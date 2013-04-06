@@ -1,0 +1,818 @@
+\documentclass[12pt]{article}
+\usepackage{mathptmx}
+\usepackage{courier} % use courier for typewriter font
+%\renewcommand*\ttdefault{cmvtt} % use computer modern as typewriter
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[algoruled,linesnumbered]{algorithm2e}
+\usepackage{amsmath,amsfonts,amsthm,amssymb}
+%\usepackage{wasysym}
+\usepackage{color} % add more color
+\usepackage{longtable}
+\usepackage{url}
+\usepackage[square,comma]{natbib}
+\renewcommand{\cite}{\citep} % use the natbib style of citation
+\usepackage[tight]{subfigure}
+\usepackage{mdwlist}
+%\usepackage[letterpaper,twoside,vscale=.8,hscale=.75,nomarginpar,hmarginratio=1:1]{geometry}
+\usepackage[parfill]{parskip}
+
+\usepackage{rotating}
+\usepackage[hang, small, bf, margin=20pt, tableposition=top]{caption}
+\setlength{\belowcaptionskip}{5pt}
+%\usepackage{mathpazo}
+\usepackage[colorlinks,pagebackref]{hyperref}
+\usepackage[figure,table]{hypcap} % Correct a problem with hyperref
+\hypersetup{citecolor={orange},linkcolor={blue}}
+\usepackage{wrapfig}
+\usepackage{array} % for the use with tabular
+\usepackage{xspace}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{appendix}
+\usepackage{minted}
+%\usemintedstyle{colorful}
+
+
+\input{dfn.tex}
+%\renewcommand{\optional}[1]{} %uncomment for published version
+
+
+\title{The BLOG Language for Probability Models\\ {version 0.6}}
+\author{Lei Li\\
+              Computer Science Division\\
+              University of California Berkeley\\
+               \email{leili@cs.berkeley.edu}\\
+\and
+               Stuart Russell\\
+              Computer Science Division\\
+              University of California Berkeley\\
+               \email{russell@cs.berkeley.edu}
+               }
+\date{\today}
+
+%\Year{2011}
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+This document introduces the syntax of \bl, a probabilistic programming language, to describe random variables and their probability dependencies.  
+\bl defines probabilistic generative models over first-order structures. For example, all Bayesian networks can be easily described by \bl.  
+\bl has the following features: 
+(a) it employs an open-universe semantics;
+(b) it can describe relational uncertainty;
+(c) it can handle identity uncertainty;
+(d) it is empowered by first-order logic.
+The particular syntax covered in this document corresponds to \bl version 0.6. The current version includes significant redesign and extension to the previous versions of \bl, based on the principles of usability and implementation efficiency. 
+\end{abstract}
+
+
+\tableofcontents
+
+\section{Summary of changes since version 0.3 (2008)}
+\begin{itemize*}
+\item Support of Map data structure;
+\item Categorical Distribution and TabularCPD using Maps;
+\item Uniform argument representation in CPD;
+\item Nested if-then-else in dependency statement;
+\item Direct support of boolean operations;
+\item Arithmetic operators (+, -, *, /, \^), which can be used in both fixed and random function statements;
+\item Support of Array, reference to array elements, and basic matrix operators on Real Array (+, -, *);
+\item All internal operators are type checked;
+\item Support additional operators and build-in functions; 
+\item Without causing confusion, ``nonrandom'' is changed to ``fixed'', ``guaranteed'' is changed to ``distinct'';
+\item Complete redesign of parser and semantic translator, towards parsing efficiency and modularity.
+\end{itemize*}
+
+
+\section{Basic language concepts}
+A \bl program consists a list of statements.
+Each statement ends with semicolon(;).
+Statements include 
+\begin{enumerate*}
+\item Type declaration; 
+\item Fixed function declaration;
+\item Distinct symbol declaration;
+\item Random function declaration;
+\item Origin function declaration;
+\item Number statement;
+\item Evidence statement;
+\item Query statement.
+\end{enumerate*}
+
+\bl is strongly typed, therefore every variable and function should explicitly specify a type.
+Each \bl program defines a set of random variables and their probabilistic dependencies. 
+A very toy example of defining a random variable in \bl is:
+
+\begin{blogcode}
+random Real x ~ Gaussian(0, 1);
+\end{blogcode}
+which states that a real-valued random variable $x$ is distributed according to the standard normal distribution. 
+To specify a dependent variable $y | x \sim \dnorm{x}{1}$:
+\begin{blogcode}
+random Real y ~ Gaussian(x, 1);
+\end{blogcode}
+
+\section{Declaring types}
+\bl is a strongly typed language. 
+ To declare a type in \bl:
+\blog/type typename;/
+
+There are built-in types including: \texttt{Boolean}, \texttt{Integer}, \texttt{Real}, \texttt{String}, and array.
+There are \emph{literals}\index{literal} in built-in types, e.g. \texttt{1.0}, \texttt{''abc''}, true, false.
+
+\section{Fixed functions}
+A fixed function has the same semantic interpretation, i.e. their values do not change over possible worlds. 
+To declare a function with fixed interpretation for all satisfying possible worlds:
+\begin{blogcode}
+fixed type0 funcname(type1) = expression;
+\end{blogcode}
+The statement defines a function with name \texttt{funcname} with one argument of type, \texttt{type1}, and return type, \texttt{type0}. 
+%The function body \texttt{e} must be a fixed/nonrandom expression, which will be introduced later. 
+
+The function body is an \texttt{expression}, which can be
+\begin{itemize}
+\item a literal of built-in types;
+\item expression such as $a+b$, (see later sections);
+\item A function call to external interpretation in Java-class, with passing of fixed term as arguments. 
+\end{itemize}
+
+Functions can have zero or multiple arguments as well. Functions without arguments are constants. 
+
+\subsection{Constants}
+{\em Constant} is a zero-ary fixed function.
+\begin{blogcode}
+fixed typename name = expression;
+\end{blogcode} 
+Where \texttt{expression} should not contain any free variables. 
+%Where the {\tt nonrandom-expression} will be described in Section~\ref{sec:expression}.
+
+For example:
+\begin{blogcode}
+fixed Real a = 1.0;
+fixed Boolean b = true;
+\end{blogcode}
+
+Another example involves a bit more on expression.
+\begin{blogcode}
+fixed Real c = 1.0 + a;
+\end{blogcode}
+
+Such names can be referred anywhere fixed zero-ary function could appear.
+For example:
+\begin{blogcode}
+random Integer x ~ Poisson(a);
+\end{blogcode}
+Here $x$ follows a Poisson distribution with the parameter set to $a$.
+
+\subsection{Distinct ``object'' symbols}
+There is a special type of functions, distinct symbols. 
+Distinct symbols are fixed zero-ary functions without function bodies.
+\begin{blogcode}
+distinct typename name1, name2, name3, ...;
+\end{blogcode}
+It defines several symbols of name, \texttt{name1}, \texttt{name2}, \texttt{name3} \dots.
+These symbols will have fixed interpretation in all satisfying possible worlds. In addition, all these symbols will have \emph{different} but fixed interpretations. 
+We can have multiple \texttt{distinct} statements in one blog, and all those symbols for the same type will have 
+distinct interpretation in possible worlds. In this sense, these symbols are equivalent to ``objects'' in model structures. 
+
+The following \bl code declares 100 Person symbols.  
+\begin{blogcode}
+type Person;
+distinct Person P[100];
+\end{blogcode}
+
+
+\paragraph{Build-in distinct symbols}
+There are predefined distinct symbols for Boolean, Integer,  Real, and String, including all integers, all real numbers, and text strings, e.g. 1, 3.14, ``hello''. These predefined symbols are also called {\em literals}.
+
+
+\section{Random functions}
+Random functions may have different interpretations across possible worlds. Random functions are defined in the similar way as fixed functions, but with \texttt{random} keyword.
+To declare a random function:
+\begin{blogcode}
+random type0 funcname(type1 x) dependency-expression;
+\end{blogcode}
+The statement defines a random function with name \texttt{funcname} with one argument of type, \texttt{type1}, and return type, \texttt{type0}. 
+
+As a very simple example, we can declare the height of a Person with the following code. 
+\begin{blogcode}
+type Person;
+distinct Person Alice, Bob;
+random Real height(Person p) ~ Gaussian(1.70, 0.25);
+\end{blogcode}
+
+\section{Origin functions}
+Origin functions are used in number statement to generate objects in possible worlds. 
+\begin{blogcode}
+origin type0 funcname(type1);
+\end{blogcode}
+An origin function has exactly one argument type and one return type. 
+The meaning of origin functions will be more clear in number statements. 
+
+\section{Number statement}
+\bl supports open worlds semantics, i.e. the number of objects in possible worlds can be declared in the language itself. While traditional graphical models does not support such semantics. 
+For user declared type, the number statements specify how many objects there are in each type, and how they are generated. 
+\begin{blogcode}
+#typename dependency-expression;
+#typename(origin_function=x, ...) dependency-expression;
+\end{blogcode}
+
+For example, the following example declares the number of \texttt{Person} follows Poisson distribution. 
+\begin{blogcode}
+type Person;
+#Person ~ Poisson(10.0);
+\end{blogcode}
+
+Another example of number statement with origin function. It declares that the number of aircraft follows Poisson distribution, each Blip has a Source object, and the number of Blips generated by an Aircraft follows Bernoulli distribution.
+\begin{blogcode}
+type Aircraft;
+type Blip;
+#Aircraft ~ Poisson(10.0); 
+origin Aircraft Source(Blip);
+#Blip(Source=a) ~ Bernoulli(0.5);
+\end{blogcode}
+
+\section{Dependency statement}
+In both nonrandom function declarations and number statements, the main body consists of dependency statements, which specifies generation process. 
+A dependency statement can be one of the following form: simple distribution clause, simple operator clause, or conditional clauses.
+A distribution clause is $\sim$ followed by the distribution name and arguments. Arguments can be any expressions allowed by the distribution.  
+\begin{blogcode}
+~ Distribution(args)
+\end{blogcode} 
+For example, here is code to define values from Poisson distribution.
+\begin{blogcode}
+~ Poisson(10.5)
+\end{blogcode}
+
+Operator clause is specified as
+\begin{blogcode}
+= expression
+\end{blogcode}
+where \texttt{expression} is arithmetic or relational operation. 
+
+Conditional clauses uses \texttt{if then else}, 
+\begin{blogcode}
+if cond then clause1
+else clause2
+\end{blogcode}
+where \texttt{cond} is a Boolean valued expression, and \texttt{clause1}, \texttt{caluse2} can be one of three clauses: simple distribution clause, operator clause or conditional clause. 
+
+\begin{example}[Uneven coin]
+There are two coins, one evenly weighted and one skewed. However, there is no visually distinction between the two. Each time we pick a coin, throw and check the face.
+\begin{blogcode}
+random Boolean even() 
+  ~ Bernoulli(0.5);
+random Boolean head() 
+  if even() == EvenCoin then
+    ~ Bernoulli(0.5)
+  else
+    ~ Bernoulli(0.8);
+\end{blogcode}
+\end{example}
+
+\section{Observing evidence}
+There are two types of evidence statements.
+\begin{blogcode}
+obs expression1 = expression2;
+\end{blogcode}
+where \texttt{expression1} should be random function application expression without free variables. 
+
+For example:
+\begin{blogcode}
+random Real x ~ Gaussian(1.0);
+obs x = 0.5;
+\end{blogcode}
+
+\section{Issuing queries}
+\begin{blogcode}
+query expression;
+\end{blogcode}
+where \texttt{expression} is a random function application expression without free variables. The result will be the posterior distribution given the observations. 
+
+\section{Expressions}
+\label{sec:expression}
+An expression can include both nonrandom and random terms.
+It is defined as
+\begin{itemize}
+\item a reference to literals of Builtin types, e.g. Integer, Real, String, Boolean and Timestep.
+\item a reference to distinct symbols;
+\item a reference to constant symbols;
+\item a proper reference to an element in {\tt Array}, with index of general expression;
+ \item fixed, random or origin function with a \emph{expression} as arguments {\tt randomfun(p1, p2, \dots)},
+  where {\tt p1, p2, \dots} are also \emph{general expressions};
+\item arithmetic operation on numerical type: \texttt{e1 + e2}, \texttt{e1 - e2}, \texttt{e1 * e2}, \texttt{e1 / e2},  \texttt{- e1}, \texttt{+ e1}, \texttt{- e1}, \texttt{(e1)}, where \texttt{e1} and \texttt{e2} are also \emph{expression} of type \texttt{Integer} or \texttt{Real}.
+\item logic expression on Boolean type: \texttt{e1 \& e2}, \texttt{e1 | e2}, \texttt{! e1}, \texttt{(e1)} where 
+\texttt{e1} and \texttt{e2} are also \emph{expression} of type \texttt{Boolean}.
+\item relational expression: \texttt{e1 > e2}, \texttt{e1 >= e2}, \texttt{e1 < e2}, \texttt{e1 <= e2}, where \texttt{e1} and \texttt{e2} should be general expression with values comparable; \texttt{e1 == e2}, \texttt{e1 != e2} can be any general expression.
+\end{itemize}
+
+\subsection{Fixed expression}
+Expression without any appearance of random function symbols. 
+Example:
+\begin{blogcode}
+1.0 + 2.0 * 3.0
+a - 2.0
+Twice(10.0) * 5.5
+\end{blogcode}
+Where \texttt{Twice(\mycdot)} is declared as 
+\begin{blogcode}
+fixed Real Twice(Real x) = x * 2;
+\end{blogcode}
+
+\subsection{Quantified formula}
+\bl allows quantified formula as in first-order logic. To specify a universal quantified formula, 
+\begin{blogcode}
+forall typename x expression
+\end{blogcode}
+To specify an existential quantified formula,
+\begin{blogcode}
+exists typename x expression
+\end{blogcode}
+
+\subsection{Set expression}
+Set expression is a special type of express which can only be used as arguments in function call, and observed symbol evidence. 
+\begin{blogcode}
+{typename x:condition(x)}
+\end{blogcode}
+
+For example, to specify uniform choice from all balls,
+\begin{blogcode}
+type Ball;
+#Ball ~ Poisson(10.0);
+random Ball choice() ~ UniformChoice({Ball b});
+\end{blogcode}
+
+To specify symbol evidence,
+\begin{blogcode}
+obs {Ball b} = {B1, B2, B3};
+\end{blogcode}
+
+\section{Array type}
+to declare an array type
+\begin{blogcode}
+type[]
+\end{blogcode}
+
+\subsection{Constant array}
+To declare an constant array
+\begin{blogcode}
+fixed type[] name = List_literal;
+\end{blogcode}
+
+For example, to declare an array with natural numbers:
+\begin{blogcode}
+fixed NaturalNum[] c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+\end{blogcode}
+
+When referring to an element in the array, it could be referred as \texttt{c[0], c[1], c[2]}, etc.
+
+\subsection{Constant list literals}
+As we already seen, we could use the square brackets, \texttt{[]} to denote constant list literals.
+Elements in a list is separated by a comma (,). Lists can be nested within a list. A shorthand notation is to use semicolon (;) to separated multiple lists within a list.
+The following two lists are regarded equivalent.
+\begin{blogcode}
+[1, 2, 3; 4, 5, 6];
+[[1, 2, 3], [4, 5, 6]];
+\end{blogcode}
+
+Constant list literals are used to assign values to an array or passing parameters to a function.
+
+\subsection{Multi-dimensional array}
+Since \texttt{Array} is a type, itself could be nested in Array declaration, thus yielding multi-dimensional array. 
+\begin{blogcode}
+fixed type[][] table = [...];
+\end{blogcode}
+
+For example, a two dimensional array of int will be
+\begin{blogcode}
+fixed NaturalNum[][] table = [[1, 2, 3], [4, 5, 6]];
+\end{blogcode}
+The following syntax in short hand is also correct:
+\begin{blogcode}
+fixed NaturalNum[][] table = [1, 2, 3; 4, 5, 6];
+\end{blogcode}
+
+
+For example, a transition matrix in Kalman  filters with Newton dynamics can be declared as:
+\begin{blogcode}
+fixed Real[][] A = [1, 1, .5; 0, 1, 1; 0, 0, 1];
+\end{blogcode}
+An element in such a dimensional array can be referred as \texttt{A[0][0]}.
+
+\subsection{Size of an array}
+There are two special functions obtain the size of an array.
+\texttt{length(\mycdot)} and \texttt{size(\mycdot)}.
+\texttt{length(\mycdot)} returns the length of one dimensional array, while \texttt{size(\mycdot)} returns the lengths at all dimensions.
+In the above example, \texttt{length(table)} will be 3, and \texttt{size(table)} will be \texttt{[2, 3]}.
+
+\section{Map}
+Map are specified using braces. 
+\begin{blogcode}
+{key1 -> value1, key2 -> value2}
+\end{blogcode}
+
+For example, 
+\begin{blogcode}
+ {true -> 0.3, false -> 0.7}
+\end{blogcode}
+
+A Map's key must be some constant, while its value can be evaluated value of a \emph{expression}, as long as the type matches.
+\begin{blogcode}
+{true -> x^2, false -> y/2}
+\end{blogcode}
+
+In addition, \texttt{type2}  in a map can be the \texttt{Distribution} type, which will be introduced in Section~\ref{sec:distribution}.
+
+\subsection{Multi-dimensional map}
+The type in a map can be an array, which will result in a multi-dimensional map.
+For example,
+\begin{blogcode}
+{[1, 1] -> 0.1, [1, 2] -> 0.3, [2, 1] -> 0.2, [2, 2] -> 0.4};
+\end{blogcode}
+
+This will be useful in creating TabularCPD (see later sections) with multiple parent variables.
+
+
+\section{Probability Distribution Library}
+\label{sec:distribution}
+%The internal logic is, \texttt{Categorical} and \texttt{TabularCPD} are sub-type of \texttt{Distribution}.
+
+\subsection{Elementary Distribution}
+Currently, many distributions are supported by \bl. A full list of distributions are included in the appendix. 
+
+For example, Gaussian distribution can be referred as,
+\begin{blogcode}
+Gaussian(Real, Real)
+\end{blogcode}
+
+\subsection{Categorical distribution as defined by probability mass table}
+\begin{blogcode}
+Categorical(Map_expression);
+\end{blogcode}
+It defines probability mass using a map.
+
+The probability should sum up to 1.0, otherwise it will by default add an entry null -> residual probability.
+For example:
+\begin{blogcode}
+Categorical({true -> 0.3, false -> 0.7});
+\end{blogcode}
+
+If the probabilities sum to more than 1.0, the BLOG compiler will produce a runtime error.
+
+\hide{
+%TODO
+\texttt{Array} can be viewed as a subtype of \texttt{Map}, therefore the following statement is also allowed.
+\begin{blogcode}
+Distribution<type>  name = Categorical(Array<Real>);
+\end{blogcode}
+}
+
+\subsection{TabularCPD}
+To declare and construct a tabular conditional probability distribution, 
+\begin{blogcode}
+  TabularCPD(Map<type2, Distribution<type1>>, v);
+\end{blogcode}
+
+For example:
+\begin{blogcode}
+TabularCPD({true -> ~ Bernoulli(0.3), 
+            false -> ~ Bernoulli(0.6)}, x);
+\end{blogcode}
+
+With the comprehension, we could even declare conditional mixture of Gaussian very easily. For example:
+\begin{blogcode}
+random Int z ~ Categorical({0 -> 0.4, 1 -> 0.6});
+random Real x ~ TabularCPD({0 -> ~Gaussian(5, 1.0), 
+                 1 -> ~Gaussian(10, 1.0)}, z);
+\end{blogcode}
+
+\subsubsection{Multiple dependent variables}
+If a CPD is dependent on several parent variables, a multi-dimensional map will be used
+\begin{blogcode}
+TabularCPD({[0, 0] -> ~Gaussian(5, 1.0), 
+            [0, 1] -> ~Gaussian(10, 1.0),
+            [1, 0] -> ~Gaussian(2, 4.0),
+            [1, 1] -> ~Gaussian(20, 4.0)}, [x, y])
+\end{blogcode}
+
+\hide{
+\subsubsection{Tree conditionals}
+If a CPD is based on a map from key to a TabularCPD, it will be a hierarchical \emph{tree conditional}. 
+The following example will essentially construct the same distribution as above.
+In general there can be multiple hierarchies.
+}
+
+
+\section{Extending \bl}
+\subsection{User defined distribution}
+Probability distributions are implemented in Java and should implement the
+ interface \verb|blog.distrib.CondProbDistrib|. Alternatively, it could be declared as subclass of \verb|blog.distrib.AbstractCondProbDistrib|. 
+By default, \bl engine will look up distribution classes in the package \verb|blog.distrib|. In addition, it will look up distribution classes under the default empty package. 
+
+{\bf Note}: using one distribution class to implement deterministic operations are supported but not recommended. 
+
+Below is one example of uniform distribution on Integer.
+
+\begin{minted}{java}
+import java.util.*;
+import blog.*;
+import blog.distrib.*;
+import blog.common.Util;
+import blog.model.Type;
+
+public class UniformInt extends AbstractCondProbDistrib {
+  public UniformInt(List params) {
+    try {
+      lower = ((Number) params.get(0)).intValue();
+      upper = ((Number) params.get(1)).intValue();
+      if ((lower > upper) || (params.size() > 2)) {
+        throw new IllegalArgumentException();
+      }
+    } catch (RuntimeException e) {
+      throw new IllegalArgumentException(
+          "UniformInt CPD expects two integer arguments "
+              + "[lower, upper] with lower <= upper.  Got: " + params);
+    }
+  }
+
+  public double getProb(List args, Object value) {
+    if (!args.isEmpty()) {
+      throw new IllegalArgumentException(
+          "UniformInt CPD does not take any arguments.");
+    }
+    if (!(value instanceof Integer)) {
+      throw new IllegalArgumentException(
+          "UniformInt CPD defines distribution over objects of class "
+              + "Integer, not " + value.getClass() + ".");
+    }
+    int x = ((Integer) value).intValue();
+
+    if ((x >= lower) && (x <= upper)) {
+      return 1.0 / (upper - lower + 1);
+    }
+    return 0;
+  }
+
+  public Object sampleVal(List args, Type childType) {
+    if (!args.isEmpty()) {
+      throw new IllegalArgumentException(
+          "UniformInt CPD does not take any arguments.");
+    }
+
+    double x = lower + Math.floor(Util.random() * (upper - lower + 1));
+    return new Integer((int) x);
+  }
+
+  private int lower;
+  private int upper;
+}
+\end{minted}
+
+
+
+
+%\subsection{Observability}
+
+\appendix
+
+\section{Built-in operators and functions}
+\begin{table}[h]
+\centering
+\caption{Arithmetic operators on Integer and Real}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt +} & plus \\ 
+{\tt -} & minus \\ 
+{\tt *} & multiply \\
+{\tt /} & divide \\ 
+{\tt \%} & module (only applied to Integers) \\
+\verb|^| & power \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Logical operators on Boolean}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt \&} & and \\ 
+{\tt |} & or \\ 
+{\tt !} & not \\
+{\tt =>} & imply \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Quantified formula}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt forall} & $\forall$ \\ 
+{\tt exists} & $\exists$ \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Relational operators on Integer, Real and other comparable types}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt >} & greater than \\ 
+{\tt >=} & greater than or equal to \\ 
+{\tt <} & less than \\
+{\tt <=} & less than or equal to \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Equality operator on all types}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt ==} & equal to \\ 
+{\tt !=} & unequal to \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Operators on String}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+{\tt +} & concatenate \\ 
+{\tt ==} & equal to \\
+{\tt ==} & unequal to \\ 
+\verb|IsEmptyString()| & returns True if the string is empty\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Operators on Timestep}
+\begin{tabular}{ c c }
+\toprule 
+operator & interpretation \\
+\midrule
+\verb|Pred()| & previous Timestep\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\section{Built-in distributions}
+\begin{itemize}
+\item Bernoulli
+\item Beta
+\item Binomial
+\item Categorical
+\item Exponential
+\item Gamma
+\item Gaussian
+\item Geometric
+\item NegativeBinomial
+\item Poisson
+\item TabularCPD
+\item UniformChoice
+\item UniformInt
+\item UniformReal
+\item MultivarGaussian
+\item Dirichlet
+\end{itemize}
+
+\hide{
+
+\section{Query and inference guidance}
+
+
+
+
+\section{Parameters}
+A parameter is only declared but not initialized with a particular value. Its value can be learned in the inference engine. To declare a parameter
+\begin{blogcode}
+param type1 name(type2, ...);
+param type1 name(type2, ...) : condition;
+\end{blogcode} 
+This declares a parameter that should satisfy the optional condition. \texttt{condition} is a nonrandom expression that returns a Boolean value. 
+
+Note here a parameter can be a function with argument of \texttt{type2, ...}, with the restriction that \texttt{type2, ...} should only involve types with distinct statements and number statements on nonrandom expression or param.
+\reminder{a bit ugly}. 
+
+Learnable parameters can be used in complex expressions. For example:
+\begin{blogcode}
+param Real a;
+random Real x ~ Gaussian(2 ^ a, 1.0);
+random Real y ~ Gaussian(a, 1.0);
+\end{blogcode}
+
+We could specifying the range of a parameter, for example:
+\begin{blogcode}
+param Real a: 0 < a & a < 10;
+param Real b: b > 1;
+random Real x ~ Gaussian(a, b);
+\end{blogcode}
+
+Commonly used parameters are often without arguments. However, the syntax does not prevent specifying infinite parameters like:
+\begin{blogcode}
+param Real mu(Int);
+\end{blogcode}
+
+%\hide{
+\subsection {Array of Parameters}
+We could define an array of parameters using
+\begin{blogcode}
+param type[size] name;
+\end{blogcode}
+where {\tt size} should be a constant natural number.
+
+\begin{blogcode}
+param Real[10] theta;
+\end{blogcode}
+
+\subsection{Declaring number param}
+\reminder{Seems this will create problem to the EM algorithm}
+A special case of parameter would the number statement. For example,
+\begin{blogcode}
+type Person;
+param NaturalNum #Person;
+param Real TrueHeight(Person p) : TrueHeight(p) > 0;
+random Real MeasuredHeight(Person p) ~ Gaussian(TrueHeight(p), 1.0);
+\end{blogcode}
+We will describe the notation for distributions in Section~\ref{sec:distribution}. For the moment, we use Gaussian as a notation for Gaussian distributions.
+This example defines a set of parameters, and its size itself is a parameter.
+
+Note that since \texttt{TrueHeight} takes \texttt{Person} as an argument, we should not allow \texttt{\#Person} to be generated from a random distribution.
+haha
+%}
+
+\section{User defined distribution}
+\reminder{TO-DO, how to define pdf and sampling function?}
+
+\section{Import user libraries}
+\subsection{Import blog program}
+\begin{blogcode}
+import path;
+\end{blogcode}
+Where \texttt{path} is a java style package description.
+
+For example, to import urn-ball.blog:
+\begin{blogcode}
+import urn-ball;
+\end{blogcode}
+
+\subsection{Referring to external library}
+\begin{blogcode}
+extern blog.distribution.*;
+\end{blogcode}
+It will make all implementation of Distribution visible to blog inference engine.
+
+
+\section{Variable size array}
+The size of an array is usually a constant. However it can also be random value.
+For example:
+\begin{blogcode}
+random NaturalNum n ~ Poisson(10.0) + 1;
+random Real[n] x;
+\end{blogcode}
+
+
+\section{Reference to Distribution}
+If a distribution is referred in a \emph{general expression}, it is regarded as a random variable and will take a sample as the value.
+For example, 
+\begin{blogcode}
+random Real x = 1 + Gaussian(0, 1.0);
+\end{blogcode}
+It has the same semantics as
+\begin{blogcode}
+random Real y ~ Gaussian(0, 1.0);
+random Real x = 1 + y;
+\end{blogcode}
+\texttt{\~{}} is used when the right side is a distribution, while \texttt{=} is used when the right side is a general expression. 
+\reminder{Shaunak suggests using \texttt{=} primarily, and \texttt{\~{}} only in certain cases that are not clear from context.}
+}
+
+\end{document}
