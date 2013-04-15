@@ -92,12 +92,12 @@ The particular syntax covered in this document corresponds to \bl version 0.6. T
 
 \section{Basic language concepts}
 A \bl program consists a list of statements.
-Each statement ends with semicolon(;).
+Each statement ends with semicolon(;). 
 Statements include 
 \begin{enumerate*}
 \item Type declaration; 
-\item Fixed function declaration;
 \item Distinct symbol declaration;
+\item Fixed function declaration;
 \item Random function declaration;
 \item Origin function declaration;
 \item Number statement;
@@ -119,12 +119,18 @@ random Real y ~ Gaussian(x, 1);
 \end{blogcode}
 
 \section{Declaring types}
-\bl is a strongly typed language. 
+\bl is a strongly typed language. Each variable should have an associated type.
  To declare a type in \bl:
 \blog/type typename;/
 
-There are built-in types including: \texttt{Boolean}, \texttt{Integer}, \texttt{Real}, \texttt{String}, and array.
-There are \emph{literals}\index{literal} in built-in types, e.g. \texttt{1.0}, \texttt{''abc''}, true, false.
+For example, to declare a user type:
+\begin{blogcode}
+type User;
+\end{blogcode}
+
+The following types are pre-defined: \verb|Boolean|, \verb|Integer|, \verb|Real|, \verb|String|, and array (which will be explain in details later).
+There are \emph{literals}\index{literal} in built-in types, e.g. \verb|1.0|, \verb|''abc''|, \verb|true|, \verb|false|.
+
 
 \section{Fixed functions}
 A fixed function has the same semantic interpretation, i.e. their values do not change over possible worlds. 
@@ -136,16 +142,16 @@ The statement defines a function with name \texttt{funcname} with one argument o
 %The function body \texttt{e} must be a fixed/nonrandom expression, which will be introduced later. 
 
 The function body is an \texttt{expression}, which can be
-\begin{itemize}
+\begin{itemize*}
 \item a literal of built-in types;
-\item expression such as $a+b$, (see later sections);
+\item expression using build-in operators  such as \verb|a+b|, (see later sections);
 \item A function call to external interpretation in Java-class, with passing of fixed term as arguments. 
-\end{itemize}
+\end{itemize*}
 
-Functions can have zero or multiple arguments as well. Functions without arguments are constants. 
+Functions can have zero or multiple arguments as well. Functions without arguments are \emph{constants}. 
 
 \subsection{Constants}
-{\em Constant} is a zero-ary fixed function.
+A {\em constant} is a zero-ary fixed function.
 \begin{blogcode}
 fixed typename name = expression;
 \end{blogcode} 
@@ -265,16 +271,13 @@ where \texttt{cond} is a Boolean valued expression, and \texttt{clause1}, \textt
 
 \begin{example}[Uneven coin]
 There are two coins, one evenly weighted and one skewed. However, there is no visually distinction between the two. Each time we pick a coin, throw and check the face.
-\begin{blogcode}
-random Boolean even() 
-  ~ Bernoulli(0.5);
-random Boolean head() 
-  if even() == EvenCoin then
-    ~ Bernoulli(0.5)
-  else
-    ~ Bernoulli(0.8);
-\end{blogcode}
 \end{example}
+\begin{blogcode}
+random Boolean even ~ Bernoulli(0.5);
+random Boolean head 
+  if even then ~ Bernoulli(0.5)
+  else ~ Bernoulli(0.8);
+\end{blogcode}
 
 \section{Observing evidence}
 There are two types of evidence statements.
@@ -294,6 +297,18 @@ obs x = 0.5;
 query expression;
 \end{blogcode}
 where \texttt{expression} is a random function application expression without free variables. The result will be the posterior distribution given the observations. 
+
+\begin{example}[Uneven coin (continued)]
+There are two coins, one evenly weighted and one skewed. However, there is no visually distinction between the two. Each time we pick a coin, throw and check the face. What is the probability of the coin being even after we observe a head?
+\end{example}
+\begin{blogcode}
+random Boolean even ~ Bernoulli(0.5);
+random Boolean head 
+  if even then ~ Bernoulli(0.5)
+  else ~ Bernoulli(0.8);
+obs head = true;
+query even;
+\end{blogcode}
 
 \section{Expressions}
 \label{sec:expression}
@@ -354,7 +369,7 @@ obs {Ball b} = {B1, B2, B3};
 \end{blogcode}
 
 \section{Array type}
-to declare an array type
+To declare an array type
 \begin{blogcode}
 type[]
 \end{blogcode}
@@ -367,10 +382,10 @@ fixed type[] name = List_literal;
 
 For example, to declare an array with natural numbers:
 \begin{blogcode}
-fixed NaturalNum[] c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+fixed Integer[] c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 \end{blogcode}
 
-When referring to an element in the array, it could be referred as \texttt{c[0], c[1], c[2]}, etc.
+When referring to an element in the array, it could be referred as \verb|c[0], c[1], c[2]|, etc.
 
 \subsection{Constant list literals}
 As we already seen, we could use the square brackets, \texttt{[]} to denote constant list literals.
@@ -391,11 +406,11 @@ fixed type[][] table = [...];
 
 For example, a two dimensional array of int will be
 \begin{blogcode}
-fixed NaturalNum[][] table = [[1, 2, 3], [4, 5, 6]];
+fixed Integer[][] table = [[1, 2, 3], [4, 5, 6]];
 \end{blogcode}
 The following syntax in short hand is also correct:
 \begin{blogcode}
-fixed NaturalNum[][] table = [1, 2, 3; 4, 5, 6];
+fixed Integer[][] table = [1, 2, 3; 4, 5, 6];
 \end{blogcode}
 
 
@@ -476,10 +491,11 @@ Distribution<type>  name = Categorical(Array<Real>);
 \subsection{TabularCPD}
 To declare and construct a tabular conditional probability distribution, 
 \begin{blogcode}
-  TabularCPD(Map<type2, Distribution<type1>>, v);
+TabularCPD(Map_expression, expression);
 \end{blogcode}
+which evaluates \verb|expression| as a key and generates values from the map. Note the \verb|Map_expression| should be a map from literals or array of literals to a distribution expression. 
 
-For example:
+For example, to draw from Bernoulli distribution according to the value of $x$, 
 \begin{blogcode}
 TabularCPD({true -> ~ Bernoulli(0.3), 
             false -> ~ Bernoulli(0.6)}, x);
@@ -487,7 +503,7 @@ TabularCPD({true -> ~ Bernoulli(0.3),
 
 With the comprehension, we could even declare conditional mixture of Gaussian very easily. For example:
 \begin{blogcode}
-random Int z ~ Categorical({0 -> 0.4, 1 -> 0.6});
+random Integer z ~ Categorical({0 -> 0.4, 1 -> 0.6});
 random Real x ~ TabularCPD({0 -> ~Gaussian(5, 1.0), 
                  1 -> ~Gaussian(10, 1.0)}, z);
 \end{blogcode}
@@ -495,10 +511,10 @@ random Real x ~ TabularCPD({0 -> ~Gaussian(5, 1.0),
 \subsubsection{Multiple dependent variables}
 If a CPD is dependent on several parent variables, a multi-dimensional map will be used
 \begin{blogcode}
-TabularCPD({[0, 0] -> ~Gaussian(5, 1.0), 
-            [0, 1] -> ~Gaussian(10, 1.0),
-            [1, 0] -> ~Gaussian(2, 4.0),
-            [1, 1] -> ~Gaussian(20, 4.0)}, [x, y])
+TabularCPD({[0, 0] -> ~ Gaussian(5, 1.0), 
+            [0, 1] -> ~ Gaussian(10, 1.0),
+            [1, 0] -> ~ Gaussian(2, 4.0),
+            [1, 1] -> ~ Gaussian(20, 4.0)}, [x, y])
 \end{blogcode}
 
 \hide{
