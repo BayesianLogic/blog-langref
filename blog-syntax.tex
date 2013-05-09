@@ -17,7 +17,6 @@
 \usepackage{mdwlist}
 %\usepackage[letterpaper,twoside,vscale=.8,hscale=.75,nomarginpar,hmarginratio=1:1]{geometry}
 \usepackage[parfill]{parskip}
-
 \usepackage{rotating}
 \usepackage[hang, small, bf, margin=20pt, tableposition=top]{caption}
 \setlength{\belowcaptionskip}{5pt}
@@ -32,7 +31,9 @@
 \usepackage{fancyvrb}
 \usepackage{multirow}
 \usepackage{booktabs}
-\usepackage{appendix}
+\usepackage[titletoc]{appendix}
+%\usepackage[page,header]{appendix}
+\usepackage{titletoc}
 \usepackage{minted}
 %\usemintedstyle{colorful}
 
@@ -40,8 +41,11 @@
 \input{dfn.tex}
 \renewcommand{\optional}[1]{} %uncomment for published version
 
+\newcommand{\blogversion}{0.6\xspace}
 
-\title{The BLOG Language for Probability Models\\ {version 0.6}}
+\title{The BLOG Language Reference  \\
+{\large (BLOG version \blogversion)}
+}
 \author{Lei Li\\
               Computer Science Division\\
               University of California Berkeley\\
@@ -68,12 +72,14 @@ This document introduces the syntax of \bl, a probabilistic programming language
 (b) it can describe relational uncertainty;
 (c) it can handle identity uncertainty; and
 (d) it is empowered by first-order logic.
-The syntax as described in this document corresponds to \bl version 0.6. The current version represents a significant redesign and extension to previous versions of \bl, based on the principles of usability and implementation efficiency.
+The syntax as described in this document corresponds to \bl version \blogversion. The current version represents a significant redesign and extension to previous versions of \bl, based on the principles of usability and implementation efficiency.
 \end{abstract}
 
+\clearpage
 
 \tableofcontents
 
+\clearpage
 
 \section{Basic language concepts}
 A \bl program consists a list of statements.
@@ -668,7 +674,17 @@ query S(@5);
 \end{blogcode}
 %\subsection{Observability}
 
+
+%\appendixpage
 \appendix
+%\appendixpage
+%\addappheadtotoc
+%\begin{appendices}
+\phantomsection
+\addcontentsline{toc}{section}{\appendixtocname}
+
+%\cleardoublepage
+
 
 \section{Summary of changes since version 0.3 (2008)}
 \begin{itemize*}
@@ -686,7 +702,7 @@ query S(@5);
 \end{itemize*}
 
 \section{Built-in operators and functions}
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Arithmetic operators on Integer and Real}
 \begin{tabular}{ c c c }
@@ -703,7 +719,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Logical operators on Boolean}
 \begin{tabular}{ c c c }
@@ -718,7 +734,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Quantified formula}
 \begin{tabular}{ c c c }
@@ -731,65 +747,63 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Relational operators on Integer, Real and other comparable types}
-\begin{tabular}{ c c }
+\begin{tabular}{ c c c }
 \toprule 
-operator & interpretation \\
+operator & interpretation & example \\
 \midrule
-{\tt >} & greater than \\ 
-{\tt >=} & greater than or equal to \\ 
-{\tt <} & less than \\
-{\tt <=} & less than or equal to \\
+{\tt >} & greater than & \verb|a > b| ,  \verb|2 > 1.0|\\ 
+{\tt >=} & greater than or equal to & \verb|a >= b| ,  \verb|2 >= 1.0| \\ 
+{\tt <} & less than & \verb|a < b| ,  \verb|1.0 < 2.0| \\
+{\tt <=} & less than or equal to & \verb|a <= b| ,  \verb|1.0 <= 2.0|  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Equality operator on all types}
-\begin{tabular}{ c c }
+\begin{tabular}{ c c c }
 \toprule 
-operator & interpretation \\
+operator & interpretation & example \\
 \midrule
-{\tt ==} & equal to \\ 
-{\tt !=} & unequal to \\ 
+{\tt ==} & equal to & \verb|a == b|   \\ 
+{\tt !=} & unequal to & \verb|a != b|  \\ 
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Operators on String}
-\begin{tabular}{ c c }
+\begin{tabular}{ c c c }
 \toprule 
-operator & interpretation \\
+operator & interpretation & example \\
 \midrule
-{\tt +} & concatenate \\ 
-{\tt ==} & equal to \\
-{\tt !=} & unequal to \\ 
-\verb|IsEmptyString()| & returns True if the string is empty\\
+{\tt +} & concatenate & \verb|"hello " + "world"|  \\ 
+{\tt ==} & equal to & \verb|"abc" == "def"|  \\
+{\tt !=} & unequal to & \verb|"abc" != "def"|\\ 
+\verb|IsEmptyString()| & returns True if the string is empty & \verb|IsEmptyString(a)| \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{table}[h]
+\begin{table}[h!]
 \centering
 \caption{Operators on Timestep}
-\begin{tabular}{ c c }
+\begin{tabular}{ c c c }
 \toprule 
-operator & interpretation \\
+operator & interpretation & example \\
 \midrule
-\verb|Pred()| & previous Timestep\\
+\verb|Pred()| & previous Timestep & \verb|Pred(@1)|  \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\optional{
-
 \section{Built-in distributions}
-\begin{itemize}
+\begin{itemize*}
 \item Bernoulli
 \item Beta
 \item Binomial
@@ -806,26 +820,26 @@ operator & interpretation \\
 \item UniformChoice
 \item UniformInt
 \item UniformReal
-\end{itemize}
+\end{itemize*}
 
-}
 
-\begin{table}[h]
+
+\begin{table}[h!]
 \centering
 \caption{Distributions in \bl}
-\begin{tabular}{ c c c c }
+\begin{tabular}{ c c c p{2in} }
 \toprule 
 distribution & argument type & value  & example \\ 
  \midrule
 Bernoulli & Real in [0,1] & Boolean & \verb|Bernoulli(0.8)| \\ 
 Beta & Real, Real & Real in [0,1] & \verb|Beta(1.0, 1.0)| \\ 
 Binomial & Integer, Real & Integer & \verb|Binomial(10, 0.5)| \\ 
+Dirichlet & Array of Real & Array of Real & \verb|Dirichlet([1, 1, 1])| \\
 Exponential & Real & Real & \verb|Exponential(2.0)| \\ 
 Gamma & Real, Real & Real & \verb|Gamma(3, 2.0)| \\ 
 Gaussian & Real, Real & Real & \verb|Gaussian(2.0, 1.0)| \\ 
 Geometric & Real in [0,1] & nonnegative Integer & \verb|Geometric(0.5)| \\ 
-Dirichlet & Array of Real & Array of Real & \verb|Dirichlet([1, 1, 1])| \\
-MultivarGaussian & Array, 2D Array & Array of Real & \verb|MultivarGaussian([0, 0], [1, 0; 0, 1])| \\
+MultivarGaussian & Array, 2D Array & Array of Real & \verb|MultivarGaussian([0, 0],| \verb| [1, 0; 0, 1])| \\
 NegativeBinomial & Integer, Real in [0,1] & Integer & \verb|NegativeBinomial(4, 0.5)| \\ 
 Poisson & Real & nonnegative Integer & \verb|Poisson(6.0)| \\ 
 UniformChoice & Set &  & \verb|UniformChoice({Person p})| \\
@@ -943,5 +957,7 @@ random Real x = 1 + y;
 \texttt{\~{}} is used when the right side is a distribution, while \texttt{=} is used when the right side is a general expression. 
 \reminder{Shaunak suggests using \texttt{=} primarily, and \texttt{\~{}} only in certain cases that are not clear from context.}
 }
+
+%\end{appendices}
 
 \end{document}
