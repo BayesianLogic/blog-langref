@@ -22,7 +22,8 @@
 \setlength{\belowcaptionskip}{5pt}
 %\usepackage{mathpazo}
 \usepackage[colorlinks,pagebackref]{hyperref}
-\usepackage[figure,table]{hypcap} % Correct a problem with hyperref
+\renewcommand*{\theHsection}{\thesection} % Correct a problem with hyperref
+\usepackage[figure,table]{hypcap} 
 \hypersetup{citecolor={orange},linkcolor={blue}}
 \usepackage{wrapfig}
 \usepackage{array} % for the use with tabular
@@ -33,7 +34,8 @@
 \usepackage{booktabs}
 \usepackage[titletoc]{appendix}
 %\usepackage[page,header]{appendix}
-\usepackage{titletoc}
+%\usepackage{titletoc}
+\usepackage{float}
 \usepackage{minted}
 %\usemintedstyle{colorful}
 
@@ -702,7 +704,7 @@ query S(@5);
 \end{itemize*}
 
 \section{Built-in operators and functions}
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Arithmetic operators on Integer and Real}
 \begin{tabular}{ c c c }
@@ -719,7 +721,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Logical operators on Boolean}
 \begin{tabular}{ c c c }
@@ -734,7 +736,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Quantified formula}
 \begin{tabular}{ c c c }
@@ -747,7 +749,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Relational operators on Integer, Real and other comparable types}
 \begin{tabular}{ c c c }
@@ -762,7 +764,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Equality operator on all types}
 \begin{tabular}{ c c c }
@@ -775,7 +777,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Operators on String}
 \begin{tabular}{ c c c }
@@ -790,7 +792,7 @@ operator & interpretation & example \\
 \end{tabular}
 \end{table}
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Operators on Timestep}
 \begin{tabular}{ c c c }
@@ -824,7 +826,7 @@ operator & interpretation & example \\
 
 
 
-\begin{table}[h!]
+\begin{table}[H]
 \centering
 \caption{Distributions in \bl}
 \begin{tabular}{ c c c p{2in} }
