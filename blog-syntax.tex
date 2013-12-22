@@ -43,7 +43,7 @@
 \input{dfn.tex}
 \renewcommand{\optional}[1]{} %uncomment for published version
 
-\newcommand{\blogversion}{0.6\xspace}
+\newcommand{\blogversion}{0.7\xspace}
 
 \title{The BLOG Language Reference  \\
 {\large (BLOG version \blogversion)}
@@ -287,10 +287,10 @@ There are two coins, one evenly weighted and one skewed. However, there is no vi
 and check which face appears.
 \end{example}
 \begin{blogcode}
-random Boolean even ~ Bernoulli(0.5);
+random Boolean even ~ BooleanDistrib(0.5);
 random Boolean head 
-  if even then ~ Bernoulli(0.5)
-  else ~ Bernoulli(0.8);
+  if even then ~ BooleanDistrib(0.5)
+  else ~ BooleanDistrib(0.8);
 \end{blogcode}
 
 \section{Observing evidence}
@@ -326,10 +326,10 @@ where \texttt{expression} is a function application expression without free vari
 There are two coins, one evenly weighted and one skewed. However, there is no way to visually distinguish the two. Each time we pick a coin, we flip it and check which face lands facing up. What is the probability of the coin being even after we observe a head?
 \end{example}
 \begin{blogcode}
-random Boolean even ~ Bernoulli(0.5);
+random Boolean even ~ BooleanDistrib(0.5);
 random Boolean head 
-  if even then ~ Bernoulli(0.5)
-  else ~ Bernoulli(0.8);
+  if even then ~ BooleanDistrib(0.5)
+  else ~ BooleanDistrib(0.8);
 obs head = true;
 query even;
 \end{blogcode}
@@ -806,6 +806,7 @@ operator & interpretation & example \\
 
 \section{Built-in distributions}
 \begin{itemize*}
+\item BooleanDistrib
 \item Bernoulli
 \item Beta
 \item Binomial
@@ -833,7 +834,8 @@ operator & interpretation & example \\
 \toprule 
 distribution & argument type & value  & example \\ 
  \midrule
-Bernoulli & Real in [0,1] & Boolean & \verb|Bernoulli(0.8)| \\ 
+BooleanDistrib & Real in [0,1] & Boolean & \verb|BooleanDistrib(0.8)| \\ 
+Bernoulli & Real in [0,1] & binary 0/1 & \verb|Bernoulli(0.8)| \\ 
 Beta & Real, Real & Real in [0,1] & \verb|Beta(1.0, 1.0)| \\ 
 Binomial & Integer, Real & Integer & \verb|Binomial(10, 0.5)| \\ 
 Dirichlet & Array of Real & Array of Real & \verb|Dirichlet([1, 1, 1])| \\
