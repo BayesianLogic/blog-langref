@@ -806,9 +806,9 @@ operator & interpretation & example \\
 
 \section{Built-in distributions}
 \begin{itemize*}
-\item BooleanDistrib
-\item Bernoulli
-\item Beta
+\item BooleanDistrib(p), with probability of $p$ generating \verb|True|, and $1-p$ generating \verb|False|.
+\item Bernoulli(p), with probability of $p$ generating 1, and $1-p$ generating 0.
+\item Beta($\alpha$, $\beta$), generating a real number $x$ in [0,1] with probability density of $\frac{x^{\alpha - 1} (1-x)^{\beta - 1}}{B(\alpha, \beta)}$, where Beta function $B$ is the normalization constant to ensure the total probability integrates to 1.
 \item Binomial
 \item Categorical
 \item Dirichlet
@@ -818,14 +818,13 @@ operator & interpretation & example \\
 \item Geometric
 \item MultivarGaussian
 \item NegativeBinomial
-\item Poisson
+\item Poisson($\lambda$), generating an integer $x$ with probability $\frac{\lambda^x}{x!}e^{-\lambda}$.
+\item Size($S$), deterministically returns the number of elements in the given set $S$.
 \item TabularCPD
-\item UniformChoice
+\item UniformChoice($S$), uniformly choosing one element from the given set $S$.
 \item UniformInt
 \item UniformReal
 \end{itemize*}
-
-
 
 \begin{table}[H]
 \centering
