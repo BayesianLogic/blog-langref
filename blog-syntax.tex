@@ -41,7 +41,7 @@
 
 
 \input{dfn.tex}
-\renewcommand{\optional}[1]{} %uncomment for published version
+\renewcommand{\optional}[1]{#1} %uncomment for published version
 
 \newcommand{\blogversion}{0.8\xspace}
 
@@ -914,7 +914,7 @@ UniformReal & Real, Real & Real & \verb|UniformReal(0, 1.0)| \\
 \end{table}
 
 
-\optional{
+%\optional{
 
 \section{Query and inference guidance}
 
@@ -1020,7 +1020,7 @@ random Real x = 1 + y;
 \end{blogcode}
 \texttt{\~{}} is used when the right side is a distribution, while \texttt{=} is used when the right side is a general expression. 
 \reminder{Shaunak suggests using \texttt{=} primarily, and \texttt{\~{}} only in certain cases that are not clear from context.}
-}
+%}
 
 %\end{appendices}
 
