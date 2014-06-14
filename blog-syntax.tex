@@ -732,112 +732,90 @@ query S(@5);
 \section{BLOG Grammar Definition}
 
 \begin{verbatim}
-
 blog_program ::= opt_statement_lst;
 
 opt_statement_lst ::= /* EMPTY */ 
-                | statement_lst;
+  | statement_lst;
 
 statement_lst ::= statement:e statement_lst
   | statement;
 
 statement ::= declaration_stmt 
-            | evidence_stmt 
-            | query_stmt 
-            ;
+  | evidence_stmt 
+  | query_stmt ;
 
-
-declaration_stmt ::=
-    type_decl
+declaration_stmt ::= type_decl
   | fixed_func_decl
   | rand_func_decl
   | origin_func_decl 
   | number_stmt 
   | distinct_decl 
   | parameter_decl 
-  | distribution_decl 
-  ;
+  | distribution_decl ;
 
 type_decl ::= TYPE ID SEMI ;
 
 type ::= refer_name
-  | array_type 
-  ;
+  | array_type ;
 
-
-array_type_or_sub ::= refer_name LBRACKET
-  ;
+array_type_or_sub ::= refer_name LBRACKET ;
 
 array_type ::= array_type_or_sub RBRACKET
-  | array_type LBRACKET RBRACKET
-  ;
+  | array_type LBRACKET RBRACKET ;
 
 opt_parenthesized_type_var_lst ::= /* EMPTY */
   | LPAREN RPAREN
-  | LPAREN type_var_lst RPAREN
-  ;
+  | LPAREN type_var_lst RPAREN ;
 
 type_var_lst ::= type ID COMMA type_var_lst
-  | type ID
-  ;
+  | type ID ;
 
 fixed_func_decl ::=
     FIXED type ID opt_parenthesized_type_var_lst 
-    EQ expression SEMI
-  ;
+    EQ expression SEMI ;
 
 rand_func_decl ::=
     RANDOM type ID opt_parenthesized_type_var_lst 
-    dependency_statement_body SEMI
-  ;
+    dependency_statement_body SEMI ;
 
 number_stmt ::=
     NUMSIGN refer_name opt_parenthesized_origin_var_list
-	dependency_statement_body SEMI;
+    dependency_statement_body SEMI;
 
 opt_parenthesized_origin_var_list ::= /* EMPTY */
-  | LPAREN origin_var_list RPAREN 
-  ;
+  | LPAREN origin_var_list RPAREN ;
 
 origin_var_list ::= ID EQ ID COMMA origin_var_list
-  | ID EQ ID
-  ;
+  | ID EQ ID ;
 
-origin_func_decl ::=
+origin_func_decl ::= 
     ORIGIN type ID LPAREN type RPAREN SEMI ;
 
 distinct_decl ::=
     DISTINCT refer_name id_or_subid_list SEMI ;
 
 id_or_subid_list ::= id_or_subid
-  | id_or_subid COMMA id_or_subid_list
-  ;
+  | id_or_subid COMMA id_or_subid_list ;
 
 id_or_subid ::= ID
-  | ID LBRACKET INT_LITERAL RBRACKET
-  ;
+  | ID LBRACKET INT_LITERAL RBRACKET ;
 
 distribution_decl ::=
     DISTRIBUTION ID EQ refer_name
     LPAREN opt_expression_list RPAREN SEMI ;
 
 refer_name ::= ID
-  | ID DOT refer_name
-  ;
+  | ID DOT refer_name ;
 
 dependency_statement_body ::= EQ expression
   | distribution_expr
-  | IF expression THEN dependency_statement_body elseif_list
-  ;
+  | IF expression THEN dependency_statement_body elseif_list ;
 
-elseif_list ::=
-    ELSE dependency_statement_body
-  | /* EMPTY */
-  ;
+elseif_list ::= /* EMPTY */
+  | ELSE dependency_statement_body ;
 
 parameter_decl ::= PARAM type ID SEMI
-  | PARAM type ID COLON expression SEMI
-  ;
+  | PARAM type ID COLON expression SEMI ;
 
 expression ::= operation_expr
   | distribution_expr
@@ -848,123 +826,100 @@ expression ::= operation_expr
   | quantified_formula
   | set_expr
   | number_expr
-  | refer_name
-  ;
+  | refer_name ;
 
 literal ::= STRING_LITERAL
   | CHAR_LITERAL
   | INT_LITERAL
   | DOUBLE_LITERAL
   | BOOLEAN_LITERAL
-  | NULL
-  ;
+  | NULL ;
 
 operation_expr ::= expression PLUS expression
-  | expression:e1 MINUS expression:e2
-  | expression:e1 MULT expression:e2
-  | expression:e1 DIV expression:e2
-  | expression:e1 MOD expression:e2
-  | expression:e1 POWER expression:e2
-  | expression:e1 LT expression:e2
-  | expression:e1 GT expression:e2
-  | expression:e1 LEQ expression:e2
-  | expression:e1 GEQ expression:e2
-  | expression:e1 EQEQ expression:e2
-  | expression:e1 NEQ expression:e2
-  | expression:e1 AND expression:e2
-  | expression:e1 OR expression:e2
-  | expression:e1 DOUBLERIGHTARROW expression:e2
-  | expression:e1 LBRACKET expression:e2 RBRACKET
-  | array_type_or_sub:e1 expression:e2 RBRACKET
-  | unary_operation_expr:e 
-  ;
+  | expression MINUS expression
+  | expression MULT expression
+  | expression DIV expression
+  | expression MOD expression
+  | expression POWER expression
+  | expression LT expression
+  | expression GT expression
+  | expression LEQ expression
+  | expression GEQ expression
+  | expression EQEQ expression
+  | expression NEQ expression
+  | expression AND expression
+  | expression OR expression
+  | expression DOUBLERIGHTARROW expression
+  | expression LBRACKET expression RBRACKET
+  | array_type_or_sub expression RBRACKET
+  | unary_operation_expr ;
 
-unary_operation_expr ::=
-    MINUS expression:e
-  | NOT expression:e
-  | AT:a expression:e
-  | LPAREN expression:e RPAREN
-  ;
+unary_operation_expr ::= MINUS expression
+  | NOT expression
+  | AT expression
+  | LPAREN expression RPAREN ;
 
-quantified_formula ::= FORALL type:ty ID:id expression:e
-  | EXISTS type:ty ID:id expression:e
-  ;
+quantified_formula ::= 
+    FORALL type ID expression
+  | EXISTS type ID expression ;
 
-function_call ::= refer_name:id LPAREN opt_expression_list:e RPAREN
-  ;
+function_call ::= 
+    refer_name LPAREN opt_expression_list RPAREN ;
 
-distribution_expr ::= DISTRIB refer_name:name LPAREN opt_expression_list:e RPAREN
-  ;
+distribution_expr ::= 
+    DISTRIB refer_name LPAREN opt_expression_list RPAREN;
 
-opt_expression_list ::= expression_list:e 
-  | 
-  ;
+opt_expression_list ::= /* EMPTY */
+  | expression_list ;
 
-expression_list ::= expression:e COMMA expression_list:elst
-  | expression:e
-  ;
+expression_list ::= expression COMMA expression_list
+  | expression ;
 
-list_construct_expression ::= LBRACKET opt_expression_list:e RBRACKET
-  | LBRACKET semi_colon_separated_expression_list:e RBRACKET
-  ;
+list_construct_expression ::= 
+    LBRACKET opt_expression_list RBRACKET
+  | LBRACKET semi_colon_separated_expression_list RBRACKET ;
 
 semi_colon_separated_expression_list ::=
-    expression_list:e SEMI semi_colon_separated_expression_list:elst
-  | expression_list:e SEMI expression_list:e2
-  ;
+    expression_list SEMI semi_colon_separated_expression_list
+  | expression_list SEMI expression_list ;
 
-map_construct_expression ::= LBRACE expression_pair_list:e RBRACE
-  ;
+map_construct_expression ::= 
+    LBRACE expression_pair_list RBRACE ;
 
 expression_pair_list ::=
-    expression:e1 RIGHTARROW expression:e2 COMMA expression_pair_list:e3
-  | expression:e1 RIGHTARROW expression:e2 
-  ;
+    expression RIGHTARROW expression COMMA expression_pair_list
+  | expression RIGHTARROW expression ;
   
-number_expr ::= NUMSIGN set_expr:e
-  | NUMSIGN type:ty
-  ;
+number_expr ::= NUMSIGN set_expr
+  | NUMSIGN type ;
 
+set_expr ::= explicit_set
+  | implicit_set
+  | tuple_set ;
 
-set_expr ::= explicit_set:e 
-  | implicit_set:e 
-  | tuple_set:e 
-  ;
+explicit_set ::= LBRACE opt_expression_list RBRACE ;
 
-explicit_set ::= LBRACE opt_expression_list:e RBRACE
-  ;
-
-implicit_set ::= LBRACE type:ty ID:id COLON expression:e RBRACE
-  | LBRACE type:ty ID:id RBRACE
-  ;
+implicit_set ::= 
+    LBRACE type ID COLON expression RBRACE
+  | LBRACE type ID RBRACE ;
 
 tuple_set ::= 
-  LBRACE expression_list:elst 
-  FOR type_var_lst:vars COLON expression:e RBRACE
-  | LBRACE expression_list:elst FOR type_var_lst:vars RBRACE
-  ;
+    LBRACE expression_list 
+    FOR type_var_lst COLON expression RBRACE
+  | LBRACE expression_list FOR type_var_lst RBRACE ;
 
+evidence_stmt ::= OBS evidence SEMI ;
 
-evidence_stmt ::= OBS evidence:e SEMI 
-  ;
+evidence ::= symbol_evidence
+  | value_evidence ;
 
-evidence ::=
-   symbol_evidence:e 
-   | value_evidence:e 
-  ;
+value_evidence ::= expression EQ expression ;
 
-value_evidence ::=
-    expression:e1 EQ expression:e2
-  ;
+symbol_evidence ::= implicit_set EQ explicit_set ;
 
-symbol_evidence ::=
-    implicit_set:e1 EQ explicit_set:e2
-  ;
+query_stmt ::= QUERY query SEMI ;
 
-query_stmt ::= QUERY  query:q SEMI
-  ;
-
-query ::= expression:e ;
+query ::= expression ;
 \end{verbatim}
 
 
