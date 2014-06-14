@@ -41,7 +41,7 @@
 
 
 \input{dfn.tex}
-\renewcommand{\optional}[1]{#1} %uncomment for published version
+\renewcommand{\optional}[1]{} %uncomment for published version
 
 \newcommand{\blogversion}{0.8\xspace}
 
@@ -113,8 +113,8 @@ random Real y ~ Gaussian(x, 1);
 
 \section{Declaring types}
 \bl is a strongly typed language. Each variable should have an associated type.  \bl has the following built-in types:
-\verb|Boolean|, \verb|Integer|, \verb|Real|, \verb|String|, \verb|Timestep|,  and array (which is described later).
-There are \emph{literals}\index{literal} in built-in types, e.g. \verb|1.0|, \verb|''abc''|, \verb|true|, \verb|false|.
+\verb|Boolean|, \verb|Integer|, \verb|Real|, \verb|String|, \verb|Timestep|,  \verb|RealMatrix|, and array (which is described later).
+There are \emph{literals}\index{literal} in built-in types, e.g. \verb|1.0|, \verb|"abc"|, \verb|true|, \verb|false|.
 
 Additionally, a user may define his or her own types.  The syntax for declaring a type in \bl is:
 \blog/type typename;/
@@ -392,7 +392,15 @@ To specify symbol evidence,
 obs {Ball b} = {B1, B2, B3};
 \end{blogcode}
 
-\section{Array type}
+
+\subsection{TupleSet}
+A \verb|TupleSet| is a set comprehension.
+\begin{blogcode}
+{<expression1>, <expression2> for typename1 x}
+\end{blogcode}
+
+
+\section{Array and Matrix}
 To declare an array type
 \begin{blogcode}
 type[]
@@ -424,25 +432,25 @@ Thus, the following two lists are equivalent:
 
 Constant list literals are used to assign values to arrays, or to pass parameters to functions.
 
-\subsection{Multi-dimensional array}
-Since \texttt{Array} is a type, itself could be nested in Array declaration, thus yielding multi-dimensional array. 
+\subsection{Matrix}
+To define a Matrix
 \begin{blogcode}
-fixed type[][] table = [...];
+fixed RealMatrix table = [...];
 \end{blogcode}
 
 For example, a two dimensional array of int will be
 \begin{blogcode}
-fixed Integer[][] table = [[1, 2, 3], [4, 5, 6]];
+fixed RealMatrix table = [[1, 2, 3], [4, 5, 6]];
 \end{blogcode}
 The following syntax in short hand is also correct:
 \begin{blogcode}
-fixed Integer[][] table = [1, 2, 3; 4, 5, 6];
+fixed RealMatrix table = [1, 2, 3; 4, 5, 6];
 \end{blogcode}
 
 
 For example, a transition matrix in Kalman  filters with Newton dynamics can be declared as:
 \begin{blogcode}
-fixed Real[][] A = [1, 1, .5; 0, 1, 1; 0, 0, 1];
+fixed RealMatrix A = [1, 1, .5; 0, 1, 1; 0, 0, 1];
 \end{blogcode}
 An element in such a dimensional array can be referred as \texttt{A[0][0]}.
 
@@ -456,44 +464,35 @@ of a multidimensional array.  In the above example, \texttt{length(table)} equal
 \subsection{Linear algebra operations}
 \bl supports the following linear algebra operations.
 \begin{itemize}
-\item vector plus, minus. Both arguments should be Real[].  Result is a vector, i.e. Real[];
+\item vector plus, minus, multiplcation. Both arguments should be \verb|RealMatrix|.  Result is a vector, i.e. \verb|RealMatrix|;
 \begin{blogcode}
-fixed Real[] a = [1, 2];
-fixed Real[] b = [4, 5];
-random Real[] x = a + b - a;
+fixed RealMatrix a = [1, 2];
+fixed RealMatrix b = [4, 5];
+random RealMatrix x = a + b - a;
+fixed RealMatrix a = [1, 2];
+fixed RealMatrix b = [4, 5];
+fixed RealMatrix c = [1, 2; 3, 4];
+fixed RealMatrix d = [4, 5; 6, 7];
+random RealMatrix w = a * 10.0 + 20.0 * b;
+random RealMatrix y = c * d;
+random RealMatrix z = c * 3.0 + 4.0 * d - c;
+random RealMatrix u = a * c;
+fixed RealMatrix e = [10; 20];
+random RealMatrix v = c * e;
 \end{blogcode}
-\item vector scalar multiplication. Result is a vector, i.e. Real[];
-\item scalar vector multiplication. Result is a vector, i.e. Real[];
-\item matrix plus, minus, multiplication. Result is a matrix, i.e. Real[][];
-\item matrix scalar multiplication. Result is a matrix, i.e. Real[][];
-\item scalar matrix multiplication. Result is a matrix, i.e. Real[][];
-\item matrix vector multiplication. Result is a matrix, i.e. Real[][];
-\item vector matrix multiplication. Result is a vector, i.e. Real[];
+\item matrix inverse. 
 \begin{blogcode}
-fixed Real[] a = [1, 2];
-fixed Real[] b = [4, 5];
-fixed Real[][] c = [1, 2; 3, 4];
-fixed Real[][] d = [4, 5; 6, 7];
-random Real[] w = a * 10.0 + 20.0 * b;
-random Real[][] y = c * d;
-random Real[][] z = c * 3.0 + 4.0 * d - c;
-random Real[][] u = a * c;
-fixed Real[][] e = [10; 20];
-random Real[][] v = c * e;
-\end{blogcode}
-\item matrix inverse. Result is Real[][];
-\begin{blogcode}
-fixed Real[][] c = [1, 2; 3, 4];
-random Real[][] s = inv(c);
-random Real t = det(c);
+fixed RealMatrix c = [1, 2; 3, 4];
+random RealMatrix s = inv(c);
 \end{blogcode}
 \item matrix determinant. Result is Real.
 \begin{blogcode}
-fixed Real[][] c = [1, 2; 3, 4];
+fixed RealMatrix c = [1, 2; 3, 4];
 random Real t = det(c);
 \end{blogcode}
-\item transpose. Result is Real[][].
+\item transpose. 
 \end{itemize}
+The full list is in appendix, Table~\ref{tab:matrixop}.
 
 \section{Map}
 Maps are specified using braces. 
@@ -683,7 +682,7 @@ random State S(Timestep t)
      C -> ~ Categorical({A -> 0.3, C -> 0.1, G -> 0.3, T -> 0.3}),
      G -> ~ Categorical({A -> 0.3, C -> 0.3, G -> 0.1, T -> 0.3}),
      T -> ~ Categorical({A -> 0.3, C -> 0.3, G -> 0.3, T -> 0.1})},
-    S(Prev(t)));
+    S(prev(t)));
 
 random Output O(Timestep t)
   ~ TabularCPD(
@@ -730,20 +729,244 @@ query S(@5);
 %\cleardoublepage
 
 
-\section{Summary of changes since version 0.3 (2008)}
-\begin{itemize*}
-\item Support for the Map data structure;
-\item Categorical and TabularCPD distribution redefined using Maps;
-\item Uniform argument representation in CPD;
-\item Nested if-then-else in dependency statements;
-\item Direct support of boolean operations;
-\item Arithmetic operators (+, -, *, /, \^), which can be used in both fixed and random function statements;
-\item Support for Arrays, references to array elements, and basic matrix operators on Real Arrays (+, -, *);
-\item All internal operators are type checked;
-\item Support for additional operators and built-in functions (detailed in appendix);
-\item Without causing confusion, ``nonrandom'' is changed to ``fixed'', ``guaranteed'' is changed to ``distinct'';
-\item Complete redesign of parser and semantic translator, aimed at parsing efficiency and modularity.
-\end{itemize*}
+\section{BLOG Grammar Definition}
+
+\begin{verbatim}
+
+blog_program ::= opt_statement_lst;
+
+opt_statement_lst ::= /* EMPTY */ 
+                | statement_lst;
+
+statement_lst ::= statement:e statement_lst
+  | statement;
+
+statement ::= declaration_stmt 
+            | evidence_stmt 
+            | query_stmt 
+            ;
+
+
+declaration_stmt ::=
+    type_decl
+  | fixed_func_decl
+  | rand_func_decl
+  | origin_func_decl 
+  | number_stmt 
+  | distinct_decl 
+  | parameter_decl 
+  | distribution_decl 
+  ;
+
+type_decl ::= TYPE ID SEMI ;
+
+type ::= refer_name
+  | array_type 
+  ;
+
+
+array_type_or_sub ::= refer_name LBRACKET
+  ;
+
+array_type ::= array_type_or_sub RBRACKET
+  | array_type LBRACKET RBRACKET
+  ;
+
+opt_parenthesized_type_var_lst ::= /* EMPTY */
+  | LPAREN RPAREN
+  | LPAREN type_var_lst RPAREN
+  ;
+
+type_var_lst ::= type ID COMMA type_var_lst
+  | type ID
+  ;
+
+fixed_func_decl ::=
+    FIXED type ID opt_parenthesized_type_var_lst 
+    EQ expression SEMI
+  ;
+
+rand_func_decl ::=
+    RANDOM type ID opt_parenthesized_type_var_lst 
+    dependency_statement_body SEMI
+  ;
+
+number_stmt ::=
+    NUMSIGN refer_name opt_parenthesized_origin_var_list
+	dependency_statement_body SEMI;
+
+opt_parenthesized_origin_var_list ::= /* EMPTY */
+  | LPAREN origin_var_list RPAREN 
+  ;
+
+origin_var_list ::= ID EQ ID COMMA origin_var_list
+  | ID EQ ID
+  ;
+
+origin_func_decl ::=
+    ORIGIN type ID LPAREN type RPAREN SEMI ;
+
+distinct_decl ::=
+    DISTINCT refer_name id_or_subid_list SEMI ;
+
+id_or_subid_list ::= id_or_subid
+  | id_or_subid COMMA id_or_subid_list
+  ;
+
+id_or_subid ::= ID
+  | ID LBRACKET INT_LITERAL RBRACKET
+  ;
+
+distribution_decl ::=
+    DISTRIBUTION ID EQ refer_name
+    LPAREN opt_expression_list RPAREN SEMI ;
+
+refer_name ::= ID
+  | ID DOT refer_name
+  ;
+
+dependency_statement_body ::= EQ expression
+  | distribution_expr
+  | IF expression THEN dependency_statement_body elseif_list
+  ;
+
+elseif_list ::=
+    ELSE dependency_statement_body
+  | /* EMPTY */
+  ;
+
+parameter_decl ::= PARAM type ID SEMI
+  | PARAM type ID COLON expression SEMI
+  ;
+
+expression ::= operation_expr
+  | distribution_expr
+  | literal
+  | function_call
+  | list_construct_expression
+  | map_construct_expression
+  | quantified_formula
+  | set_expr
+  | number_expr
+  | refer_name
+  ;
+
+literal ::= STRING_LITERAL
+  | CHAR_LITERAL
+  | INT_LITERAL
+  | DOUBLE_LITERAL
+  | BOOLEAN_LITERAL
+  | NULL
+  ;
+
+operation_expr ::= expression PLUS expression
+  | expression:e1 MINUS expression:e2
+  | expression:e1 MULT expression:e2
+  | expression:e1 DIV expression:e2
+  | expression:e1 MOD expression:e2
+  | expression:e1 POWER expression:e2
+  | expression:e1 LT expression:e2
+  | expression:e1 GT expression:e2
+  | expression:e1 LEQ expression:e2
+  | expression:e1 GEQ expression:e2
+  | expression:e1 EQEQ expression:e2
+  | expression:e1 NEQ expression:e2
+  | expression:e1 AND expression:e2
+  | expression:e1 OR expression:e2
+  | expression:e1 DOUBLERIGHTARROW expression:e2
+  | expression:e1 LBRACKET expression:e2 RBRACKET
+  | array_type_or_sub:e1 expression:e2 RBRACKET
+  | unary_operation_expr:e 
+  ;
+
+unary_operation_expr ::=
+    MINUS expression:e
+  | NOT expression:e
+  | AT:a expression:e
+  | LPAREN expression:e RPAREN
+  ;
+
+quantified_formula ::= FORALL type:ty ID:id expression:e
+  | EXISTS type:ty ID:id expression:e
+  ;
+
+function_call ::= refer_name:id LPAREN opt_expression_list:e RPAREN
+  ;
+
+distribution_expr ::= DISTRIB refer_name:name LPAREN opt_expression_list:e RPAREN
+  ;
+
+opt_expression_list ::= expression_list:e 
+  | 
+  ;
+
+expression_list ::= expression:e COMMA expression_list:elst
+  | expression:e
+  ;
+
+list_construct_expression ::= LBRACKET opt_expression_list:e RBRACKET
+  | LBRACKET semi_colon_separated_expression_list:e RBRACKET
+  ;
+
+semi_colon_separated_expression_list ::=
+    expression_list:e SEMI semi_colon_separated_expression_list:elst
+  | expression_list:e SEMI expression_list:e2
+  ;
+
+map_construct_expression ::= LBRACE expression_pair_list:e RBRACE
+  ;
+
+expression_pair_list ::=
+    expression:e1 RIGHTARROW expression:e2 COMMA expression_pair_list:e3
+  | expression:e1 RIGHTARROW expression:e2 
+  ;
+  
+number_expr ::= NUMSIGN set_expr:e
+  | NUMSIGN type:ty
+  ;
+
+
+set_expr ::= explicit_set:e 
+  | implicit_set:e 
+  | tuple_set:e 
+  ;
+
+explicit_set ::= LBRACE opt_expression_list:e RBRACE
+  ;
+
+implicit_set ::= LBRACE type:ty ID:id COLON expression:e RBRACE
+  | LBRACE type:ty ID:id RBRACE
+  ;
+
+tuple_set ::= 
+  LBRACE expression_list:elst 
+  FOR type_var_lst:vars COLON expression:e RBRACE
+  | LBRACE expression_list:elst FOR type_var_lst:vars RBRACE
+  ;
+
+
+evidence_stmt ::= OBS evidence:e SEMI 
+  ;
+
+evidence ::=
+   symbol_evidence:e 
+   | value_evidence:e 
+  ;
+
+value_evidence ::=
+    expression:e1 EQ expression:e2
+  ;
+
+symbol_evidence ::=
+    implicit_set:e1 EQ explicit_set:e2
+  ;
+
+query_stmt ::= QUERY  query:q SEMI
+  ;
+
+query ::= expression:e ;
+\end{verbatim}
+
 
 \section{Built-in operators and functions}
 \begin{table}[H]
@@ -759,13 +982,17 @@ operator & interpretation & example \\
 \verb|/| & divide & \verb|x / y| , \verb|1.0 / 2|\\ 
 \verb|%| & modulus (only applied to Integers) & \verb|x % y|, \verb|1.0 % 2| \\
 \verb|^| & power & \verb|x ^ y| , \verb|1.0 ^ 2| \\
+\verb|abs| & absolute value & \verb|abs(x)|,  \verb|abs(-1.0)| \\
+\verb|round| & rounding & \verb|round(x)|,  \verb|round(1.6)| \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[H]
 \centering
-\caption{Linear algebra operators on Real array}
+\caption{Operators on RealMatrix
+\label{tab:matrixop}
+}
 \begin{tabular}{ c c c }
 \toprule 
 operator & interpretation & example \\
@@ -776,11 +1003,36 @@ operator & interpretation & example \\
 \verb|inv| & inverse & \verb|inv(x)| \\
 \verb|transpose| & transpose & \verb|transpose(x)| \\
 \verb|det| & determinant & \verb|det(x)| \\
+\verb|repmat| & repeat a matrix & \verb|repmat(x, 2, 3)| \\
+\verb|diag| & create a diagonal matrix & \verb|diag(x)| \\
+\verb|vstack| & stacking scalars or matrices to create a larger one & \verb|vstack(x, y, z)| \\
+\verb|hstack| & horizontally stacking scalars or matrices & \verb|hstack(x, y, z)| \\
+\verb|eye| & identity matrix & \verb|eye(3)| \\
+\verb|zeros| & zero matrix & \verb|zeros(3, 4)| \\
+\verb|ones| & a matrix with all 1 & \verb|ones(3, 4)| \\
+\verb|exp| & element-wise exponential  & \verb|exp(x)| \\
 \bottomrule
 \end{tabular}
 
 Note the dimensionality should match. 
 \end{table}
+
+\begin{table}[H]
+\centering
+\caption{Conversion between types
+\label{tab:matrixop}
+}
+\begin{tabular}{ c c c }
+\toprule 
+operator & interpretation & example \\
+\midrule
+\verb|toReal| & single element matrix, a number or Boolean into Real & \verb|toReal(x)| \\
+\verb|toInt| & single element matrix, a number or Boolean into Int & \verb|toInt(x)| \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 
 \begin{table}[H]
 \centering
@@ -860,7 +1112,26 @@ operator & interpretation & example \\
 \toprule 
 operator & interpretation & example \\
 \midrule
-\verb|Pred()| & previous Timestep & \verb|Pred(@1)|  \\
+\verb|prev()| & previous Timestep & \verb|prev(@1)|  \\
+\verb|-| & Timestep minus an integer & \verb|@10 - 1 == @9|  \\
+\verb|+| & Timestep plus an integer & \verb|@10 + 1 == @11|  \\
+\verb|%| &  Timestep mod & \verb|x % 10 == @0|  \\
+\verb|*| & Timestep multiply an integer & \verb|@10 * 2 == @20|  \\
+\verb|/| & Timestep divide an integer & \verb|@10 / 2 == @5|  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Arithmetic operators on Set}
+\begin{tabular}{ c c c }
+\toprule 
+operator & interpretation & example \\
+\midrule
+\verb|min| & minimum of elements a set & \verb|min()|\\ 
+\verb|max| & maximum of elements in a set & \verb|max()|\\
+\verb|sum| & summation of elements in a set & \verb|sum()|\\ 
 \bottomrule
 \end{tabular}
 \end{table}
@@ -914,7 +1185,7 @@ UniformReal & Real, Real & Real & \verb|UniformReal(0, 1.0)| \\
 \end{table}
 
 
-%\optional{
+\optional{
 
 \section{Query and inference guidance}
 
@@ -1020,7 +1291,7 @@ random Real x = 1 + y;
 \end{blogcode}
 \texttt{\~{}} is used when the right side is a distribution, while \texttt{=} is used when the right side is a general expression. 
 \reminder{Shaunak suggests using \texttt{=} primarily, and \texttt{\~{}} only in certain cases that are not clear from context.}
-%}
+}
 
 %\end{appendices}
 
