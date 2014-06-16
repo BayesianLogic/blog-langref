@@ -729,6 +729,19 @@ query S(@5);
 %\cleardoublepage
 
 
+\section{A Brief  History of BLOG}
+Bayesian Logic (BLOG) was first developed by Brian Milch in 2005. Since then, major contribution is from various members of Professor Stuart Russell's research group at University of California Berkeley. 
+
+The initial syntax and semantics of BLOG was described in 
+
+\begin{quote}
+Brian Milch, Bhaskara Marthi, Stuart Russell, David Sontag, Daniel L. Ong, and Andrey Kolobov (2005) "BLOG: Probabilistic Models with Unknown Objects". Proc. 19th International Joint Conference on Artificial Intelligence (IJCAI): 1352-1359.
+\end{quote}
+
+Dr. Rodrigo Braz introduced Timestep into BLOG. Milch and Braz released BLOG 0.3 in 2008.
+
+Dr. Lei Li has been leading the development of the language and BLOG inference system since 2011. Since then, the language sees major changes, as well as the inference engine. New algorithms are introduced. However, the semantics of BLOG remain the same as the original. 
+
 \section{BLOG Grammar Definition}
 
 \begin{verbatim}
@@ -1093,16 +1106,20 @@ operator & interpretation & example \\
 
 \section{Built-in distributions}
 \begin{itemize*}
-\item BooleanDistrib(p), with probability of $p$ generating \verb|True|, and $1-p$ generating \verb|False|.
 \item Bernoulli(p), with probability of $p$ generating 1, and $1-p$ generating 0.
 \item Beta($\alpha$, $\beta$), generating a real number $x$ in [0,1] with probability density of $\frac{x^{\alpha - 1} (1-x)^{\beta - 1}}{B(\alpha, \beta)}$, where Beta function $B$ is the normalization constant to ensure the total probability integrates to 1.
-\item Binomial
+\item Binomial(n, p)  
+\item BooleanDistrib(p), with probability of $p$ generating \verb|True|, and $1-p$ generating \verb|False|.
 \item Categorical
 \item Dirichlet
 \item Exponential
 \item Gamma
 \item Gaussian
 \item Geometric
+\item Iota
+\item Laplace
+\item LinearGaussian
+\item Multinomial
 \item MultivarGaussian
 \item NegativeBinomial
 \item Poisson($\lambda$), generating an integer $x$ with probability $\frac{\lambda^x}{x!}e^{-\lambda}$.
@@ -1111,6 +1128,7 @@ operator & interpretation & example \\
 \item UniformChoice($S$), uniformly choosing one element from the given set $S$.
 \item UniformInt
 \item UniformReal
+\item UniformVector
 \end{itemize*}
 
 \begin{table}[H]
@@ -1120,21 +1138,24 @@ operator & interpretation & example \\
 \toprule 
 distribution & argument type & value  & example \\ 
  \midrule
-BooleanDistrib & Real in [0,1] & Boolean & \verb|BooleanDistrib(0.8)| \\ 
 Bernoulli & Real in [0,1] & binary 0/1 & \verb|Bernoulli(0.8)| \\ 
 Beta & Real, Real & Real in [0,1] & \verb|Beta(1.0, 1.0)| \\ 
 Binomial & Integer, Real & Integer & \verb|Binomial(10, 0.5)| \\ 
+BooleanDistrib & Real in [0,1] & Boolean & \verb|BooleanDistrib(0.8)| \\ 
+Categorical & Map & & see main text \\
 Dirichlet & Array of Real & Array of Real & \verb|Dirichlet([1, 1, 1])| \\
 Exponential & Real & Real & \verb|Exponential(2.0)| \\ 
 Gamma & Real, Real & Real & \verb|Gamma(3, 2.0)| \\ 
 Gaussian & Real, Real & Real & \verb|Gaussian(2.0, 1.0)| \\ 
 Geometric & Real in [0,1] & nonnegative Integer & \verb|Geometric(0.5)| \\ 
+Laplace & Real, and positive Real & Real & \verb|Laplace(0, 1.0)| \\ 
 MultivarGaussian & Array, 2D Array & Array of Real & \verb|MultivarGaussian([0, 0],| \verb| [1, 0; 0, 1])| \\
 NegativeBinomial & Integer, Real in [0,1] & Integer & \verb|NegativeBinomial(4, 0.5)| \\ 
 Poisson & Real & nonnegative Integer & \verb|Poisson(6.0)| \\ 
 UniformChoice & Set &  & \verb|UniformChoice({Person p})| \\
 UniformInt & Integer, Integer & Integer & \verb|UniformInt(0, 10)| \\
 UniformReal & Real, Real & Real & \verb|UniformReal(0, 1.0)| \\
+UniformVector & Real's & RealMatrix & \verb|UniformVector(0,1,0,1)| \\
  \bottomrule
 \end{tabular} 
 \end{table}
