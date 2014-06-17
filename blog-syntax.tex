@@ -45,8 +45,8 @@
 
 \newcommand{\blogversion}{0.8\xspace}
 
-\title{The BLOG Language Reference  \\
-{\large (BLOG version \blogversion)}
+\title{The \bl Language Reference  \\
+{\large (\bl version \blogversion)}
 }
 \author{Lei Li\\
               Computer Science Division\\
@@ -103,13 +103,17 @@ Each \bl program defines a set of random variables and their probabilistic depen
 A toy example of defining a random variable in \bl is:
 
 \begin{blogcode}
-random Real x ~ Gaussian(0, 1);
+random Integer z ~ Bernoulli(0.5);
+random Real x 
+  if z == 1 then ~ Gaussian(0.5, 1.0);
+  else ~ Gaussian(-0.5, 1.0);
+obs x = 0.2;
+query z;
 \end{blogcode}
-which states that a real-valued random variable $x$ is distributed according to the standard normal distribution. 
-To specify a dependent variable $y | x \sim \dnorm{x}{1}$:
-\begin{blogcode}
-random Real y ~ Gaussian(x, 1);
-\end{blogcode}
+which describes an mixture of Gaussian distribution. 
+The latent variable \verb|z| determines the mixture component of \verb|x|. 
+The program asks the possible value of \verb|z| given the evidence of \verb|x| being 0.2.
+The will output a posterior distribution of $P(z | x=0.2)$;
 
 \section{Declaring types}
 \bl is a strongly typed language. Each variable should have an associated type.  \bl has the following built-in types:
@@ -732,17 +736,17 @@ query S(@5);
 \section{A Brief  History of BLOG}
 Bayesian Logic (BLOG) was first developed by Brian Milch in 2005. Since then, major contribution is from various members of Professor Stuart Russell's research group at University of California Berkeley. 
 
-The initial syntax and semantics of BLOG was described in 
+The initial syntax and semantics of \bl was described in 
 
 \begin{quote}
 Brian Milch, Bhaskara Marthi, Stuart Russell, David Sontag, Daniel L. Ong, and Andrey Kolobov (2005) "BLOG: Probabilistic Models with Unknown Objects". Proc. 19th International Joint Conference on Artificial Intelligence (IJCAI): 1352-1359.
 \end{quote}
 
-Dr. Rodrigo Braz introduced Timestep into BLOG. Milch and Braz released BLOG 0.3 in 2008.
+Dr. Rodrigo Braz introduced Timestep into BLOG. Milch and Braz released \bl 0.3 in 2008.
 
-Dr. Lei Li has been leading the development of the language and BLOG inference system since 2011. Since then, the language sees major changes, as well as the inference engine. New algorithms are introduced. However, the semantics of BLOG remain the same as the original. 
+Dr. Lei Li has been leading the development of the language and \bl inference system since 2011. Since then, the language sees major changes, as well as the inference engine. New algorithms are introduced. However, the semantics of \bl remain the same as the original. 
 
-\section{BLOG Grammar Definition}
+\section{\bl Grammar Definition}
 
 \begin{verbatim}
 blog_program ::= opt_statement_lst;
