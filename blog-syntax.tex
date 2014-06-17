@@ -113,7 +113,12 @@ query z;
 which describes an mixture of Gaussian distribution. 
 The latent variable \verb|z| determines the mixture component of \verb|x|. 
 The program asks the possible value of \verb|z| given the evidence of \verb|x| being 0.2.
-The will output a posterior distribution of $P(z | x=0.2)$;
+The will output a posterior distribution of $P(z | x=0.2)$.
+\begin{verbatim}
+	0.45274150986103495	0
+	0.5472584901389806	1
+\end{verbatim}
+It means with probability 0.5472584901389806 of \verb|z| being 1.
 
 \section{Declaring types}
 \bl is a strongly typed language. Each variable should have an associated type.  \bl has the following built-in types:
