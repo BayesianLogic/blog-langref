@@ -45,7 +45,7 @@
 
 \renewcommand{\optional}[1]{} %uncomment for published version
 
-\newcommand{\blogversion}{0.8\xspace}
+\newcommand{\blogversion}{0.9\xspace}
 
 \title{The \bl Language Reference  \\
 {\large (\bl version \blogversion)}
@@ -114,14 +114,12 @@ A simple example serves to illustrate these concepts. Suppose that an urn contai
 balls are drawn one at a time and then replaced after the observed color is noted. Color observation is 80\% accurate.
 First, we define the types:
 \begin{blogcode}
-type Ball; type Draw; type Color;
+type Ball; type Draw; 
 \end{blogcode}
 Then, we talk about the objects that exist for each type.
 In this case, we know there are two colors and (say) eight draws; by writing
 \begin{blogcode}
-distinct Color Blue, Green;
-distinct Draw Draw1, Draw2, Draw3, Draw4,
-    Draw5, Draw6, Draw7, Draw8;
+distinct Draw Draw[8];
 \end{blogcode}
 we name these objects and assert that the names refer to distinct colors.
 On the other hand, the number of balls is (say) equally likely to be anywhere from 1 to 4; for this we use a number statement:
@@ -129,26 +127,28 @@ On the other hand, the number of balls is (say) equally likely to be anywhere fr
 #Ball ~ UniformInt(1,4);
 \end{blogcode}
 Having made these assertions, we declare and write dependencies for the function symbols
-that we need to describe the domain. First, the true color of a ball is a color,
-equally likely to be blue or green; for this, we use the built-in
-\hyperref[categorical-section]{categorical distribution}, which takes as its parameter a mapping
-from values to probabilities:
+that we need to describe the domain. First, the true color of a ball is 
+equally likely to be blue or non-blue; for this, we use a boolean predicate 
+\verb|isBlue|. It requires the built-in
+{BooleanDistrib distribution}, which takes a positive real number as 
+the probability of being true:
 \begin{blogcode}
-random Color TrueColor(Ball b) ~ Categorical({Blue -> 0.5, Green -> 0.5});
+random Boolean isBlue(Ball b) ~ BooleanDistrib(0.5);
 \end{blogcode}
 The ball drawn on each draw is chosen at random from the balls in the urn:
 \begin{blogcode}
-random Ball BallDrawn(Draw d) ~ UniformChoice({Ball b});
+random Ball ballDrawn(Draw d) ~ UniformChoice({Ball b});
 \end{blogcode}
 Finally, we say that the observed color is the same as the true color
-with 80\% probability. Here we use the built-in distribution for a tabular 
-conditional distribution, which selects a specific distribution from the mapping
-in the first argument depending on the values of the remaining arguments:
+with 80\% probability, i.e. the chance of observing blue balls being 
+80\% if the true color of the ball is blue.
+Here we use the \verb|if-then-else| expression:
 \begin{blogcode}
-random Color ObsColor(Draw d) 
-       ~ TabularCPD({Blue -> Categorical({Blue -> 0.8, Green -> 0.2}),
-                     Green -> Categorical({Blue -> 0.2, Green -> 0.8})},
-                    TrueColor(BallDrawn(d)));
+random Boolean obsBlue(Draw d) ~
+  if isBlue(BallDrawn(d)) then 
+    BooleanDistrib(0.8)
+  else
+    BooleanDistrib(0.2);
 \end{blogcode}
 Having written dependency statements for all the function symbols, we are done.
 
@@ -158,7 +158,7 @@ As noted earlier, the BLOG program defines a probability model over worlds.
 What are the worlds in this case, and what are their probabilities?
 
 Each world has a specific number of balls, $\#Ball\eq k$, and thus contains
-balls $Ball_1,\ldots,Ball_k$ in addition to two colors $Blue$ and $Green$ and eight draws $Draw_1,\ldots,Draw_8$.
+balls $Ball_1,\ldots,Ball_k$ in addition to eight draws $Draw_1,\ldots,Draw_8$.
 (Notice we will use italics for objects in worlds, as distinct from
 typewriter font for symbols in the BLOG language.)
 A particular world is fixed by setting the values of every function symbol
@@ -166,23 +166,23 @@ for every possible tuple of objects of the appropriate types. We call
 the value of a function symbol applied to a particular tuple of objects
 a {\em basic random variables} or BRV. For this domain, the BRVs are:
 \begin{itemize}
-\item $TrueColor_{Ball_i}$, either $Blue$ or $Green$, for $i\eq1,\ldots,k$;
-\item $BallDrawn_{Draw_j}$, one of $Ball_1,\ldots,Ball_k$,  for $j\eq1,\ldots,8$;
-\item $ObsColor_{Draw_j}$, either $Blue$ or $Green$,  for $j\eq1,\ldots,8$.
+\item $isBlue_{Ball_i}$, either $true$ or $false$, for $i\eq1,\ldots,k$;
+\item $ballDrawn_{Draw_j}$, one of $Ball_1,\ldots,Ball_k$,  for $j\eq1,\ldots,8$;
+\item $obs_{Draw_j}$, either $true$ or $false$,  for $j\eq1,\ldots,8$.
 \end{itemize}
-For each $k$, there are $2^k$ values for the $TrueColor$ BRVs,
-$k^8$ values for the $BallDrawn$ BRVs, and $2^8$ values for
-the $ObsColor$s. The total number of worlds is thus
+For each $k$, there are $2^k$ values for the $isBlue$ BRVs,
+$k^8$ values for the $ballDrawn$ BRVs, and $2^8$ values for
+the $obsBlue$s. The total number of worlds is thus
 $\sum_{k\eq 1}^4 2^k \cdot k^8 \cdot 2^8 \eq 282,135,040$.
 The probability of any particular world is just the product of the probabilities 
 of the choices made in ``constructing'' the world, i.e., choosing values
 for the number variables and BRVs in topological order. For example, we might choose
 \begin{itemize}
 \item $\#Ball\eq 1$ with probability 0.25;
-\item $TrueColor_{Ball_1}\eq Blue$ with probability 0.5;
-\item $BallDrawn_{Draw_j}\eq Ball_1$ with probability 1 (the only choice!) for $j\eq1,\ldots,8$;
-\item $\ldots BallDrawn_{Draw_8}\eq \ldots \eq Ball_1$ with probability 1;
-\item $ObsColor_{Draw_j}\eq Blue$ with probability 0.8, for $j\eq1,\ldots,8$.
+\item $isBlue_{Ball_1}\eq true$ with probability 0.5;
+\item $ballDrawn_{Draw_j}\eq Ball_1$ with probability 1 (the only choice!) for $j\eq1,\ldots,8$;
+\item $\ldots ballDrawn_{Draw_8}\eq \ldots \eq Ball_1$ with probability 1;
+\item $obsBlue_{Draw_j}\eq Blue$ with probability 0.8, for $j\eq1,\ldots,8$.
 \end{itemize}
 The probability of this world is $0.25 \stimes 0.5 \stimes 1^8 \stimes 0.8^8\eq 0.02097152$.
 
@@ -194,14 +194,14 @@ Evidence is supplied by asserting observed values for expressions.
 arguments (which may themselves be complex terms). In our case, we might 
 assert the following:
 \begin{blogcode}
-obs ObsColor(Draw[1]) = Green;
-obs ObsColor(Draw[2]) = Blue;
-obs ObsColor(Draw[3]) = Green;
-obs ObsColor(Draw[4]) = Blue;
-obs ObsColor(Draw[5]) = Green;
-obs ObsColor(Draw[6]) = Blue;
-obs ObsColor(Draw[7]) = Green;
-obs ObsColor(Draw[8]) = Blue;
+obs obsBlue(Draw[0]) = true;
+obs obsBlue(Draw[1]) = false;
+obs obsBlue(Draw[2]) = true;
+obs obsBlue(Draw[3]) = false;
+obs obsBlue(Draw[4]) = true;
+obs obsBlue(Draw[5]) = false;
+obs obsBlue(Draw[6]) = true;
+obs obsBlue(Draw[7]) = false;
 \end{blogcode}
 Given
 evidence, a \hyperref[query-section]{query statement} indicates a
@@ -211,22 +211,24 @@ and the answers---probabilities for each possible value of the
 expression---to be returned to the standard output stream.
 %%[[check: is output always to standard output stream?]]
 \begin{blogcode}
-query #{Ball b};
+query size({b for Ball b});
+\end{blogcode}
+generates the following answers:
+\begin{verbatim}
+Distribution of values for size({b for Ball b : true})
+	0.07696467881871667	1
+	0.2749155437572819	2
+	0.3066400745347743	3
+	0.34147970288922114	4
+\end{verbatim}
+\begin{blogcode}
+query ballDrawn(Draw[0]) == ballDrawn(Draw[1]);
 \end{blogcode}
 generates answers
 \begin{blogcode}
-1 [[fill in]]
-2 [[fill in]]
-3 [[fill in]]
-4 [[fill in]]
-\end{blogcode}
-\begin{blogcode}
-query BallDrawn(Draw1) == BallDrawn(Draw2);
-\end{blogcode}
-generates answers
-\begin{blogcode}
-true [[fill in]]
-false [[fill in]]
+Distribution of values for (ballDrawn(Draw[0]) = ballDrawn(Draw[1]))
+	0.7070034886998044	false
+	0.29299651130018706	true
 \end{blogcode}
 
 
@@ -583,7 +585,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
   expressions of the appropriate types.
 \item A reference to an array element {\tt A[e1]} or matrix element
   {\tt A[e1][e2]} where {\tt e1} and {\tt e2} are arbitrary
-  expressions of type {\tt Integer}.%% [[vector or matrix element?
+  expressions of type \blog|Integer|.%% [[vector or matrix element?
   %% need to fix our terminology and ontology; also need vector and
   %% matrix expressions, types for vectors and matrices]]
   References outside the array size will cause a runtime error.
@@ -620,7 +622,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
 \item A set expression (see \secref{set-section}).
 \item A map expression (see \secref{map-section}).
 \item An if-then-else expression
-      \begin{blogcode}if condition then expression1 else expression2\end{blogcode}
+     \blog|if condition then expression1 else expression2|
      where {\tt condition} is any Boolean expression and {\tt
        expression1} and {\tt expression2} are any expressions.
      The expression has the value of {\tt
@@ -628,10 +630,9 @@ An expression can include both fixed and random terms.  Expressions are of the f
      and {\tt
        expression2} when {\tt condition} has the value {\it false}.
 \item A case expression
-      \begin{blogcode}case expr in map\end{blogcode}
+    \blog|case expr in map|
      where {\tt expr} is any Boolean expression and {\tt map} is a map
      expression.
-
 \end{itemize}
 
 \subsection{Quantified formula}\label{quantifier-section}
