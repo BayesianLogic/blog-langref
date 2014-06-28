@@ -266,6 +266,38 @@ Type declarations, distinct symbol declarations, number statements and their ass
 worlds with objects. Fixed and random function declarations introduce properties of objects and relationships among objects
 and define distributions over the worlds that can be constructed using these functions.
 
+\section{Lexical tokens}
+\subsection{Keyword} \label{keyword-section}
+Keywords in \bl have preserved semantics. Currently there are following keywords. 
+\begin{blogcode}
+  type    distinct    fixed    random    origin
+  if      then        else     case      in
+  obs     query
+\end{blogcode}
+
+\subsection{Operaors and Punctuation}
+
+
+\subsection{Identifier}\label{identifier-section}
+An identifier starts with either 26 alphabetical characters (\verb|a| to \verb|z|, \verb|A| to \verb|Z|) or underscore (\verb|_|). Then followed by any number of the 26 alphabetical characters, underscores, or digits. 
+An identifier should not collide with keywords. 
+Identifiers are used to refer type names, functions, distribution, distinct symbols, and logical variables. 
+For example, \verb|x|, \verb|_abc1def|, and \verb|abs| are all valid identifiers. 
+The first two can be used as type names, distinct symbol names, or logical variables. 
+The last one, \verb|abs| refers to the library function \verb|abs()| which returns absolute value of the input argument.
+
+\subsection{Literals}
+\paragraph{Boolean literal}
+
+\paragraph{Integer literals}
+
+\paragraph{Real literal}
+
+\reminder{floating}
+
+\paragraph{String literal}
+
+\paragraph{Timestep literal}
 
 \section{Declaring types}\label{type-declaration-section}
 
