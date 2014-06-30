@@ -11,5 +11,9 @@
 
 3. install blog_py_lexer
   Latex highlighting needs the blog_py_lexer.
+  install from the git repo BayesianLogic/blog under tools/blog_py_lexer/
+
+  or download the following
+
   https://sites.google.com/site/bloginference/tools/blog_py_lexer-0.8.zip
 
