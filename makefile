@@ -1,4 +1,4 @@
-MAIN=blog-syntax
+MAIN=blog-langref
 TENSAKU= tensaku
 TEXPARTS= *.tex
 FLAGS=-shell-escape -synctex=1 -interaction=nonstopmode
