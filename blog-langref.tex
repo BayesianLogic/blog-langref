@@ -267,18 +267,18 @@ worlds with objects. Fixed and random function declarations introduce properties
 and define distributions over the worlds that can be constructed using these functions.
 
 \section{Lexical tokens}
-\subsection{Keyword} \label{keyword-section}
-Keywords in \bl have preserved semantics. Currently there are following keywords. 
+\subsection{Keywords} \label{keyword-section}
+Keywords in \bl have preserved semantics. Currently there are the following keywords:
 \begin{blogcode}
   type    distinct    fixed    random    origin
   if      then        else     case      in
   obs     query
 \end{blogcode}
 
-\subsection{Operaors and Punctuation}
+\subsection{Operators and Punctuation}
 
 
-\subsection{Identifier}\label{identifier-section}
+\subsection{Identifiers}\label{identifier-section}
 An identifier starts with either 26 alphabetical characters (\verb|a| to \verb|z|, \verb|A| to \verb|Z|) or underscore (\verb|_|). Then followed by any number of the 26 alphabetical characters, underscores, or digits. 
 An identifier should not collide with keywords. 
 Identifiers are used to refer type names, functions, distribution, distinct symbols, and logical variables. 
@@ -554,7 +554,7 @@ For example, the following example declares the number of \texttt{Ball}s accordi
 \begin{blogcode}
 #Ball ~ Poisson(10.0);
 \end{blogcode}
-As with random function declarations, a number statement can use a determinisic dependency:
+As with random function declarations, a number statement can use a deterministic dependency:
 \begin{blogcode}
 #type-name ~ count-expression;
 \end{blogcode}
