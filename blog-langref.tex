@@ -267,18 +267,18 @@ worlds with objects. Fixed and random function declarations introduce properties
 and define distributions over the worlds that can be constructed using these functions.
 
 \section{Lexical tokens}
-\subsection{Keyword} \label{keyword-section}
-Keywords in \bl have preserved semantics. Currently there are following keywords. 
+\subsection{Keywords} \label{keyword-section}
+Keywords in \bl have preserved semantics. Currently there are the following keywords:
 \begin{blogcode}
   type    distinct    fixed    random    origin
   if      then        else     case      in
   obs     query
 \end{blogcode}
 
-\subsection{Operaors and Punctuation}
+\subsection{Operators and Punctuation}
 
 
-\subsection{Identifier}\label{identifier-section}
+\subsection{Identifiers}\label{identifier-section}
 An identifier starts with either 26 alphabetical characters (\verb|a| to \verb|z|, \verb|A| to \verb|Z|) or underscore (\verb|_|). Then followed by any number of the 26 alphabetical characters, underscores, or digits. 
 An identifier should not collide with keywords. 
 Identifiers are used to refer type names, functions, distribution, distinct symbols, and logical variables. 
@@ -288,16 +288,25 @@ The last one, \verb|abs| refers to the library function \verb|abs()| which retur
 
 \subsection{Literals}
 \paragraph{Boolean literal}
+There are two boolean literals: \verb|true| and \verb|false|.
 
 \paragraph{Integer literals}
+Integer literals are defined for all integers, e.g. \verb|-123|, \verb|0|,
+\verb|7|, \verb|50000|.
 
-\paragraph{Real literal}
+\paragraph{Real literals}
+Real literals are defined for real numbers, where a zero on either side of the
+decimal point can be omitted: \verb|123.|, \verb|123.45|, \verb|0.123|,
+\verb|.123|, \verb|-45.6|. Scientific notation is also supported:
+\verb|123.45e-2|, \verb|123.45E-2|, \verb|123.45e1|, \verb|123.45e+1|.
 
-\reminder{floating}
+\paragraph{Character and String literals}
+Character literals are delimited by single quotes: \verb|'s'|, \verb|'\n'|.
+String literals are delimited by double quotes: \verb|"hello\n\nworld"|.
 
-\paragraph{String literal}
-
-\paragraph{Timestep literal}
+\paragraph{Timestep literals}
+Timestep literals are distinguished by an \verb|@| prefix. They are defined for
+all non-negative timesteps: \verb|@0|, \verb|@1|, \verb|@654|, etc.
 
 \section{Declaring types}\label{type-declaration-section}
 
@@ -545,7 +554,7 @@ For example, the following example declares the number of \texttt{Ball}s accordi
 \begin{blogcode}
 #Ball ~ Poisson(10.0);
 \end{blogcode}
-As with random function declarations, a number statement can use a determinisic dependency:
+As with random function declarations, a number statement can use a deterministic dependency:
 \begin{blogcode}
 #type-name ~ count-expression;
 \end{blogcode}
