@@ -156,9 +156,6 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Geometric(0.2);
 \end{blogcode}
 
-\subsection{Iota}
-implement in built-in functions
-
 \subsection{Multinomial($n$, $\bar{p}$)}
  The multinomial distribution contains $k$ categories. During a single trial, exactly one of the $k$ categories is selected. The probability of selecting a particular category $i$ is $\frac{p_{i}}{\sum_{i=1}^{k} p_{i}}$. The process is repeated independently $n$ times, and the resultant counts of each category are returned.
  
@@ -259,11 +256,6 @@ The following code defines a random function symbol \verb|x| distributed accordi
 \begin{blogcode}
 random Integer x ~ Poisson(3.0);
 \end{blogcode}
-
-\subsection{Size}
-
-implement in built-in functions
-Size($S$), deterministically returns the number of elements in the given set $S$.
 
 \subsection{UniformChoice($S$)}
 
