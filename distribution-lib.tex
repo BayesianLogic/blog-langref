@@ -1,28 +1,390 @@
+This section lists the distributions included in \bl standard library.
+
+\subsection{Bernoulli($p$)}
+Bernoulli distribution generates the value $1$ with probability $p$ and $0$ with probability $1-p$. 
+
+\paragraph*{Parameters:} 
 \begin{itemize*}
-\item Bernoulli(p), with probability of $p$ generating 1, and $1-p$ generating 0.
-\item Beta($\alpha$, $\beta$), generating a real number $x$ in [0,1] with probability density of $\frac{x^{\alpha - 1} (1-x)^{\beta - 1}}{B(\alpha, \beta)}$, where Beta function $B$ is the normalization constant to ensure the total probability integrates to 1.
-\item Binomial(n, p)  
-\item BooleanDistrib(p), with probability of $p$ generating \verb|True|, and $1-p$ generating \verb|False|.
-\item Categorical
-\item Dirichlet
-\item Exponential
-\item Gamma
-\item Gaussian
-\item Geometric
-\item Iota
-\item Laplace
-\item LinearGaussian
-\item Multinomial
-\item MultivarGaussian
-\item NegativeBinomial
-\item Poisson($\lambda$), generating an integer $x$ with probability $\frac{\lambda^x}{x!}e^{-\lambda}$.
-\item Size($S$), deterministically returns the number of elements in the given set $S$.
-\item TabularCPD
-\item UniformChoice($S$), uniformly choosing one element from the given set $S$.
-\item UniformInt
-\item UniformReal
-\item UniformVector
+\item[] \verb|Real|
+ $p$, $0 \leq p \leq 1$ 
 \end{itemize*}
+\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1\}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \left\{
+	  \begin{array}{lr}
+	    p &    k = 1 \\
+	    1-p &  k = 0
+	  \end{array}
+	\right.
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Bernoulli distribution.
+\begin{blogcode}
+random Integer x ~ Bernoulli(0.5);
+\end{blogcode}
+
+\subsection{Binomial($n$, $p$)} 
+Binomial distribution generates the number of successes in a sequence of $n$ independent Bernoulli trials where each trial yields success with probability $p$.
+
+\paragraph*{Parameters:} 
+
+\begin{itemize*}
+\item[] \verb|Integer| $n$, $n \geq 0$
+\item[] \verb|Real| $p$, $0 \leq p \leq 1$
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1, \ldots, n\} $
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \binom{n}{k}p^{k}(1-p)^{k} , 0 \leq k \leq n \\
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Binomial distribution.
+\begin{blogcode}
+random Integer x ~ Binomial(10, 0.5);
+\end{blogcode}
+
+\subsection{BooleanDistrib($p$)}
+BooleanDistrib distribution generates \verb|true| with probability $p$ and \verb|false| with probability $1-p$. 
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real|
+ $p$, $0 \leq p \leq 1$ 
+\end{itemize*}
+\paragraph*{Support:} \verb|Boolean|, $k \in \{\verb|True|, \verb|False|\}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \left\{
+	  \begin{array}{lr}
+	    p & k = \verb|true| \\
+	    1 - p & k = \verb|false|
+	  \end{array}
+	\right.
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a BooleanDistrib distribution.
+\begin{blogcode}
+random Boolean x ~ BooleanDistrib(0.5);
+\end{blogcode}
+
+\subsection{Categorical}
+Refer to Section 9.1.12
+
+\subsection{Dirichlet($\alpha$)}
+Let $\bar{\alpha}$ be a \texttt{MatrixLib} column vector whose entries are $\alpha_{1}, \ldots \alpha_{K}$. The support of the Dirichlet is a vector $x_{1}, \ldots x_{n}$ whose pdf is:
+$$
+	\frac{1}{Z(\bar{\alpha})} * \prod_{i=1}^{K} x_{i}^{\alpha_{i} - 1}
+	, s.t. \sum_{i=1}^{K} x_{i} = 1
+$$  
+$$ Z(\bar{\alpha}) = \frac{ \prod_{i=1}^{K} \Gamma(\alpha_{i})   }{ \Gamma(\sum_{i=1}^{K} \alpha_{i} )  } $$
+The result is returned as a \texttt{MatrixLib} column vector.
+
+\begin{blogcode}
+fixed RealMatrix vector = [1; 3; 5];
+random RealMatrix x ~ Dirichlet(matrix);
+\end{blogcode}
+
+\subsection{Exponential($\lambda$)} 
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real|
+ $\lambda$, $\lambda > 0$ 
+\end{itemize*}
+\paragraph*{Support:} \verb|Real|, $x \geq 0$ 
+
+\paragraph*{Probability density function:}
+\[
+	f(x) = \lambda \exp(-\lambda x) , x \geq 0 \\
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to an Exponential distribution.
+\begin{blogcode}
+random Real x ~ Exponential(0.2);
+\end{blogcode}
+
+\subsection{Gaussian($\mu$,$\sigma$)}
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real|
+ $\mu$, $\mu \in \mathbb{R}$
+\item[] \verb|Real|
+ $\sigma$, $\sigma \geq 0$ 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Real|, $x \in \mathbb{R}$ 
+
+\paragraph*{Probability density function:}
+\[
+	f(x) = \frac{1}{\sigma \sqrt{2 \pi}} exp(\frac{-(x-\mu)^{2}}{2 \sigma^{2}})
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Gaussian distribution with mean $-1$ and variance $2$.
+\begin{blogcode}
+random Real x ~ Gaussian(-1, 2);
+\end{blogcode}
+
+\subsection{Geometric($p$)}
+Geometric distribution generates the number of failures before the first success in a sequence of independent Bernoulli trials with probability of success $p$.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real|
+ $p$, $0 \leq p \leq 1$ 
+\end{itemize*}
+\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = p(1-p)^{k}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Geometric distribution where each Bernoulli trial has a probability of success $p = 0.2$
+\begin{blogcode}
+random Integer x ~ Geometric(0.2);
+\end{blogcode}
+
+\subsection{Iota}
+implement in built-in functions
+
+\subsection{Multinomial($n$, $\bar{p}$)}
+ The multinomial distribution contains $k$ categories. During a single trial, exactly one of the $k$ categories is selected. The probability of selecting a particular category $i$ is $\frac{p_{i}}{\sum_{i=1}^{k} p_{i}}$. The process is repeated independently $n$ times, and the resultant counts of each category are returned.
+ 
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Integer| $n$, $n \in \{0, 1, 2, \ldots \}$
+\item[] \verb|RealMatrix| (Column Vector) $\bar{p}$, $p \in \mathbb{R}^{k}$ $p_{1} \geq 0, p_{2} \geq 0, \ldots, .. p_{k} \geq 0, s.t. \sum_{i=1}^{k} p_{i} > 0$
+\end{itemize*}
+
+\paragraph*{Support:} \verb|RealMatrix| (Column Vector), $\bar{x} \in \mathbb{Z}^{k}, s.t. x_{i} \in \{0, 1, 2, \ldots, n \} \forall i \in \{0, 1, 2, \ldots, k \}  $ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = x_{1},\ldots,x_{k}) = \frac{n!}{x_{1}! \times \ldots \times x_{k}!} p_{1}^{x_{1}} \ldots p_{k}^{x_{k}}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Multinomial distribution.
+\begin{blogcode}
+fixed RealMatrix m = [1; 1; 2];
+random RealMatrix x ~ Multinomial(4, m);
+\end{blogcode}
+
+\subsection{MultivarGaussian($\bar{\mu}$, $\Sigma$)}
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|RealMatrix| (Column Vector )$\bar{\mu}$, $n \in \{0, 1, 2, \ldots \}$
+
+\item[] \verb|RealMatrix| (Column Vector) $\Sigma$, symmetric and positive semi-definite.
+
+\end{itemize*}
+
+\paragraph*{Support:} \verb|RealMatrix|, $\bar{x} \in \mathbb{Z}^{k}, s.t. x_{i} \in \{0, 1, 2, \ldots, n \} \forall i \in \{0, 1, 2, \ldots, k \}  $ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = x_{1},\ldots,x_{k}) = \frac{n!}{x_{1}! \times \ldots \times x_{k}!} p_{1}^{x_{1}} \ldots p_{k}^{x_{k}}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Multivariate Gaussian with mean $\bar{\mu} = 
+\begin{pmatrix}
+  1  \\
+  1  \\ 
+ \end{pmatrix}$ and covariance $\Sigma = 
+ \begin{pmatrix}
+   1 & 0 \\
+   0 & 3 \\
+  \end{pmatrix}
+ $
+\begin{blogcode}
+fixed RealMatrix mu = [1; 1];
+fixed RealMatrix covariance = [1, 0; 0, 3];
+random RealMatrix x ~ MultivarGaussian(mu, covariance);
+\end{blogcode}
+
+\subsection{NegativeBinomial($r$, $p$)}
+NegativeBinomial distribution generates the number of failures until the $r^{\text{th}}$ success in a sequence of independent Bernoulli trials each with probability of success $p$.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Integer| $r$, $r \in \{0, 1, 2, \ldots \}$
+\item[] \verb|Real| $p$, $0 \leq p \leq 1$ 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \binom{k + r - 1}{k} p^{r} (1-p)^{k} 
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Negative Binomial distribution with probability of success $p = 0.8$ and number of failures $r = 2$.
+\begin{blogcode}
+random Integer x ~ NegativeBinomial(2, 0.8);
+\end{blogcode}
+
+
+\subsection{Poisson($\lambda$)}
+Given a success probability $p$ very close to $0$, and $n$ independent Bernoulli trials such that $\lambda = np$, the Poisson distribution generates a good approximation to the number of successful trials.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real| $\lambda$, $\lambda > 0$ 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = exp(-\lambda) * \frac{\lambda^{k}}{k!}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Poisson distribution with mean $\lambda = 3.0$
+\begin{blogcode}
+random Integer x ~ Poisson(3.0);
+\end{blogcode}
+
+\subsection{Size}
+
+implement in built-in functions
+Size($S$), deterministically returns the number of elements in the given set $S$.
+
+\subsection{UniformChoice($S$)}
+
+UniformChoice distribution chooses an element uniformly from the set $S$, whose objects are all of type $T$.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real| $S$, a set of objects 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|T|, $k \in S$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \frac{1}{|S|}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| that selects between the colors Green, Red, and Blue uniformly at random.
+
+\begin{blogcode}
+type Color;
+distinct Color Green, Red, Blue;
+random Color x ~ UniformChoice({c for Color c});
+query x;
+\end{blogcode}
+
+\subsection{UniformInt($a$, $b$)}
+UniformInt distribution generates an \verb|Integer| uniformly at random between the between a lower bound $a$ and an upper bound $b$. $a$ and $b$ are both included in the set of integers which are uniformly sampled from.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Integer| $a$, $a \in \mathbb{Z}$
+\item[] \verb|Integer| $a$, $b \in \mathbb{Z}$
+\item[] $a \leq b$
+ 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Integer|, $k \in \{a, a+1, \ldots, b-1, b \}$ 
+
+\paragraph*{Probability mass function:}
+\[
+	P(X = k) = \left\{
+		  \begin{array}{lr}
+		    \frac{1}{b - a + 1} & a \leq k \leq b \\
+		    0 					& \text{else}
+		  \end{array}
+		\right.
+\]]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| that selects uniformly at random from the set of integers $\{1, 2, 3\}$
+
+\begin{blogcode}
+random Integer x ~ UniformInt(1, 3);
+\end{blogcode}
+
+\subsection{UniformReal($a$, $b$)}
+
+UniformReal distribution generates a \verb|Real| uniformly at random between the between a lower bound $a$ and an upper bound $b$. The lower bound $a$ is inclusive but the upper bound is exclusive.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|Real| $a$, $a \in \mathbb{R}$
+\item[] \verb|Real| $b$, $b \in \mathbb{R}$
+\item[] $a < b$
+ 
+\end{itemize*}
+
+\paragraph*{Support:} \verb|Real|, $x \in [a, b)$ 
+
+\paragraph*{Probability density function:}
+\[
+	f(x) = \left\{
+		  \begin{array}{lr}
+		    \frac{1}{b - a + 1} & a \leq x < b \\
+		    0 					& \text{else}
+		  \end{array}
+		\right.
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| that generates a \verb|Real| uniformly at random between 0.0 and 1.0.
+
+\begin{blogcode}
+random Real x ~ UniformReal(0, 1);
+\end{blogcode}
+
+\subsection{UniformVector($v$)}
+
+$v$ is an argument list of $2 \times 1$ \verb|RealMatrix| row vectors with arbitrary length $k$. Denote $v_{i,L}$ as the first element in the $i^{\text{th}}$ row vector and $v_{i, U}$ as the second element in the $i^{\text{th}}$ row vector. UniformVector generates a \verb|RealMatrix| column vector of dimension $k$ where element $i$ is uniformly distributed between $v_{i,L}$ and $v_{i,U}$.
+
+\paragraph*{Parameters:} 
+\begin{itemize*}
+\item[] \verb|RealMatrix| $v_{1}$, $v_{1} \in \mathbb{R}^{2}, v_{1,L} < v_{1,U}$
+\item[] $\ldots$
+\item[] \verb|RealMatrix| $v_{k}$, $v_{k} \in \mathbb{R}^{2}, 
+v_{k,L} < v_{k,U}$
+
+\end{itemize*}
+
+\paragraph*{Support:} 
+$$
+\verb|RealMatrix| \text{(Column Vector)}, 
+\bar{x} \in \mathbb{R}^{k}, \bigcap_{i=1}^{k} v_{i,L} \leq \bar{x_{i}} \leq v_{i,U}  
+$$
+
+\paragraph*{Probability density function:}
+\[
+	f(\bar{x}) = \frac{1}{\prod_{i=1}^{k} (v_{i,U} - v_{i,L})}
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| that generates a \verb|RealMatrix| column vector of dimension $2$ whose first element is a \verb|Real| that is uniformly distributed between $0$ and $0.5$ and whose second element is a \verb|Real| that is uniformly distributed between $5$ and $10$.
+
+\begin{blogcode}
+fixed RealMatrix a = [0, 0.5];
+fixed RealMatrix b = [5, 10];
+random RealMatrix x ~ UniformVector(a, b);
+\end{blogcode}
+
 
 \begin{table}[H]
 \centering
