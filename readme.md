@@ -15,5 +15,5 @@
 
   or download the following
 
-  https://sites.google.com/site/bloginference/tools/blog_py_lexer-0.8.zip
+  http://bayesianlogic.github.io/download/blog_py_lexer.zip
 

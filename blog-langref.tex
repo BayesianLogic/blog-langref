@@ -58,8 +58,8 @@
                Stuart Russell\\
               Computer Science Division\\
               University of California Berkeley\\
-               \email{russell@cs.berkeley.edu}
-               }
+               \email{russell@cs.berkeley.edu}\\
+}
 \date{\today}
 
 %\Year{2011}
@@ -103,8 +103,8 @@ it is helpful, nonetheless, to understand the key semantic ideas, which are base
 A \bl \hyperref[program-section]{program} defines a probability distribution over a space of {\em possible worlds}.
 It does so by means of a set of \hyperref[type-declaration-section]{type declarations},
 \hyperref[number-section]{number statements}, and \hyperref[dependency-section]{dependency statements}.
-These statements describe the objects that may exist in each world and introduce function symbols\footnote{Function symbols include as special cases predicate symbols (Boolean-valued functions) and constant symbols (zero-ary functions).} that carry information about the objects. (\bl also supplies several \hyperref[builtin-type-section]{built-in types}
-and \hyperref[builtin-operator-appendix]{built-in functions} that operate on those types.)
+These statements describe the objects that may exist in each world and introduce function symbols\footnote{Function symbols include as special cases predicate symbols (Boolean-valued functions) and constant symbols (zero-ary functions).} that carry information about the objects. \bl also supplies several \hyperref[builtin-type-section]{built-in types}
+and \hyperref[builtin-operator-appendix]{built-in functions} that operate on those types.
 The possible worlds are constructed from the function symbols and the objects,
 and the probability of each world can be calculated from the information supplied by the dependency statements.
 
@@ -114,31 +114,32 @@ A simple example serves to illustrate these concepts. Suppose that an urn contai
 balls are drawn one at a time and then replaced after the observed color is noted. Color observation is 80\% accurate.
 First, we define the types:
 \begin{blogcode}
-type Ball; type Draw; 
+type Ball; 
+type Draw; 
 \end{blogcode}
+We declare two types and use semicolons (\verb|;|) to terminate the \hyperref[type-declaration-section]{type declarations}. 
 Then, we talk about the objects that exist for each type.
 In this case, we know there are two colors and (say) eight draws; by writing
 \begin{blogcode}
 distinct Draw Draw[8];
 \end{blogcode}
-we name these objects and assert that the names refer to distinct colors.
-On the other hand, the number of balls is (say) equally likely to be anywhere from 1 to 4; for this we use a number statement:
+we name these objects and assert that the names refer to distinct \verb|Draw|'s.
+On the other hand, the number of balls is (say) equally likely to be anywhere from 1 to 4; for this we use a number statement and \hyperref[uniformint-section]{\texttt{UniformInt} distribution}:
 \begin{blogcode}
 #Ball ~ UniformInt(1,4);
 \end{blogcode}
 Having made these assertions, we declare and write dependencies for the function symbols
 that we need to describe the domain. First, the true color of a ball is 
 equally likely to be blue or non-blue; for this, we use a boolean predicate 
-\verb|isBlue|. It requires the built-in
-{BooleanDistrib distribution}, which takes a positive real number as 
-the probability of being true:
+\verb|isBlue|. It requires the built-in \hyperref[boolean-distribution-section]{\texttt{BooleanDistrib} distribution}, which takes a positive real number as the probability of being true:
 \begin{blogcode}
 random Boolean isBlue(Ball b) ~ BooleanDistrib(0.5);
 \end{blogcode}
-The ball drawn on each draw is chosen at random from the balls in the urn:
+The ball drawn on each draw is \hyperref[uniformchoice-section]{chosen at random} from the balls in the urn:
 \begin{blogcode}
-random Ball ballDrawn(Draw d) ~ UniformChoice({Ball b});
+random Ball ballDrawn(Draw d) ~ UniformChoice({b for Ball b});
 \end{blogcode}
+\verb|{b for Ball b}| is the \hyperref[set-section]{Set comprehension expression}. 
 Finally, we say that the observed color is the same as the true color
 with 80\% probability, i.e. the chance of observing blue balls being 
 80\% if the true color of the ball is blue.
@@ -208,77 +209,97 @@ evidence, a \hyperref[query-section]{query statement} indicates a
 posterior probability of interest. We can query the value of any \hyperref[expression-section]{expression}
 by adding a query statement to the file. Each such statement will cause the inference engine to be invoked 
 and the answers---probabilities for each possible value of the
-expression---to be returned to the standard output stream.
-%%[[check: is output always to standard output stream?]]
+expression---to be returned to the standard output stream. Alternative output format is available but it is out of the scope. Readers may refer to \bl user's manual~\footnote{\url{http://bayesianlogic.cs.berkeley.edu/pages/user-manual.html}}. 
 \begin{blogcode}
 query size({b for Ball b});
 \end{blogcode}
 generates the following answers:
 \begin{verbatim}
 Distribution of values for size({b for Ball b : true})
-	0.07696467881871667	1
-	0.2749155437572819	2
-	0.3066400745347743	3
-	0.34147970288922114	4
+	1	0.07696467881871667
+	2	0.2749155437572819
+	3	0.3066400745347743
+	4	0.34147970288922114
 \end{verbatim}
 \begin{blogcode}
 query ballDrawn(Draw[0]) == ballDrawn(Draw[1]);
 \end{blogcode}
 generates answers
-\begin{blogcode}
+\begin{verbatim}
 Distribution of values for (ballDrawn(Draw[0]) = ballDrawn(Draw[1]))
-	0.7070034886998044	false
-	0.29299651130018706	true
-\end{blogcode}
-
+	false	0.7070034886998044
+	true	0.29299651130018706
+\end{verbatim}
 
 \section{Syntax description conventions}\label{convention-section}
-
-
 In describing the syntax of \bl, we use the following conventions:
 %%[[not currently implemented exactly like this; need to fix the latex code that does coloring etc]]
 \begin{itemize}
 \item Keywords of the language appear in bold green text: \blog|type Ball;|
 \item User-defined names (e.g., {\tt Ball}) and all literal values appear in plain black text.
 \item Built-in types appear in bold red text: \blog|fixed Real pi = 3.14159;|
-\item Built-in distributions appear in plain blue text: \blog|random Integer N ~ Poisson(12)|
-\item Logical variables appear in bold blue italic text: \blog|random Real ReportedAge(Person x) ~ Gaussian(Age(x)-Offset,Var);|
-\item Generic placeholders, to be replaced by actual names or expressions, appear in italic magenta text: \blog|type type-name;|
-\item The dot-dot-dot notation indicates that additional elements can be added, similar to those preceding it.
+\item Built-in distributions appear in plain blue text: \blog|random Integer N ~ Poisson(12);|
+\item Function names appear in blue text: \blog|random Real height(Person p) ~ Gaussian(6, 1);|
+%\item Logical variables appear in bold blue italic text: \blog|random Real ReportedAge(Person x) ~ Gaussian(Age(x)-Offset,Var);|
+%\item Generic placeholders, to be replaced by actual names or expressions, appear in italic magenta text: \blog|type type_name;|
+\item The dot-dot-dot \verb|...| notation indicates that additional elements can be added, similar to those preceding it.
 \item Optional elements appear in angle brackets: \blog|if boolean-expression then expression <else expression>;|
 \end{itemize}
 
-\section{\bl Program}\label{program-section}\label{program-section}
+\section{\bl Program}\label{program-section}
 A \bl program consists a sequence of statements, each ending with a semicolon(;). 
 The following kinds of statements are recognized:
 \begin{enumerate*}
-\item Type declarations; 
-\item Distinct symbol declarations;
-\item Fixed function declarations;
-\item Random function declarations;
-\item Origin function declarations;
-\item Number statements;
-\item Evidence statements, and;
-\item Query statements.
+\item \hyperref[type-declaration-section]{Type declarations}, 
+\item \hyperref[distinct-section]{Distinct symbol declarations}, 
+\item \hyperref[fixed-section]{Fixed function declarations},
+\item \hyperref[random-function-section]{Random function declarations},
+\item \hyperref[origin-section]{Origin function declarations},
+\item \hyperref[number-section]{Number statements},
+\item \hyperref[evidence-section]{Evidence statements}, and,
+\item \hyperref[query-section]{Query statements}.
 \end{enumerate*}
 
 Type declarations, distinct symbol declarations, number statements and their associated origin function declarations serve to populate
 worlds with objects. Fixed and random function declarations introduce properties of objects and relationships among objects
 and define distributions over the worlds that can be constructed using these functions.
 
+A \bl program can be written in a single file. However, it is also typical to write a large \bl program in multiple files. 
+By convention, \texttt{.blog} suffix is used for \bl program, and \texttt{.dblog} for those with \verb|Timestep|. 
+Within a single file, the ordering of statements does not affect their semantic interpretation. However, while a \bl program consists of multiple files, they should be organized into an order such that statements in later files only refer to symbols defined within the same file or before. Such order is called {\em loading order} of a \bl program. 
+
 \section{Lexical tokens}
-\subsection{Keyword} \label{keyword-section}
-Keywords in \bl have preserved semantics. Currently there are following keywords. 
+\bl tokens are case sensitive. 
+
+\subsection{Keywords} \label{keyword-section}
+Keywords in \bl have preserved semantics. Currently there are the following keywords:
 \begin{blogcode}
   type    distinct    fixed    random    origin
   if      then        else     case      in
-  obs     query
+  obs     query       true     false
 \end{blogcode}
 
-\subsection{Operaors and Punctuation}
+\subsection{Operators and Punctuation}
+\bl supports the following punctuations:
+\begin{verbatim}
+  ;   {    }    (    )    [    ]
+  :   =    ~    ,    #    .
+\end{verbatim}
+Note \verb|.| is different from \verb|.| in real numbers. 
+It is only used in referring the underlying class name for a distribution. 
+These punctuations are used to separating expressions or statements. 
+\verb|{ }| and \verb|( )| always appear in pairs. 
+
+\bl supports the following operators,
+\begin{blogcode}
+  +    -    *    /    ^    %
+  >    <    >=   <=   ==   !=
+  !    &    |    ->   =>
+\end{blogcode}
+The semantic interpretation of these operators are described in \secref{builtin-operator-appendix}.
 
 
-\subsection{Identifier}\label{identifier-section}
+\subsection{Identifiers}\label{identifier-section}
 An identifier starts with either 26 alphabetical characters (\verb|a| to \verb|z|, \verb|A| to \verb|Z|) or underscore (\verb|_|). Then followed by any number of the 26 alphabetical characters, underscores, or digits. 
 An identifier should not collide with keywords. 
 Identifiers are used to refer type names, functions, distribution, distinct symbols, and logical variables. 
@@ -289,56 +310,74 @@ The last one, \verb|abs| refers to the library function \verb|abs()| which retur
 \subsection{Literals}
 \paragraph{Boolean literal}
 
+There are two \verb|Boolean| literals: \verb|true| and \verb|false|. 
+
 \paragraph{Integer literals}
+\verb|Integer| literals are defined for all integers, ranging from $-2^{31}$ to $2^{31}-1$, e.g. \verb|-123|, \verb|0|,
+\verb|7|, \verb|50000|.
 
-\paragraph{Real literal}
+\paragraph{Real literals}
+\verb|Real| literals are defined for real numbers. Each real number is a double-precision 64-bit IEEE 754 floating point. The maximal positive \verb|Real| value is $1.7976931348623157 × 10^{308}$, while the minimal positive \verb|Real| value is $4.9406564584124654 × 10^{−324}$. 
+In real literals, a zero on either side of the decimal point can be omitted: \verb|123.|, \verb|123.45|, \verb|0.123|,
+\verb|.123|, \verb|-45.6|. Scientific notation is also supported:
+\verb|123.45e-2|, \verb|123.45E-2|, \verb|123.45e1|, \verb|123.45e+1|.
 
-\reminder{floating}
 
-\paragraph{String literal}
+\paragraph{Character and String literals}
+Character literals are delimited by single quotes: \verb|'s'|, \verb|'\n'|.
+String literals are delimited by double quotes: \verb|"hello\n\nworld"|.
 
-\paragraph{Timestep literal}
+\paragraph{Timestep literals}
+\verb|Timestep|'s correspond to nonnegative integers, but are a distinguished type
+to allow for inference algorithms that are specialized for temporal models. 
+\verb|Timestep| literals are distinguished by an \verb|@| prefix. They are defined for all non-negative timesteps: \verb|@0|, \verb|@1|, \verb|@654|, etc.
+
+\subsection{Whitespace and Comments}
+Tokens may be separated by whitespace characters: \textvisiblespace, tab-character, and new-line. 
+
+Comments are in the following two form:
+\begin{itemize}
+\item A single-line comment is a sequence of characters starts with \verb|//| and extends to the end of the line, or
+\item A multi-line comment is a sequence of characters between \verb|/*| and \verb|*/|. Note any character after the first \verb|/*| and before the first \verb|*/| is interpreted as comment. Therefore \verb|/* /* */| is a valid comment, while \verb|/* /* */ */| is not because it has extra \verb|*/|, which \bl does not know how to interpret.
+\end{itemize}
 
 \section{Declaring types}\label{type-declaration-section}
-
 \bl is a strongly typed language. At present the type system is extremely simple: there is no type hierarchy
 and each object has exactly one type. Types must be specified for the arguments and value of every function symbol.
 The types can be \hyperref[builtin-type-section]{built-in-types} or \hyperref[user-type-section]{user-defined types} from a type declaration statement.
 
 
+
 \subsection{Built-in types}\label{builtin-type-section}
-
-\bl has the following built-in types. For each, examples of recognized {\em literals} of that type are given.
+\bl has the following built-in types. 
 Every such literal names an object in the world; thus, for example, every world implicitly contains all the integers.
+Each of the following types has corresponding literals, except from \verb|RealMatrix|. 
 \begin{itemize}
-\item \verb|Boolean|: \verb|true|, \verb|false|.
-\item \verb|Integer|: \verb|17|, \verb|-53|.
-\item \verb|Real|: \verb|0.2643|, \verb|27.2e+12|.
-%%[[check: can we use floating point notation? What about rationals?]]
-\item \verb|String|: \verb|"abc"|, \verb|"123*456"|.
-\item \verb|Timestep|: \verb|@0|, \verb|@100|. (Timesteps correspond to nonnegative integers, but are a distinguished type
-to allow for inference algorithms that are specialized for temporal models.)
-\item \verb|RealMatrix|: [[sorry, cannot explain realmatrix as it needs to be cleaned up before it makes sense]]
+\item \verb|Boolean|: Boolean literals \verb|true|, \verb|false|.
+\item \verb|Integer|: Integer literals \verb|17|, \verb|-53|.
+\item \verb|Real|: Real literals \verb|0.2643|, \verb|27.2e+12|.
+\item \verb|String|: String literals \verb|"abc"|, \verb|"123*456"|.
+\item \verb|Timestep|: \verb|@0|, \verb|@100|. 
+\item \verb|RealMatrix|: denoting matrix type. Please see \secref{matrix-section} for detailed description of constructing a \verb|RealMatrix|.
 \end{itemize}
-
 
 \subsection{User-defined types}\label{user-type-section}
 
 Additionally, a user may define his or her own types.  The syntax for declaring a type in \bl is:
-\blog|type type-name;|
-Here \placeholder{type-name} is an {\it identifier}. [[what is the syntax of identifiers??]]
+\blog|type type_name;|
+Here \verb|type_name| is an \hyperref[identifier-section]{identifier}. 
 For example, the following line of \bl declares a Citation type:
 \begin{blogcode}
 type Citation;
 \end{blogcode}
 
-\subsection{Distinct symbols}\label{distinct-section}
+\subsection{Distinct symbols} \label{distinct-section}
 Information about the objects that are elements of a user-defined type
 is usually provided via a \hyperref[number-section]{number statement}, but there are cases
 where the objects are known and individually distinguishable, perhaps through observations.
 Names for such objects can be introduced as follows:
 \begin{blogcode}
-distinct type-name identifier1, identifier2, ...;
+distinct type_name identifier1, identifier2, ...;
 \end{blogcode}
 For example, an information extraction system might have 5 citations to work with;
 these can be introduced by
@@ -354,7 +393,7 @@ distinct symbols play the same role as built-in literals.
 With a large number of objects, explicit naming of each is inconvenient.
 In such cases, one can use an implicit construction to define {\em indexed symbols}:
 \begin{blogcode}
-distinct type-name prefix[int];
+distinct type_name prefix[int];
 \end{blogcode}
 where {\tt prefix} is an identifier and {\tt int} is a nonnegative integer.
 For example, the following \bl code declares one hundred symbols for {\tt Citation}s:
@@ -363,8 +402,7 @@ distinct Citation Cite[100];
 \end{blogcode}
 Now the names \verb|Cite[0]|, \verb|Cite[1]|, etc., can be used to refer to these {\tt Citation}s. Note that the symbols are indexed starting from 0.
 
-
-\subsection{Array types}\label{array-section}
+\subsection{Array and Matrix}\label{array-section}
 
 Array types in \bl include one-dimensional vectors and two-dimensional
 matrices. Functions with integer arguments can play many of the roles
@@ -378,45 +416,22 @@ In such cases, distributions will tend to have vector and matrix
 parameters---e.g., the mean and covariance parameters of a
 multivariate Gaussian.
 
-
-Currently, only Integer arrays and Real arrays are fully
-supported. Arrays of other types are partially supported. 
+Currently, only Integer matrix and Real matrix are fully
+supported. Arrays of user declared type are only supported in distinct symbols and symbol reference as described in \secref{distinct-section}.
 %%[[clarify: what does ``partially supported'' mean? Better to say
 %%that support for other types will be added in future?]]
 
-
 Arrays can be used as return type of functions, but not as arguments of functions. However, some distributions take arrays as arguments.
 
-\subsubsection{Vectors}\label{vector-section}
-
-%%[[do we agree that ``array'' can have any dimension, while
-%%``vector'' is one-dimensional and ``matrix'' is two-dimensional?]]
-
-The \bl type specifier \verb|type-name[]| denotes
-a one-dimensional vector with elements of type {\tt type-name}.
-For example, @@
-To declare a constant array, use the following form:
-\begin{blogcode}
-fixed type[] name = List_literal;
-\end{blogcode}
-
-For example, to declare an array of natural numbers:
-\begin{blogcode}
-fixed Integer[] c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-\end{blogcode}
-
-An element of an array can be referenced as \verb|c[0], c[1], c[2]|, etc.
-
-\subsubsection{Constant list literals}\label{list-literal-section}
-As we already seen, we can use square brackets, \texttt{[]} to denote constant list literals.
-Elements in a list are separated by commas (,). Lists can also be nested within other list. A shorthand notation is to use semicolons (;) to separated multiple lists within a list.
-Thus, the following two lists are equivalent:
+\subsubsection{Constructing List}\label{list-literal-section}
+As we already seen, we can use square brackets, \texttt{[]} to construct a List. Elements in a List are separated by commas (,). Lists can also be nested within other Lists. A shorthand notation is to use semicolons (;) to separated multiple Lists.
+Thus, the following two Lists are equivalent:
 \begin{blogcode}
 [1, 2, 3; 4, 5, 6];
 [[1, 2, 3], [4, 5, 6]];
 \end{blogcode}
 
-Constant list literals are used to assign values to arrays, or to pass parameters to functions.
+Lists are used to assign values to matrix, or to pass parameters to functions.
 
 \subsubsection{Matrices}\label{matrix-section}
 To define a Matrix
@@ -434,18 +449,13 @@ fixed RealMatrix table = [1, 2, 3; 4, 5, 6];
 \end{blogcode}
 
 
-For example, a transition matrix in Kalman  filters with Newton dynamics can be declared as:
+For example, a transition matrix in Kalman filters with Newton dynamics can be declared as:
 \begin{blogcode}
 fixed RealMatrix A = [1, 1, .5; 0, 1, 1; 0, 0, 1];
 \end{blogcode}
 An element in such a dimensional array can be referred as \texttt{A[0][0]}.
 
-\optional{
-\subsection{Size of an array}\label{-section}
-There are two special functions to obtain the size of an array, \texttt{length(\mycdot)} and \texttt{size(\mycdot)}.
-\texttt{length(\mycdot)} returns the length of one dimensional array, while \texttt{size(\mycdot)} returns the lengths of all dimensions
-of a multidimensional array.  In the above example, \texttt{length(table)} equals 3, and \texttt{size(table)} equals \texttt{[2, 3]}.
-}
+
 
 Linear algebra operations on vectors and matrices are listed in
 in \appref{builtin-operator-appendix}, \tabref{tab:matrixop}.
@@ -463,10 +473,11 @@ is one about whose values there is uncertainty, so that the values may vary acro
 \bl allows the user to declare that there is {\em no} uncertainty concerning the value of a given function; that is, the
 value of the function applied to given arguments is the same in all worlds. Such a fixed function is declared as follows:
 \begin{blogcode}
-fixed type-name0 function-name(type-name1 var1, ...) = fixed-expression;
+fixed type_name0 function_name(type_name1 var1, ...) = 
+  fixed_expression;
 \end{blogcode}
-This statement defines a fixed function with name \texttt{function-name} whose arguments are {\tt var1} (of type {\tt type-name1}), etc.,
-and whose return type is \texttt{type-name0}. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
+This statement defines a fixed function with name \texttt{function\_name} whose arguments are {\tt var1} (of type \verb|type_name1|), etc.,
+and whose return type is \verb|type_name0|. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
 all elements of the corresponding types.
 
 The function body is a fixed expression, which may be
@@ -498,13 +509,14 @@ fixed Real CircleArea(Real r) = pi * r^2;
 To declare a random function, there are two possible forms. The first describes a probabilistic
 conditional dependency:
 \begin{blogcode}
-random type-name0 function-name(type-name1 var1, ...) ~ distribution-expression;
+random type_name0 function_name(type_name1 var1, ...) ~ 
+  distribution_expression;
 \end{blogcode}
-This form defines a random function with name \texttt{function-name} whose arguments are {\tt var1} (of type {\tt type-name1}), etc.,
-and whose return type is \texttt{type-name0}. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
+This form defines a random function with name \texttt{function\_name} whose arguments are {\tt var1} (of type \verb|type_name1|), etc.,
+and whose return type is \verb|type_name0|. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
 all elements of the corresponding types and may appear in the distribution expression. The statement asserts that for any possible instantiation of the
 logical variables with objects, the resulting random variable has a conditional probability distribution
-described by the corresponding instantiation of the {\tt distribution-expression}.
+described by the corresponding instantiation of the {\tt distribution\_expression}. The {\tt distribution\_expression} must return a concrete distribution. 
 
 For example, the following statement says the height of a tree has a Gaussian distribution
 whose mean depends linearly on the tree's age and the growth rate of its species:
@@ -515,7 +527,7 @@ The full syntax of distribution expressions is described in \secref{distribution
 
 The second form describes a deterministic dependency:
 \begin{blogcode}
-random type-name0 function-name(type-name1 var1, ...) = expression;
+random type_name0 function-name(type_name1 var1, ...) = expression;
 \end{blogcode}
 As before, the logical variables may appear in the expression.
 Such a declaration is distinct from a fixed function declaration because, although the dependency is deterministic,
@@ -537,7 +549,7 @@ on other aspects of the world. For example, intuitively the number of fleas in t
 
 The simplest form of number statement omits any direct dependency on other objects:
 \begin{blogcode}
-#type-name ~ count-distribution-expression;
+#type_name ~ count-distribution-expression;
 \end{blogcode}
 The {\tt count-distribution-expression} should be a distribution over
 the nonnegative integers (see \secref{special-distribution-section}).
@@ -545,9 +557,9 @@ For example, the following example declares the number of \texttt{Ball}s accordi
 \begin{blogcode}
 #Ball ~ Poisson(10.0);
 \end{blogcode}
-As with random function declarations, a number statement can use a determinisic dependency:
+As with random function declarations, a number statement can use a deterministic dependency:
 \begin{blogcode}
-#type-name ~ count-expression;
+#type_name ~ count-expression;
 \end{blogcode}
 The {\tt count-expression} should evaluate to a nonnegative integer.
 
@@ -557,7 +569,7 @@ and the objects on whose existence the new objects depend. For example, each fle
 depends on the existence of its host dog. This link is expressed by an {\em origin function}.
 Origin functions are declared as follows:
 \begin{blogcode}
-origin type-name0 function-name(type-name1);
+origin type_name0 function-name(type_name1);
 \end{blogcode}
 An origin function has exactly one argument type and one return type.  
 For example, we can declare {\t Host} as an origin function:
@@ -568,7 +580,7 @@ origin Dog Host(Flea);
 In the number statement, the origin functions are attached to the type 
 as follows:
 \begin{blogcode}
-#type-name(origin-function1=var1, ...) ~ distribution-expression;
+#type_name(origin-function1=var1, ...) ~ distribution-expression;
 \end{blogcode}
 For example, the number statement
 \begin{blogcode}
@@ -667,16 +679,46 @@ An expression can include both fixed and random terms.  Expressions are of the f
      expression.
 \end{itemize}
 
+
+\subsection{If-then-else expressions}\label{if-then-else-section}
+
+An if-then-else expression allows one to use different expressions depending on aspects of the conditioning context.
+The general form is
+\begin{blogcode}
+if condition then expression1 else expression2
+\end{blogcode}
+where \texttt{condition} is a \hyperref[Boolean-expression-section]{Boolean expression} and \texttt{expression1} and \texttt{expression2}
+are expressions. For example, suppose that a {\tt Coin} is exactly {\tt Fair} with probability 0.99, and that
+a fair coin comes up heads half the time and a biased coin comes up heads roughly 80\% of the time:
+\begin{blogcode}
+random Boolean Fair(Coin c) ~ BooleanDistrib(0.99);
+random Boolean Bias(Coin c) ~  
+  if Fair(c) then Exactly(0.5) 
+  else Beta(80,20);
+\end{blogcode}
+The \hyperref[builtin-distribution-appendix]{built-in distribution}
+{\tt BooleanDistrib($p$)} assigns probability $p$ to {\tt true} and
+$1-p$ to {\tt false}. It is equivalent to {\tt Categorical({true ->
+    $p$, false -> $1-p$})}. Note that the {\tt Bernoulli($p$)}
+distribution returns 0 or 1, which are not Boolean values. 
+
+Note that if-then-else can be nested. 
+
+%% [[explain defaults: If the else-part of an if-then-else expression is
+%%    missing and the {\tt condition} is false,
+%%   then what? - Exactly(0) for number statement, Exactly(null) otherwise??]]
+
+
 \subsection{Quantified formula}\label{quantifier-section}
 \bl allows quantified formulas, as in typed first-order logic. 
 Each such formula constitutes a Boolean expression.
 
 A universally quantified formula has the form
 \begin{blogcode}
-forall type-name var expression
+forall type_name var expression
 \end{blogcode}
 %%[[check: can quantifier prefixes have more than one variable?]]
-where {\tt type-name} is any type and {\tt var} is the name of a
+where {\tt type\_name} is any type and {\tt var} is the name of a
 logical variable. The {\tt expression} is any Boolean expression,
 possibly containing {\tt var}. The formula has value {\it true}
 in a given world iff {\tt expression} has value {\it true}
@@ -692,7 +734,7 @@ and {\tt (}{\it false}{\tt => }{\it false}{\tt )}.
 
 An existentially quantified formula has the form
 \begin{blogcode}
-exists type-name var expression
+exists type_name var expression
 \end{blogcode}
 and has value {\it true}
 in a given world iff {\tt expression} has value {\it true}
@@ -732,10 +774,10 @@ As with \hyperref[quantifier-section]{quantified formulas}, set
 expressions have a logical variable that ranges over a given type.
 The most general form is
 \begin{blogcode}
-{expression for type-name var: condition}
+{expression for type_name var: condition}
 \end{blogcode}
 where {\tt expression} is any expression, possibly including {\tt
-  var}; {\tt type-name} is any declared or built-in type; {\tt var} is
+  var}; \verb|type\_name| is any declared or built-in type; {\tt var} is
 a logical variable; and {\tt condition} is any Boolean expression,
 possibly containing {\tt var}. The value of the set expression in any
 world is the set of objects that are possible values of {\tt
@@ -755,13 +797,13 @@ the given type. Thus, the set
 contains just {\it true}, since {\tt (b => b)} is true
 for both values of {\tt b}.
 
-If the {\tt expression for} part is omitted, the expression
-is assumed to be {\tt var}. Thus the set
-\begin{blogcode}
-{Integer x: x>0 & x<5}
-\end{blogcode}
-contains the elements 1, 4, 9, 16, while the set 
-\verb|{Boolean b}| contains {\it true} and {\it false}.
+%%If the {\tt expression for} part is omitted, the expression
+%%is assumed to be {\tt var}. Thus the set
+%%\begin{blogcode}
+%%{Integer x: x>0 & x<5}
+%%\end{blogcode}
+%%contains the elements 1, 4, 9, 16, while the set 
+%%\verb|{Boolean b}| contains {\it true} and {\it false}.
 
 %%[[list comprehension: is it well defined?]]
 
@@ -790,15 +832,52 @@ In a context where a distribution is required---for example, in a
 Distribution-valued maps with literal arrays as keys are useful for
 describing conditional distributions with multiple discrete parents.
 
+\subsection{Case expressions}\label{case-distribution-section}
+In \secref{if-then-else-section}, the if-then-else expression constructs a simple two-element mixture distribution whose
+index variable is {\tt Fair(c)}. More complex mixture distributions and other context-specific dependencies
+can be constructed using nested-if-then-else expressions. Alternatively, one may
+use a {\em case expression}, which has the form
+\begin{blogcode}
+case expr in map
+\end{blogcode}
+where {\tt expr} is an arbitrary expression and {\tt map} is a mapping from keys to distribution expressions (see \secref{map-section}).
+The case expression returns the distribution from the map whose key matches the value of {\tt expr}.
+For example, the following describes a mixture of three Gaussians:
+\begin{blogcode}
+random Integer Z ~ Categorical({0 -> 0.4, 1 -> 0.5, 2 -> 0.1});
+random Real X ~ 
+  case Z in {
+    0 -> Gaussian(0,1), 
+    1 -> Gaussian(0,9), 
+    2 -> Gaussian(5,1)
+  };
+\end{blogcode}
+
+In the terminology of Bayesian networks, {\tt Z} in this example is a parent of {\tt X}.
+If there are multiple parents, the conditional distribution can be written using
+a {\tt case} expression with a list of indices. 
+%% [[will ``list'' be a recognized by the manual as a proper type? At present it's not clear]]
+Consider an example due initially to Judea Pearl:
+the alarm in a house goes off in response to a burglary or an earthquake,
+but is somewhat unreliable. We might write the following model:
+\begin{blogcode}
+random Boolean Burglary(House h) ~ BooleanDistrib(0.003);
+random Boolean Earthquake ~ BooleanDistrib(0.002);
+random Boolean Alarm(House h) ~ 
+  case [Burglary(h), Earthquake] in {
+    [false, false] -> BooleanDistrib(0.01),
+    [false, true]  -> BooleanDistrib(0.40),
+    [true, false]  -> BooleanDistrib(0.80),
+    [true, true ]  -> BooleanDistrib(0.90)
+  };
+\end{blogcode}
+
+
 \section{Distribution expressions}\label{distribution-section}
 In both random function declarations and number statements, probabilistic dependencies are specified by
-{\em distribution expressions}. There are three kinds of distribution expressions: elementary distributions,
-if-then-else expressions, and case expressions.
+{\em distribution expressions}. 
 
-\subsection{Elementary distributions}\label{elementary-distribution-section}
-
-An elementary distribution resembles a function application, with the name of the distribution
-followed by its parameter arguments in parentheses. For example, a Bernoulli distribution with parameter 0.8
+A distribution expression resembles a function application, with the name of the distribution followed by its parameter arguments in parentheses. For example, a Bernoulli distribution with parameter 0.8
 returns 1 with probability 0.8, 0 otherwise:
 \begin{blogcode}
 Bernoulli(0.8)
@@ -811,8 +890,8 @@ random Integer Outcome(Coin c, Toss t) ~ Bernoulli(Bias(c));
 \end{blogcode}
 Currently, many standard distributions are supported by \bl. A full
 list of built-in distributions and their parameter specifications
-appears in \appref{builtin-distribution-appendix}.  Elementary
-distribution expressions may also use user-defined distributions
+appears in \appref{builtin-distribution-appendix}. 
+Distribution expressions may also use user-defined distributions
 (\secref{user-defined-distribution-section}).
 
 %% [[add material on distribution type specifications]]
@@ -822,7 +901,7 @@ distribution expressions may also use user-defined distributions
 %% not have to be inlined by the user; in such a case there should be
 %% no difficulty with generating the sampling and likelihood code]]
 
-\subsubsection{Distributions over specific sets of interest}\label{special-distribution-section}
+\subsection{Distributions over specific sets of interest}\label{special-distribution-section}
 The {\em support} of a distribution is the set of values for which
 the distribution assigns non-zero probability. For example, the
 support of a Gaussian distribution is the entire real line, i.e., the
@@ -845,7 +924,7 @@ in \bl:
     UniformInt} (with a nonnegative lower bound) have this property.
 \end{itemize}
 
-\subsubsection{Categorical distribution}\label{categorical-section}
+\subsection{Categorical distribution}\label{categorical-section}
 
 One particular built-in distribution of interest is the
 {\em categorical distribution}, which specifies probabilities for each
@@ -862,8 +941,15 @@ probability for {\tt false}.
 The probability values in the map argument should sum to 1.0;
 otherwise, a default \texttt{null} key will be added with a
 probability value equal to the residual probability.  On the other hand, if the probabilities sum to more than 1.0, the BLOG
-compiler will produce a runtime error.
-%%[[check - completion and error checking in categoricals; is this the case]]
+compiler will automatically normalize the weights.
+
+
+\subsection{UniformChoice from Set} \label{uniformchoice-section}
+It is possible to choose from a set using the following distribution:
+\begin{blogcode}
+UniformChoice({x for Item x : weight(x) > 10})
+\end{blogcode}
+It is uniformly choosing from a set of items with weight over 10. 
 
 \hide{
 %TODO [[agreed, it woul dbe good to have a vector giving probabilities
@@ -879,64 +965,9 @@ Distribution<type>  name = Categorical(Array<Real>);
 }
 
 
-\subsection{If-then-else distribution expressions}\label{if-then-else-distribution-section}
 
-An if-then-else distribution expression allows one to use different distributions depending on aspects of the conditioning context.
-The general form is
-\begin{blogcode}
-if condition then distribution1 else distribution2
-\end{blogcode}
-where \texttt{condition} is a \hyperref[Boolean-expression-section]{Boolean expression} and \texttt{distribution1} and \texttt{distribution2}
-are distribution expressions. For example, suppose that a {\tt Coin} is exactly {\tt Fair} with probability 0.99, and that
-a fair coin comes up heads half the time and a biased coin comes up heads roughly 80\% of the time:
-\begin{blogcode}
-random Boolean Fair(Coin c) ~ BooleanDistrib(0.99);
-random Boolean Bias(Coin c) ~  
-  if Fair(c) then Exactly(0.5) else Beta(80,20);
-\end{blogcode}
-The \hyperref[builtin-distribution-appendix]{built-in distribution}
-{\tt BooleanDistrib($p$)} assigns probability $p$ to {\tt true} and
-$1-p$ to {\tt false}. It is equivalent to {\tt Categorical({true ->
-    $p$, false -> $1-p$})}. Note that the {\tt Bernoulli($p$)}
-distribution returns 0 or 1, which are not Boolean values.
 
-%% [[explain defaults: If the else-part of an if-then-else expression is
-%%    missing and the {\tt condition} is false,
-%%   then what? - Exactly(0) for number statement, Exactly(null) otherwise??]]
 
-\subsection{Case distribution expressions}\label{case-distribution-section}
-
-In this example, the if-then-else expression constructs a simple two-element mixture distribution whose
-index variable is {\tt Fair(c)}. More complex mixture distributions and other context-specific dependencies
-can be constructed using nested-if-then-else expressions. Alternatively, one may
-use a {\em case expression}, which has the form
-\begin{blogcode}
-case expr in map
-\end{blogcode}
-where {\tt expr} is an arbitrary expression and {\tt map} is a mapping from keys to distribution expressions (see \secref{map-section}).
-The case expression returns the distribution from the map whose key matches the value of {\tt expr}.
-For example, the following describes a mixture of three Gaussians:
-\begin{blogcode}
-random Integer Z ~ Categorical({0 -> 0.4, 1 -> 0.5, 2 -> 0.1});
-random Real X ~ case Z in {0 -> Gaussian(0,1), 1 -> Gaussian(0,9), 2 -> Gaussian(5,1)};
-\end{blogcode}
-
-In the terminology of Bayesian networks, {\tt Z} in this example is a parent of {\tt X}.
-If there are multiple parents, the conditional distribution can be written using
-a {\tt case} expression with a list of indices. 
-%% [[will ``list'' be a recognized by the manual as a proper type? At present it's not clear]]
-Consider an example due initially to Judea Pearl:
-the alarm in a house goes off in response to a burglary or an earthquake,
-but is somewhat unreliable. We might write the following model:
-\begin{blogcode}
-random Boolean Burglary(House h) ~ BooleanDistrib(0.003);
-random Earthquake(House h) ~ BooleanDistrib(0.002);
-random Alarm(House h) ~ case [Burglary(h),Earthquake(h)] in 
-    {[false,false] -> BooleanDistrib(0.01),
-     [false,true]  -> BooleanDistrib(0.40),
-     [true,false]  -> BooleanDistrib(0.80),
-     [true,true]   -> BooleanDistrib(0.90)};
-\end{blogcode}
 
 
 
@@ -955,12 +986,12 @@ obs x = 0.5;
 
 The second way is known as symbol evidence, and is of form:
 \begin{blogcode}
-obs {type type0 : expression(x)} = { x1, x2, ...}
+obs {x for type x : expression(x)} = { x1, x2, ...}
 \end{blogcode}
 
 For example, in the aircraft example, blips may be specified in symbol evidence as follows:
 \begin{blogcode}
-obs {Blip b} = {b1, b2, b3};
+obs {b for Blip b} = {b1, b2, b3};
 \end{blogcode}
 This defines three blips with names \texttt{b1}, \texttt{b2}, and \texttt{b3}.  These names can be used as expressions in queries, which are described next.
 
@@ -974,9 +1005,9 @@ where \texttt{expression} is a function application expression without free vari
 [[fix to add multiple tosses, give answer]]
 \begin{blogcode}
 random Boolean even ~ BooleanDistrib(0.5);
-random Boolean head 
-  if even then ~ BooleanDistrib(0.5)
-  else ~ BooleanDistrib(0.8);
+random Boolean head ~
+  if even then BooleanDistrib(0.5)
+  else BooleanDistrib(0.8);
 obs head = true;
 query even;
 \end{blogcode}
@@ -985,71 +1016,200 @@ query even;
 
 \section{Extending \bl}\label{-section}
 \subsection{User-defined distributions}\label{user-defined-distribution-section}
-Probability distributions are implemented in Java.  Distribution classes should implement the interface \verb|blog.distrib.CondProbDistrib|.
-Alternatively, distributions can be declared as subclass of \verb|blog.distrib.AbstractCondProbDistrib|. 
+Probability distributions are implemented in Java.  Distribution classes should implement the interface \verb|blog.distrib.CondProbDistrib|. 
 By default, the \bl engine will look up distribution classes in the package \verb|blog.distrib|. In addition, it will look up distribution classes under the default empty package. 
 
 {\bf Note}: using a distribution class to implement a deterministic operation is supported but not recommended. 
 
 Below is one example of a uniform distribution on Integers.
-
 \begin{minted}{java}
-import java.util.*;
-import blog.*;
-import blog.distrib.*;
+package blog.distrib;
+
 import blog.common.Util;
-import blog.model.Type;
 
-public class UniformInt extends AbstractCondProbDistrib {
-  public UniformInt(List params) {
-    try {
-      lower = ((Number) params.get(0)).intValue();
-      upper = ((Number) params.get(1)).intValue();
-      if ((lower > upper) || (params.size() > 2)) {
-        throw new IllegalArgumentException();
+public class UniformInt implements CondProbDistrib {
+
+  /**
+   * set parameters for UniformInt
+   * distribution
+   * 
+   * @param params
+   *          An array of [Integer, Integer]
+   *          <ul>
+   *          <li>params[0]: <code>lower</code> (Integer)</li>
+   *          <li>params[1]: <code>upper</code> (Integer)</li>
+   *          </ul>
+   * 
+   * @see blog.distrib.CondProbDistrib#setParams(java.util.List)
+   */
+  @Override
+  public void setParams(Object[] params) {
+    if (params.length != 2) {
+      throw new IllegalArgumentException("expected two parameters");
+    }
+    setParams((Integer) params[0], (Integer) params[1]);
+  }
+
+  /**
+   * For a non-null value of method parameter lower, sets the
+   * distribution parameter <code>lower</code> to method parameter lower.
+   * Similarly for <code>upper</code>. Then checks to see if assignment of
+   * parameters is legal. In other words, an assignment of parameters is legal
+   * if <code>lower <= upper</code>.
+   * 
+   * @param lower
+   *          parameter <code>lower</code>
+   * @param upper
+   *          parameter <code>upper</code>
+   */
+  public void setParams(Integer lower, Integer upper) {
+    if (lower != null) {
+      this.lower = lower;
+      this.hasLower = true;
+    }
+    if (upper != null) {
+      this.upper = upper;
+      this.hasUpper = true;
+    }
+    if (this.hasLower && this.hasUpper) {
+      if (this.lower > this.upper) {
+        throw new IllegalArgumentException(
+            "UniformInt distribution requires that lower <= upper");
       }
-    } catch (RuntimeException e) {
-      throw new IllegalArgumentException(
-          "UniformInt CPD expects two integer arguments "
-              + "[lower, upper] with lower <= upper.  Got: " + params);
+      this.prob = 1.0 / (this.upper - this.lower + 1);
+      this.logProb = Math.log(this.prob);
     }
   }
 
-  public double getProb(List args, Object value) {
-    if (!args.isEmpty()) {
-      throw new IllegalArgumentException(
-          "UniformInt CPD does not take any arguments.");
+  private void checkHasParams() {
+    if (!this.hasLower) {
+      throw new IllegalArgumentException("parameter lower not provided");
     }
-    if (!(value instanceof Integer)) {
-      throw new IllegalArgumentException(
-          "UniformInt CPD defines distribution over objects of class "
-              + "Integer, not " + value.getClass() + ".");
+    if (!this.hasUpper) {
+      throw new IllegalArgumentException("parameter upper not provided");
     }
-    int x = ((Integer) value).intValue();
-
-    if ((x >= lower) && (x <= upper)) {
-      return 1.0 / (upper - lower + 1);
-    }
-    return 0;
   }
 
-  public Object sampleVal(List args, Type childType) {
-    if (!args.isEmpty()) {
-      throw new IllegalArgumentException(
-          "UniformInt CPD does not take any arguments.");
-    }
-
-    double x = lower + Math.floor(Util.random() * (upper - lower + 1));
-    return new Integer((int) x);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see blog.distrib.CondProbDistrib#getProb(java.lang.Object)
+   */
+  @Override
+  public double getProb(Object value) {
+    return getProb(((Integer) value).intValue());
   }
 
+  /**
+   * Returns the probability of the UniformInt distribution having outcome
+   * <code>value</code>.
+   */
+  public double getProb(int value) {
+    checkHasParams();
+    return (value >= lower) && (value <= upper) ? prob : 0;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see blog.distrib.CondProbDistrib#getLogProb(java.lang.Object)
+   */
+  @Override
+  public double getLogProb(Object value) {
+    return getLogProb(((Integer) value).intValue());
+  }
+
+  /**
+   * Returns the log probability of the UniformInt distribution having outcome
+   * <code>value</code>.
+   */
+  public double getLogProb(int value) {
+    checkHasParams();
+    return ((value >= lower) && (value <= upper)) ? logProb
+        : Double.NEGATIVE_INFINITY;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see blog.distrib.CondProbDistrib#sampleVal()
+   */
+  @Override
+  public Object sampleVal() {
+    return sample_value();
+  }
+
+  public int sample_value() {
+    checkHasParams();
+    return lower + Util.randInt(upper - lower + 1);
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getName();
+  }
+
+  /** Parameter <code>lower</code>. */
   private int lower;
+  /** Flag indicating whether <code>lower</code> has been set. */
+  private boolean hasLower;
+  /** Parameter <code>upper</code>. */
   private int upper;
+  /** Flag indicating whether <code>upper</code> has been set. */
+  private boolean hasUpper;
+  /**
+   * The probability of an outcome between <code>lower</code> and
+   * <code>upper</code> inclusive.
+   */
+  private double prob;
+  /**
+   * The log probability of an outcome between <code>lower</code> and
+   * <code>upper</code> inclusive.
+   */
+  private double logProb;
 }
 \end{minted}
 
 
-\section{A comprehensive example}\label{-section}
+\section{Comprehensive examples}\label{example-section}
+
+\subsection{Burglary}
+The following example was due initially to Judea Pearl:
+the alarm in a house goes off in response to a burglary or an earthquake,
+but is somewhat unreliable. We might write the following model:
+\begin{blogcode}
+type House;
+
+distinct House Maryhouse, Johnhouse, Cathyhouse, Rogerhouse;
+
+random Boolean Burglary(House h) ~ BooleanDistrib(0.003);
+random Boolean Earthquake ~ BooleanDistrib(0.002);
+random Boolean Alarm(House h) ~ 
+  case [Burglary(h), Earthquake] in {
+    [false, false] -> BooleanDistrib(0.01),
+    [false, true]  -> BooleanDistrib(0.40),
+    [true, false]  -> BooleanDistrib(0.80),
+    [true, true ]  -> BooleanDistrib(0.90)
+  };
+
+obs Alarm(Maryhouse) = true;
+obs Alarm(Johnhouse) = true;
+obs Alarm(Cathyhouse) = true;
+obs Alarm(Rogerhouse) = false;
+
+query Earthquake;
+\end{blogcode}
+
+\bl inference engine will produce the following likelihood of earthquake.
+\begin{verbatim}
+Number of samples: 10000
+Distribution of values for Earthquake
+	true	0.967140181036552
+	false	0.03285981896344725
+\end{verbatim}
+
+
+\subsection{A hidden Markov model for genetic sequences}
 \begin{example}[Hidden Markov models]
 The following represents a hidden Markov model for genetic sequences with four states and four output symbols. The state at each time step transitions to another with respect to a conditional distribution specified by a TabularCPD. 
 Each state at each time step emits an observation with respect to another CPD. After making a few observations, we can query the states for each time step.
@@ -1058,42 +1218,50 @@ Each state at each time step emits an observation with respect to another CPD. A
 \begin{blogcode}
 type State;
 distinct State A, C, G, T;
+
 type Output;
 distinct Output ResultA, ResultC, ResultG, ResultT;
-random State S(Timestep t)
-  if t == @0 then 
-    ~ Categorical({A -> 0.3, C -> 0.2, G -> 0.1, T -> 0.4})
-  else ~ TabularCPD(
-    {A -> ~ Categorical({A -> 0.1, C -> 0.3, G -> 0.3, T -> 0.3}),
-     C -> ~ Categorical({A -> 0.3, C -> 0.1, G -> 0.3, T -> 0.3}),
-     G -> ~ Categorical({A -> 0.3, C -> 0.3, G -> 0.1, T -> 0.3}),
-     T -> ~ Categorical({A -> 0.3, C -> 0.3, G -> 0.3, T -> 0.1})},
-    S(prev(t)));
 
-random Output O(Timestep t)
-  ~ TabularCPD(
-    {A -> ~ Categorical({ResultA -> 0.85, ResultC -> 0.05,
-                         ResultG -> 0.05, ResultT -> 0.05}),
-    C -> ~ Categorical({ResultA -> 0.05, ResultC -> 0.85, 
-                        ResultG -> 0.05, ResultT -> 0.05}),
-    G -> ~ Categorical({ResultA -> 0.05, ResultC -> 0.05, 
-                        ResultG -> 0.85, ResultT -> 0.05}),
-    T -> ~ Categorical({ResultA -> 0.05, ResultC -> 0.05, 
-                        ResultG -> 0.05, ResultT -> 0.85})},
-    S(t));
+random State S(Timestep t) ~
+  if t == @0 then 
+    Categorical({A -> 0.3, C -> 0.2, G -> 0.1, T -> 0.4})
+  else case S(prev(t)) in {
+    A -> Categorical({A -> 0.1, C -> 0.3, G -> 0.3, T -> 0.3}),
+    C -> Categorical({A -> 0.3, C -> 0.1, G -> 0.3, T -> 0.3}),
+    G -> Categorical({A -> 0.3, C -> 0.3, G -> 0.1, T -> 0.3}),
+    T -> Categorical({A -> 0.3, C -> 0.3, G -> 0.3, T -> 0.1})
+  };
+
+random Output O(Timestep t) ~ 
+  case S(t) in {
+    A -> Categorical({
+      ResultA -> 0.85, ResultC -> 0.05, 
+      ResultG -> 0.05, ResultT -> 0.05}),
+    C -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.85, 
+      ResultG -> 0.05, ResultT -> 0.05}),
+    G -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.05, 
+      ResultG -> 0.85, ResultT -> 0.05}),
+    T -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.05, 
+      ResultG -> 0.05, ResultT -> 0.85})
+  };
 
 /* Evidence for the Hidden Markov Model.
  */
+
 obs O(@0) = ResultC;
 obs O(@1) = ResultA;
 obs O(@2) = ResultA;
 obs O(@3) = ResultA;
 obs O(@4) = ResultG;
 
-/* Queries for the Hidden Markov Model, given the evidence.  
- * Note that we can query S(5) even though our observations 
- * only went up to time 4.
+/* Queries for the Hiddem Markov Model, given the evidence.  
+ * Note that we can query S(5) even though our observations only 
+ * went up to time 4.
  */
+
 query S(@0);
 query S(@1);
 query S(@2);
@@ -1101,6 +1269,40 @@ query S(@3);
 query S(@4);
 query S(@5);
 \end{blogcode}
+
+\bl will generate the following results using the particle filtering algorithm. 
+\begin{verbatim}
+Distribution of values for S(@0)
+	C	0.8128524436090175
+	T	0.09473684210526356
+	A	0.06905545112781902
+	G	0.023355263157894345
+Distribution of values for S(@1)
+	A	0.8700181159420364
+	G	0.05365942028985556
+	T	0.05143115942029019
+	C	0.024891304347826236
+Distribution of values for S(@2)
+	A	0.7075761624799592
+	C	0.09974612506680965
+	G	0.0965058792089793
+	T	0.0961718332442546
+Distribution of values for S(@3)
+	A	0.7633727477477481
+	C	0.08085585585585582
+	G	0.07908220720720713
+	T	0.07668918918918921
+Distribution of values for S(@4)
+	G	0.8739530096536214
+	C	0.050912123793299964
+	T	0.05014906303236865
+	A	0.02498580352072714
+Distribution of values for S(@5)
+	A	0.2989778534923363
+	C	0.2949673480976736
+	T	0.2767248722316938
+	G	0.12932992617830938
+\end{verbatim}
 
 \appendix
 
@@ -1124,194 +1326,242 @@ Dr. Lei Li has been leading the development of the language and \bl inference sy
 \section{\bl Grammar Definition}\label{bnf-appendix}
 
 \begin{verbatim}
-blog_program ::= opt_statement_lst;
+program ::= opt_statement_lst ;
 
-opt_statement_lst ::= /* EMPTY */ 
-  | statement_lst;
+opt_statement_lst ::= 
+    /* EMPTY */
+  | statement_lst ;
 
-statement_lst ::= statement:e statement_lst
-  | statement;
+statement_lst ::= 
+    statement SEMI statement_lst
+  | statement statement_lst
+  | statement SEMI 
+  | statement ;
 
-statement ::= declaration_stmt 
-  | evidence_stmt 
+statement ::= 
+    declaration_stmt  
+  | evidence_stmt  
   | query_stmt ;
 
-declaration_stmt ::= type_decl
-  | fixed_func_decl
-  | rand_func_decl
-  | origin_func_decl 
-  | number_stmt 
-  | distinct_decl 
-  | parameter_decl 
+declaration_stmt ::=
+    type_decl 
+  | fixed_func_decl 
+  | rand_func_decl 
+  | origin_func_decl  
+  | number_stmt  
+  | distinct_decl  
+  | parameter_decl  
   | distribution_decl ;
 
-type_decl ::= TYPE ID SEMI ;
+type_decl ::= TYPE ID ;
 
-type ::= refer_name
-  | array_type ;
+type ::= 
+    refer_name
+  | list_type 
+  | array_type  
+  | map_type ;
+
+list_type ::= LIST LT refer_name GT ;
 
 array_type_or_sub ::= refer_name LBRACKET ;
 
-array_type ::= array_type_or_sub RBRACKET
-  | array_type LBRACKET RBRACKET ;
+array_type ::= 
+    array_type_or_sub RBRACKET
+  | array_type  LBRACKET RBRACKET ;
 
-opt_parenthesized_type_var_lst ::= /* EMPTY */
-  | LPAREN RPAREN
+map_type ::= MAP LT type COMMA type GT ;
+
+opt_parenthesized_type_var_lst ::= 
+    /* EMPTY */
+  | parenthesized_type_var_lst
+  | type_var_lst ;
+
+parenthesized_type_var_lst ::= 
+    LPAREN RPAREN
   | LPAREN type_var_lst RPAREN ;
 
-type_var_lst ::= type ID COMMA type_var_lst
-  | type ID ;
+extra_commas ::= 
+    COMMA COMMA
+  | extra_commas COMMA ;
+
+type_var_lst ::= 
+    type ID COMMA type_var_lst
+  | type ID
+  | type ID extra_commas type_var_lst
+  | type ID type_var_lst
+  | type COMMA type_var_lst ;
 
 fixed_func_decl ::=
-    FIXED type ID opt_parenthesized_type_var_lst 
-    EQ expression SEMI ;
+    FIXED type_type ID opt_parenthesized_type_var_lst
+    EQ expression ;
 
 rand_func_decl ::=
-    RANDOM type ID opt_parenthesized_type_var_lst 
-    dependency_statement_body SEMI ;
+    RANDOM type_type ID opt_parenthesized_type_var_lst
+    dependency_statement_body ;
 
 number_stmt ::=
     NUMSIGN refer_name opt_parenthesized_origin_var_list
-    dependency_statement_body SEMI;
+  dependency_statement_body
+  | NUMSIGN opt_parenthesized_origin_var_list
+  dependency_statement_body ;
 
-opt_parenthesized_origin_var_list ::= /* EMPTY */
+opt_parenthesized_origin_var_list ::= 
+    /* Empty */
   | LPAREN origin_var_list RPAREN ;
 
-origin_var_list ::= ID EQ ID COMMA origin_var_list
-  | ID EQ ID ;
+origin_var_list ::= 
+    ID EQ ID COMMA origin_var_list
+  | ID EQ ID extra_commas origin_var_list
+  | ID EQ COMMA origin_var_list
+  | ID EQ ID origin_var_list
+  | ID EQ ID
+  | ID ID ;
 
-origin_func_decl ::= 
-    ORIGIN type ID LPAREN type RPAREN SEMI ;
+origin_func_decl ::=
+  ORIGIN type_type ID LPAREN type_type RPAREN 
+ | ORIGIN type_type LPAREN type_type RPAREN 
+ | ORIGIN type_type ID LPAREN type_type 
+ | ORIGIN type_type ID type_type RPAREN ;
 
 distinct_decl ::=
-    DISTINCT refer_name id_or_subid_list SEMI ;
+    DISTINCT refer_name id_or_subid_list ;
 
-id_or_subid_list ::= id_or_subid
-  | id_or_subid COMMA id_or_subid_list ;
+id_or_subid_list ::= 
+   id_or_subid 
+ | id_or_subid COMMA id_or_subid_list
+ | id_or_subid id_or_subid_list
+ | id_or_subid extra_commas id_or_subid_list ;
 
-id_or_subid ::= ID
-  | ID LBRACKET INT_LITERAL RBRACKET ;
+id_or_subid ::= 
+   ID
+ | ID LBRACKET INT_LITERAL RBRACKET ;
 
 distribution_decl ::=
     DISTRIBUTION ID EQ refer_name
-    LPAREN opt_expression_list RPAREN SEMI ;
+    LPAREN opt_expression_list RPAREN ;
 
-refer_name ::= ID
+refer_name ::= 
+    ID 
   | ID DOT refer_name ;
 
-dependency_statement_body ::= EQ expression
-  | distribution_expr
-  | IF expression THEN dependency_statement_body elseif_list ;
+dependency_statement_body ::= DISTRIB expression ;
 
-elseif_list ::= /* EMPTY */
-  | ELSE dependency_statement_body ;
+parameter_decl ::= 
+   PARAM type ID 
+ | PARAM type ID COLON expression ;
 
-parameter_decl ::= PARAM type ID SEMI
-  | PARAM type ID COLON expression SEMI ;
+expression ::= 
+    operation_expr  
+  | literal  
+  | function_call 
+  | list_expr 
+  | map_construct_expression 
+  | quantified_formula 
+  | set_expr 
+  | number_expr 
+  | if_expr 
+  | case_expr ;
 
-expression ::= operation_expr
-  | distribution_expr
-  | literal
-  | function_call
-  | list_construct_expression
-  | map_construct_expression
-  | quantified_formula
-  | set_expr
-  | number_expr
-  | refer_name ;
+literal ::= 
+   STRING_LITERAL
+ | CHAR_LITERAL
+ | INT_LITERAL
+ | DOUBLE_LITERAL
+ | BOOLEAN_LITERAL
+ | NULL ;
 
-literal ::= STRING_LITERAL
-  | CHAR_LITERAL
-  | INT_LITERAL
-  | DOUBLE_LITERAL
-  | BOOLEAN_LITERAL
-  | NULL ;
+operation_expr ::= 
+  expression PLUS expression
+ | expression MINUS expression
+ | expression MULT expression
+ | expression DIV expression
+ | expression MOD expression
+ | expression POWER expression
+ | expression LT expression
+ | expression GT expression
+ | expression LEQ expression
+ | expression GEQ expression
+ | expression EQEQ expression
+ | expression NEQ expression
+ | expression AND expression
+ | expression OR expression
+ | expression DOUBLERIGHTARROW expression
+ | expression LBRACKET expression RBRACKET
+ | unary_operation_expr ;
 
-operation_expr ::= expression PLUS expression
-  | expression MINUS expression
-  | expression MULT expression
-  | expression DIV expression
-  | expression MOD expression
-  | expression POWER expression
-  | expression LT expression
-  | expression GT expression
-  | expression LEQ expression
-  | expression GEQ expression
-  | expression EQEQ expression
-  | expression NEQ expression
-  | expression AND expression
-  | expression OR expression
-  | expression DOUBLERIGHTARROW expression
-  | expression LBRACKET expression RBRACKET
-  | array_type_or_sub expression RBRACKET
-  | unary_operation_expr ;
-
-unary_operation_expr ::= MINUS expression
-  | NOT expression
-  | AT expression
-  | LPAREN expression RPAREN ;
+unary_operation_expr ::=
+   MINUS expression %prec UMINUS
+ | NOT expression
+ | AT expression
+ | LPAREN expression RPAREN ;  
 
 quantified_formula ::= 
-    FORALL type ID expression
-  | EXISTS type ID expression ;
+   FORALL type ID expression
+ | EXISTS type ID expression ;
 
 function_call ::= 
-    refer_name LPAREN opt_expression_list RPAREN ;
+   refer_name LPAREN opt_expression_list RPAREN
+ | refer_name ;
 
-distribution_expr ::= 
-    DISTRIB refer_name LPAREN opt_expression_list RPAREN;
+if_expr ::= 
+   IF expression THEN expression ELSE expression 
+ | IF expression THEN expression ;
 
-opt_expression_list ::= /* EMPTY */
-  | expression_list ;
+case_expr ::= CASE expression IN map_construct_expression ;
 
-expression_list ::= expression COMMA expression_list
-  | expression ;
+opt_expression_list ::= 
+    expression_list 
+  | /*EMPTY*/ ;
 
-list_construct_expression ::= 
-    LBRACKET opt_expression_list RBRACKET
-  | LBRACKET semi_colon_separated_expression_list RBRACKET ;
+expression_list ::= 
+   expression COMMA expression_list
+ | expression
+ | expression extra_commas expression_list ;
 
 semi_colon_separated_expression_list ::=
-    expression_list SEMI semi_colon_separated_expression_list
-  | expression_list SEMI expression_list ;
+   semi_ending_expression_list semi_colon_separated_expression_list
+ | semi_ending_expression_list expression_list ;
 
-map_construct_expression ::= 
-    LBRACE expression_pair_list RBRACE ;
+semi_ending_expression_list ::=
+   expression_list SEMI
+ | semi_ending_expression_list SEMI ;
+
+map_construct_expression ::= LBRACE expression_pair_list RBRACE ;
 
 expression_pair_list ::=
-    expression RIGHTARROW expression COMMA expression_pair_list
-  | expression RIGHTARROW expression ;
+   expression RIGHTARROW expression COMMA expression_pair_list
+ | expression RIGHTARROW expression ;
   
-number_expr ::= NUMSIGN set_expr
-  | NUMSIGN type ;
+number_expr ::= 
+   NUMSIGN set_expr
+ | NUMSIGN type ;
 
-set_expr ::= explicit_set
-  | implicit_set
+list_expr ::= 
+   LBRACKET opt_expression_list RBRACKET
+ | LBRACKET semi_colon_separated_expression_list RBRACKET
+ | LBRACKET comprehension_expr RBRACKET ;
+
+set_expr ::= 
+    explicit_set 
   | tuple_set ;
 
 explicit_set ::= LBRACE opt_expression_list RBRACE ;
 
-implicit_set ::= 
-    LBRACE type ID COLON expression RBRACE
-  | LBRACE type ID RBRACE ;
+comprehension_expr ::= expression_list FOR type_var_lst opt_colon_expr ;
 
-tuple_set ::= 
-    LBRACE expression_list 
-    FOR type_var_lst COLON expression RBRACE
-  | LBRACE expression_list FOR type_var_lst RBRACE ;
+opt_colon_expr ::= 
+    /* EMPTY */
+  | COLON expression ;
 
-evidence_stmt ::= OBS evidence SEMI ;
+tuple_set ::= LBRACE comprehension_expr RBRACE ;
 
-evidence ::= symbol_evidence
-  | value_evidence ;
+evidence_stmt ::= OBS evidence ;
+
+evidence ::= value_evidence ;
 
 value_evidence ::= expression EQ expression ;
 
-symbol_evidence ::= implicit_set EQ explicit_set ;
-
-query_stmt ::= QUERY query SEMI ;
-
-query ::= expression ;
+query_stmt ::= QUERY expression ;
 \end{verbatim}
 
 
@@ -1490,6 +1740,30 @@ operator & interpretation & example \\
 
 \end{document}
 
+% Optional section
+%%\subsubsection{Vectors}\label{vector-section}
+%%The \bl type specifier \verb|type_name[]| denotes
+%%a one-dimensional vector with elements of type {\tt type_name}.
+%%For example, @@
+%%To declare a constant array, use the following form:
+%%\begin{blogcode}
+%%fixed type[] name = List_literal;
+%%\end{blogcode}
+%%
+%%For example, to declare an array of natural numbers:
+%%\begin{blogcode}
+%%fixed Integer[] c = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+%%\end{blogcode}
+%%
+%%An element of an array can be referenced as \verb|c[0], c[1], c[2]|, etc.
+
+
+%%\optional{
+%%\subsection{Size of an array}\label{-section}
+%%There are two special functions to obtain the size of an array, \texttt{length(\mycdot)} and \texttt{size(\mycdot)}.
+%%\texttt{length(\mycdot)} returns the length of one dimensional array, while \texttt{size(\mycdot)} returns the lengths of all dimensions
+%%of a multidimensional array.  In the above example, \texttt{length(table)} equals 3, and \texttt{size(table)} equals \texttt{[2, 3]}.
+%%} 
 
 %% \optional{
 %% 

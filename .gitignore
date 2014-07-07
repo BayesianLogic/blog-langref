@@ -1,0 +1,8 @@
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+blog-langref.pdf
+*.synctex.gz
+*.toc

@@ -71,7 +71,7 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Binomial(10, 0.5);
 \end{blogcode}
 
-\subsection{BooleanDistrib($p$)}
+\subsection{BooleanDistrib($p$)} \label{boolean-distribution-section}
 BooleanDistrib distribution generates \verb|true| with probability $p$ and \verb|false| with probability $1-p$. 
 
 \paragraph*{Parameters:} 
@@ -98,7 +98,7 @@ random Boolean x ~ BooleanDistrib(0.5);
 \end{blogcode}
 
 \subsection{Categorical}
-Refer to Section 9.1.12
+Refer to \secref{categorical-section}.
 
 \subsection{Dirichlet($\bar{\alpha}$)}
 
@@ -194,14 +194,14 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Real x ~ Gamma(2.0, 4.0);
 \end{blogcode}
 
-\subsection{Gaussian($\mu$,$\sigma$)}
+\subsection{Gaussian($\mu$,$\sigma^2$)}
 
 \paragraph*{Parameters:} 
 \begin{itemize*}
-\item[] \verb|Real|
+\item[] mean, \verb|Real|
  $\mu$, $\mu \in \mathbb{R}$
-\item[] \verb|Real|
- $\sigma$, $\sigma \geq 0$ 
+\item[] variance \verb|Real|
+ $\sigma^2$, $\sigma^2 \geq 0$ 
 \end{itemize*}
 
 \paragraph*{Support:} \verb|Real|, $x \in \mathbb{R}$ 
@@ -361,7 +361,9 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Poisson(3.0);
 \end{blogcode}
 
-\subsection{UniformChoice($S$)}
+
+\subsection{UniformChoice($S$)} 
+\label{uniformchoice-appexdix}
 
 UniformChoice distribution chooses an element uniformly from the set $S$, whose objects are all of type $T$.
 
@@ -387,7 +389,7 @@ random Color x ~ UniformChoice({c for Color c});
 query x;
 \end{blogcode}
 
-\subsection{UniformInt($a$, $b$)}
+\subsection{UniformInt($a$, $b$)} \label{uniformint-section}
 UniformInt distribution generates an \verb|Integer| uniformly at random between the between a lower bound $a$ and an upper bound $b$. $a$ and $b$ are both included in the set of integers which are uniformly sampled from.
 
 \paragraph*{Parameters:} 
