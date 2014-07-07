@@ -238,21 +238,22 @@ In describing the syntax of \bl, we use the following conventions:
 \item Keywords of the language appear in bold green text: \blog|type Ball;|
 \item User-defined names (e.g., {\tt Ball}) and all literal values appear in plain black text.
 \item Built-in types appear in bold red text: \blog|fixed Real pi = 3.14159;|
-\item Built-in distributions appear in plain blue text: \blog|random Integer N ~ Poisson(12)|
-\item Logical variables appear in bold blue italic text: \blog|random Real ReportedAge(Person x) ~ Gaussian(Age(x)-Offset,Var);|
+\item Built-in distributions appear in plain blue text: \blog|random Integer N ~ Poisson(12);|
+\item Function names appear in blue text: \blog|random Real height(Person p) ~ Gaussian(6, 1);|
+%\item Logical variables appear in bold blue italic text: \blog|random Real ReportedAge(Person x) ~ Gaussian(Age(x)-Offset,Var);|
 %\item Generic placeholders, to be replaced by actual names or expressions, appear in italic magenta text: \blog|type type_name;|
-\item The dot-dot-dot notation indicates that additional elements can be added, similar to those preceding it.
+\item The dot-dot-dot \verb|...| notation indicates that additional elements can be added, similar to those preceding it.
 \item Optional elements appear in angle brackets: \blog|if boolean-expression then expression <else expression>;|
 \end{itemize}
 
-\section{\bl Program}\label{program-section}\label{program-section}
+\section{\bl Program}\label{program-section}
 A \bl program consists a sequence of statements, each ending with a semicolon(;). 
 The following kinds of statements are recognized:
 \begin{enumerate*}
 \item \hyperref[type-declaration-section]{Type declarations}, 
 \item \hyperref[distinct-section]{Distinct symbol declarations}, 
 \item \hyperref[fixed-section]{Fixed function declarations},
-\item \hyperref[random-section]{Random function declarations},
+\item \hyperref[random-function-section]{Random function declarations},
 \item \hyperref[origin-section]{Origin function declarations},
 \item \hyperref[number-section]{Number statements},
 \item \hyperref[evidence-section]{Evidence statements}, and,
@@ -268,21 +269,24 @@ By convention, \texttt{.blog} suffix is used for \bl program, and \texttt{.dblog
 Within a single file, the ordering of statements does not affect their semantic interpretation. However, while a \bl program consists of multiple files, they should be organized into an order such that statements in later files only refer to symbols defined within the same file or before. Such order is called {\em loading order} of a \bl program. 
 
 \section{Lexical tokens}
+\bl tokens are case sensitive. 
+
 \subsection{Keywords} \label{keyword-section}
 Keywords in \bl have preserved semantics. Currently there are the following keywords:
 \begin{blogcode}
   type    distinct    fixed    random    origin
   if      then        else     case      in
-  obs     query
+  obs     query       true     false
 \end{blogcode}
 
 \subsection{Operators and Punctuation}
 \bl supports the following punctuations:
-\begin{blogcode}
+\begin{verbatim}
   ;   {    }    (    )    [    ]
-  :   .   =    ~    ,    #
-\end{blogcode}
+  :   =    ~    ,    #    .
+\end{verbatim}
 Note \verb|.| is different from \verb|.| in real numbers. 
+It is only used in referring the underlying class name for a distribution. 
 These punctuations are used to separating expressions or statements. 
 \verb|{ }| and \verb|( )| always appear in pairs. 
 
