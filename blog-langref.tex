@@ -58,8 +58,8 @@
                Stuart Russell\\
               Computer Science Division\\
               University of California Berkeley\\
-               \email{russell@cs.berkeley.edu}
-               }
+               \email{russell@cs.berkeley.edu}\\
+}
 \date{\today}
 
 %\Year{2011}
@@ -103,8 +103,8 @@ it is helpful, nonetheless, to understand the key semantic ideas, which are base
 A \bl \hyperref[program-section]{program} defines a probability distribution over a space of {\em possible worlds}.
 It does so by means of a set of \hyperref[type-declaration-section]{type declarations},
 \hyperref[number-section]{number statements}, and \hyperref[dependency-section]{dependency statements}.
-These statements describe the objects that may exist in each world and introduce function symbols\footnote{Function symbols include as special cases predicate symbols (Boolean-valued functions) and constant symbols (zero-ary functions).} that carry information about the objects. (\bl also supplies several \hyperref[builtin-type-section]{built-in types}
-and \hyperref[builtin-operator-appendix]{built-in functions} that operate on those types.)
+These statements describe the objects that may exist in each world and introduce function symbols\footnote{Function symbols include as special cases predicate symbols (Boolean-valued functions) and constant symbols (zero-ary functions).} that carry information about the objects. \bl also supplies several \hyperref[builtin-type-section]{built-in types}
+and \hyperref[builtin-operator-appendix]{built-in functions} that operate on those types.
 The possible worlds are constructed from the function symbols and the objects,
 and the probability of each world can be calculated from the information supplied by the dependency statements.
 
@@ -114,24 +114,24 @@ A simple example serves to illustrate these concepts. Suppose that an urn contai
 balls are drawn one at a time and then replaced after the observed color is noted. Color observation is 80\% accurate.
 First, we define the types:
 \begin{blogcode}
-type Ball; type Draw; 
+type Ball; 
+type Draw; 
 \end{blogcode}
+We declare two types and use semicolons (\verb|;|) to terminate the \hyperref[type-declaration-section]{type declarations}. 
 Then, we talk about the objects that exist for each type.
 In this case, we know there are two colors and (say) eight draws; by writing
 \begin{blogcode}
 distinct Draw Draw[8];
 \end{blogcode}
-we name these objects and assert that the names refer to distinct colors.
-On the other hand, the number of balls is (say) equally likely to be anywhere from 1 to 4; for this we use a number statement:
+we name these objects and assert that the names refer to distinct \verb|Draw|'s.
+On the other hand, the number of balls is (say) equally likely to be anywhere from 1 to 4; for this we use a number statement and \hyperref[uniformint-section]{\texttt{UniformInt} distribution}:
 \begin{blogcode}
 #Ball ~ UniformInt(1,4);
 \end{blogcode}
 Having made these assertions, we declare and write dependencies for the function symbols
 that we need to describe the domain. First, the true color of a ball is 
 equally likely to be blue or non-blue; for this, we use a boolean predicate 
-\verb|isBlue|. It requires the built-in
-{BooleanDistrib distribution}, which takes a positive real number as 
-the probability of being true:
+\verb|isBlue|. It requires the built-in \hyperref[boolean-distribution-section]{\texttt{BooleanDistrib} distribution}, which takes a positive real number as the probability of being true:
 \begin{blogcode}
 random Boolean isBlue(Ball b) ~ BooleanDistrib(0.5);
 \end{blogcode}
@@ -139,6 +139,7 @@ The ball drawn on each draw is \hyperref[uniformchoice-section]{chosen at random
 \begin{blogcode}
 random Ball ballDrawn(Draw d) ~ UniformChoice({b for Ball b});
 \end{blogcode}
+\verb|{b for Ball b}| is the \hyperref[set-section]{Set comprehension expression}. 
 Finally, we say that the observed color is the same as the true color
 with 80\% probability, i.e. the chance of observing blue balls being 
 80\% if the true color of the ball is blue.
@@ -208,8 +209,7 @@ evidence, a \hyperref[query-section]{query statement} indicates a
 posterior probability of interest. We can query the value of any \hyperref[expression-section]{expression}
 by adding a query statement to the file. Each such statement will cause the inference engine to be invoked 
 and the answers---probabilities for each possible value of the
-expression---to be returned to the standard output stream.
-%%[[check: is output always to standard output stream?]]
+expression---to be returned to the standard output stream. Alternative output format is available but it is out of the scope. Readers may refer to \bl user's manual~\footnote{\url{http://bayesianlogic.cs.berkeley.edu/pages/user-manual.html}}. 
 \begin{blogcode}
 query size({b for Ball b});
 \end{blogcode}
@@ -231,10 +231,7 @@ Distribution of values for (ballDrawn(Draw[0]) = ballDrawn(Draw[1]))
 	true	0.29299651130018706
 \end{verbatim}
 
-
 \section{Syntax description conventions}\label{convention-section}
-
-
 In describing the syntax of \bl, we use the following conventions:
 %%[[not currently implemented exactly like this; need to fix the latex code that does coloring etc]]
 \begin{itemize}
@@ -252,19 +249,23 @@ In describing the syntax of \bl, we use the following conventions:
 A \bl program consists a sequence of statements, each ending with a semicolon(;). 
 The following kinds of statements are recognized:
 \begin{enumerate*}
-\item Type declarations; 
-\item Distinct symbol declarations;
-\item Fixed function declarations;
-\item Random function declarations;
-\item Origin function declarations;
-\item Number statements;
-\item Evidence statements, and;
-\item Query statements.
+\item \hyperref[type-declaration-section]{Type declarations}, 
+\item \hyperref[distinct-section]{Distinct symbol declarations}, 
+\item \hyperref[fixed-section]{Fixed function declarations},
+\item \hyperref[random-section]{Random function declarations},
+\item \hyperref[origin-section]{Origin function declarations},
+\item \hyperref[number-section]{Number statements},
+\item \hyperref[evidence-section]{Evidence statements}, and,
+\item \hyperref[query-section]{Query statements}.
 \end{enumerate*}
 
 Type declarations, distinct symbol declarations, number statements and their associated origin function declarations serve to populate
 worlds with objects. Fixed and random function declarations introduce properties of objects and relationships among objects
 and define distributions over the worlds that can be constructed using these functions.
+
+A \bl program can be written in a single file. However, it is also typical to write a large \bl program in multiple files. 
+By convention, \texttt{.blog} suffix is used for \bl program, and \texttt{.dblog} for those with \verb|Timestep|. 
+Within a single file, the ordering of statements does not affect their semantic interpretation. However, while a \bl program consists of multiple files, they should be organized into an order such that statements in later files only refer to symbols defined within the same file or before. Such order is called {\em loading order} of a \bl program. 
 
 \section{Lexical tokens}
 \subsection{Keywords} \label{keyword-section}

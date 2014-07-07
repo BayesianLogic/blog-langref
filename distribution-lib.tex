@@ -49,7 +49,7 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Binomial(10, 0.5);
 \end{blogcode}
 
-\subsection{BooleanDistrib($p$)}
+\subsection{BooleanDistrib($p$)} \label{boolean-distribution-section}
 BooleanDistrib distribution generates \verb|true| with probability $p$ and \verb|false| with probability $1-p$. 
 
 \paragraph*{Parameters:} 
@@ -257,7 +257,7 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Poisson(3.0);
 \end{blogcode}
 
-\subsection{UniformChoice($S$)}
+\subsection{UniformChoice($S$)} \label{uniformchoice-appexdix}
 
 UniformChoice distribution chooses an element uniformly from the set $S$, whose objects are all of type $T$.
 
@@ -283,7 +283,7 @@ random Color x ~ UniformChoice({c for Color c});
 query x;
 \end{blogcode}
 
-\subsection{UniformInt($a$, $b$)}
+\subsection{UniformInt($a$, $b$)} \label{uniformint-section}
 UniformInt distribution generates an \verb|Integer| uniformly at random between the between a lower bound $a$ and an upper bound $b$. $a$ and $b$ are both included in the set of integers which are uniformly sampled from.
 
 \paragraph*{Parameters:} 
