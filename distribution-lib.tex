@@ -104,7 +104,7 @@ Refer to Section 9.1.12
 
 \paragraph*{Parameters:} 
 \begin{itemize*}
-\item[] \verb|RealMatrix| (Column Vector) $\bar{\alpha}$, s.t. $\alpha_{i} \geq 0, \forall i \in \{1, \ldots, K\}$ 
+\item[] \verb|RealMatrix| (Column Vector) $\bar{\alpha}$, s.t. $\alpha_{i} > 0, \forall i \in \{1, \ldots, K\}$ 
 \end{itemize*}
 
 \paragraph*{Support:} 
@@ -149,6 +149,7 @@ random Integer x ~ Discrete(vec);
 \end{blogcode}
 
 \subsection{Exponential($\lambda$)} 
+The exponential distribution generates the interarrival time between two events in a Poisson process.
 
 \paragraph*{Parameters:} 
 \begin{itemize*}
@@ -170,6 +171,28 @@ random Real x ~ Exponential(0.2);
 
 \subsection{Gamma($k$,$\lambda$)}
 
+\paragraph*{Parameters:}
+\begin{itemize*}
+\item[] \verb|Real| $k$, $k > 0$
+\item[] \verb|Real| $\lambda$, $\lambda > 0$ 
+\end{itemize*}
+
+\paragraph*{Support:}
+\verb|Real|, $x > 0$
+
+\paragraph*{Probability density function:}
+\[
+	f(x) = \frac{\lambda exp(-\lambda x) (\lambda x)^{k-1}}{\Gamma(k)}
+\]
+\[
+	\Gamma(k) = \int_{0}^{\infty} t^{k-1}exp(-t) dt
+\]
+
+\paragraph*{Example:}
+The following code defines a random function symbol \verb|x| distributed according to a Gamma Distribution.
+\begin{blogcode}
+random Real x ~ Gamma(2.0, 4.0);
+\end{blogcode}
 
 \subsection{Gaussian($\mu$,$\sigma$)}
 
