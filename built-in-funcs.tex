@@ -1,0 +1,186 @@
+Operators such as \verb|+|, \verb|-|, etc. are used in infix form, e.g. 1 + 2 +
+3. Functions are used in the familiar way: \verb|func(arg1, arg2)|.
+
+We show the type signature of each function and operator. For example, {\tt *:
+Real x RealMatrix -> RealMatrix} means that the operator \verb|*| takes a
+\verb|Real| argument and a \verb|RealMatrix| argument, and produces a
+\verb|RealMatrix| result.
+
+
+\subsection{Constants}
+\label{sec:builtin-constants}
+
+\verb|null: Null| \reminder{?}
+
+\verb|e: Real| The $e$ constant.
+
+\verb|pi: Real| The $\pi$ constant.
+
+
+\subsection{Comparison operators}
+\label{sec:builtin-comparison}
+
+\verb|<: Real x Real -> Boolean|
+
+\verb|<=: Real x Real -> Boolean|
+
+\verb|>: Real x Real -> Boolean|
+
+\verb|>=: Real x Real -> Boolean|
+
+\reminder{what about == and != ??? They're not in BuiltInFunctions.java}
+
+
+\subsection{Arithmetic operations}
+\label{sec:builtin-arithmetic}
+
+\verb|+: Integer x Integer -> Integer| \\
+\verb|+: Real x Real -> Real| \\
+\verb|+: Timestep x Integer -> Timestep|
+
+\verb|-: Integer x Integer -> Integer| \\
+\verb|-: Real x Real -> Real| \\
+\verb|-: Timestep x Integer -> Timestep|
+
+\verb|*: Integer x Integer -> Integer| \\
+\verb|*: Real x Real -> Real| \\
+\verb|*: Timestep x Integer -> Timestep|
+
+\verb|/: Integer x Integer -> Integer| \\
+\verb|/: Real x Real -> Real| \\
+\verb|/: Timestep x Integer -> Timestep|
+
+\verb|^: Real x Real -> Real|
+
+\verb|abs: Integer -> Integer| \\
+\verb|abs: Real -> Real| Absolute value.
+
+\verb|exp: Integer -> Real| \\
+\verb|exp: Real -> Real| Exponential.
+
+\reminder{no log??}
+
+\verb|%: Integer x Integer -> Integer| \\
+\verb|%: Timestep x Integer -> Timestep| Modulus.
+
+
+\subsection{Matrix operations}
+\label{sec:builtin-matrix-ops}
+
+\verb|+: RealMatrix x RealMatrix -> RealMatrix|
+
+\verb|-: RealMatrix x RealMatrix -> RealMatrix|
+
+\verb|*: RealMatrix x RealMatrix -> RealMatrix| \\
+\verb|*: RealMatrix x Real -> RealMatrix| \\
+\verb|*: Real x RealMatrix -> RealMatrix|
+
+\verb|inv: RealMatrix -> RealMatrix| Matrix inverse.
+
+\verb|transpose: RealMatrix -> RealMatrix| Matrix transpose.
+
+\verb|det: RealMatrix -> Real| Matrix determinant.
+
+\verb|diag: RealMatrix -> RealMatrix| Takes a column vector of values, and
+returns a diagonal matrix with the given values on the diagonal.
+
+\verb|repmat: RealMatrix x Integer x Integer -> RealMatrix| Return a tiled
+matrix. For example, \verb|repmat(x, 2, 3)| returns a matrix obtained by tiling
+6 copies of \verb|x| in two rows and three columns.
+
+\verb|sum: RealMatrix -> RealMatrix| Column-wise sum of a matrix. For example,
+\verb|sum([1, 2; 3, 4])| returns \verb|[4, 6]|.
+
+\verb|hstack: RealMatrix... -> RealMatrix| \\
+\verb|hstack: Real... -> RealMatrix| Stacks scalars or matrices horizontally.
+For example, \verb|hstack(1, 2, 3)| returns the row vector {\tt [1, 2, 3]}.
+
+\verb|vstack: RealMatrix... -> RealMatrix| \\
+\verb|vstack: Real... -> RealMatrix| Stacks scalars or matrices vertically. For
+example, \verb|vstack(1, 2, 3)| returns the column vector {\tt [1; 2; 3]}.
+
+\verb|eye: Integer -> RealMatrix| Returns an identity matrix of the given size.
+For example, \verb|eye(5)| returns a 5x5 identity matrix.
+
+\verb|zeros: Integer x Integer -> RealMatrix| Returns a matrix of the given size, filled with zeros.  For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
+
+\verb|ones: Integer x Integer -> RealMatrix| Returns a matrix of the given
+size, filled with ones.  For example, \verb|ones(3, 4)| returns a 3x4 matrix of
+ones.
+
+\verb|abs: RealMatrix -> RealMatrix| Element-wise absolute value.
+
+\verb|exp: RealMatrix -> RealMatrix| Element-wise exponential of a matrix.
+
+\verb|[]: RealMatrix x Integer -> RealMatrix| Index a matrix. For example,
+\verb|m[i]| returns the \verb|i|-th row of \verb|m|. \\
+\verb|[]: Real[] x Integer -> Real| Index an array.
+
+It is a runtime error to perform matrix operations with dimensions that do not
+match.
+
+
+\subsection{Set operations}
+\label{sec:builtin-set-ops}
+
+\verb|min: Set -> Integer| Minimum of a set.
+
+\verb|max: Set -> Integer| Maximum of a set.
+
+\verb|sum: Set -> Real| Sum of elements in a set of Real values.
+
+\verb|size: Set -> Integer| Number of elements in a set.
+
+\verb|iota: Set -> Any| Extract element from a singleton set. For example,
+\verb|iota({6})| evaluates to \verb|6|.
+
+
+\verb|round: Real -> Integer| Round a Real to the nearest Integer.  For
+example, \verb|round(1.6)| evaluates to \verb|2|.
+
+\verb|toInt: Real -> Integer| Convert to Integer, rounding towards zero. \\
+\verb|toInt: Boolean -> Integer| Convert false to 0, true to 1. \\
+\verb|toInt: Integer -> Integer| Identity. \\
+\verb|toInt: RealMatrix -> Integer| Extract the element from a 1x1 RealMatrix,
+and convert it to an Integer by rounding towards zero.
+
+\verb|toReal: Real -> Real| Identity. \\
+\verb|toReal: Boolean -> Real| Convert false to 0.0, true to 1.0. \\
+\verb|toReal: Integer -> Real| Convert Integer to Real. \\
+\verb|toReal: RealMatrix -> Real| Extract the element from a 1x1 RealMatrix,
+and convert it to a Real.
+
+
+\subsection{Trigonometric functions}
+\label{sec:builtin-trig}
+
+\verb|sin: Real -> Real| Sine of the given value in radians.
+
+\verb|cos: Real -> Real| Cosine of the given value in radians.
+
+\verb|tan: Real -> Real| Tangent of the given value in radians.
+
+\verb|atan2: Real x Real -> Real| Arctangent. Analogous to the \verb|atan2|
+function in Java.
+
+
+\subsection{Miscellaneous functions}
+\label{sec:builtin-misc}
+
+\verb|succ: Integer -> Integer| Return the next integer.
+
+\verb|pred: Integer -> Integer| Return the previous integer.
+
+\verb|next: Timestep -> Timestep| Return the next timestep.
+
+\verb|prev: Timestep -> Timestep| Return the next timestep.
+
+\verb|+: String x String -> String| Concatenate strings.
+
+\verb|isEmptyString: String -> Boolean| Return true iff string is empty.
+
+\verb|loadRealMatrix: String -> RealMatrix| Load a \verb|RealMatrix| from a
+text file. The space-separated formats produced by numpy and Matlab are
+supported.
+
+
