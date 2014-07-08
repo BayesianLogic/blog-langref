@@ -1,222 +1,186 @@
-\subsection{Scalar operations}
-\label{sec:builtin-scalar-ops}
+Operators such as \verb|+|, \verb|-|, etc. are used in infix form, e.g. 1 + 2 +
+3. Functions are used in the familiar way: \verb|func(arg1, arg2)|.
 
-The following operators are defined on Integer and Real scalars:
+We show the type signature of each function and operator. For example, {\tt *:
+Real x RealMatrix -> RealMatrix} means that the operator \verb|*| takes a
+\verb|Real| argument and a \verb|RealMatrix| argument, and produces a
+\verb|RealMatrix| result.
 
-\begin{table}[H]
-\centering
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-\verb|+| & plus & \verb|x + y| , \verb|1.0 + 2|\\ 
-\verb|-| & minus & \verb|x - y| , \verb|1.0 - 2|\\ 
-\verb|*| & multiply & \verb|x * y| , \verb|1.0 * 2|\\
-\verb|/| & divide & \verb|x / y| , \verb|1.0 / 2|\\ 
-\verb|%| & modulus (only applied to Integers) & \verb|x % y|, \verb|1.0 % 2| \\
-\verb|^| & power & \verb|x ^ y| , \verb|1.0 ^ 2| \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-The following functions are defined on Integer and Real scalars:
+\subsection{Constants}
+\label{sec:builtin-constants}
 
-\begin{itemize}
-\item
-    \verb|abs| computes the absolute value of a number. \\
-    For example, \verb|abs(-1.2)| evaluates to \verb|1.2|.
-\item
-    \verb|exp| computes the exponential of a number. \\
-    For example, \verb|exp(2.5)| evaluates to \verb|12.1825|.
-\item
-    \verb|round| rounds a Real to the nearest Integer. \\
-    For example, \verb|round(1.6)| evaluates to \verb|2|.
-\end{itemize}
+\verb|null: Null| \reminder{?}
+
+\verb|e: Real| The $e$ constant.
+
+\verb|pi: Real| The $\pi$ constant.
+
+
+\subsection{Comparison operators}
+\label{sec:builtin-comparison}
+
+\verb|<: Real x Real -> Boolean|
+
+\verb|<=: Real x Real -> Boolean|
+
+\verb|>: Real x Real -> Boolean|
+
+\verb|>=: Real x Real -> Boolean|
+
+\reminder{what about == and != ??? They're not in BuiltInFunctions.java}
+
+
+\subsection{Arithmetic operations}
+\label{sec:builtin-arithmetic}
+
+\verb|+: Integer x Integer -> Integer| \\
+\verb|+: Real x Real -> Real| \\
+\verb|+: Timestep x Integer -> Timestep|
+
+\verb|-: Integer x Integer -> Integer| \\
+\verb|-: Real x Real -> Real| \\
+\verb|-: Timestep x Integer -> Timestep|
+
+\verb|*: Integer x Integer -> Integer| \\
+\verb|*: Real x Real -> Real| \\
+\verb|*: Timestep x Integer -> Timestep|
+
+\verb|/: Integer x Integer -> Integer| \\
+\verb|/: Real x Real -> Real| \\
+\verb|/: Timestep x Integer -> Timestep|
+
+\verb|^: Real x Real -> Real|
+
+\verb|abs: Integer -> Integer| \\
+\verb|abs: Real -> Real| Absolute value.
+
+\verb|exp: Integer -> Real| \\
+\verb|exp: Real -> Real| Exponential.
+
+\reminder{no log??}
+
+\verb|%: Integer x Integer -> Integer| \\
+\verb|%: Timestep x Integer -> Timestep| Modulus.
 
 
 \subsection{Matrix operations}
 \label{sec:builtin-matrix-ops}
 
-RealMatrix represents a 2d matrix. Column vectors and row vectors are just
-special cases where the number of rows or columns is one. BLOG does not
-distinguish between vectors and matrices at the type level. The following
-operators are defined for the RealMatrix type:
+\verb|+: RealMatrix x RealMatrix -> RealMatrix|
 
-\begin{table}[H]
-\centering
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-\verb|+| & plus & \verb|x + y| \\ 
-\verb|-| & minus & \verb|x - y| \\ 
-\verb|*| & multiply & \verb|x * y| \\
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|-: RealMatrix x RealMatrix -> RealMatrix|
 
-The following functions are defined for the RealMatrix type:
+\verb|*: RealMatrix x RealMatrix -> RealMatrix| \\
+\verb|*: RealMatrix x Real -> RealMatrix| \\
+\verb|*: Real x RealMatrix -> RealMatrix|
 
-\begin{itemize}
-\item
-    \verb|inv| computes the inverse of a matrix.
-\item
-    \verb|transpose| computes the transpose of a matrix.
-\item
-    \verb|det| computes the determinant of a matrix.
-\item
-    \verb|repmat| returns a tiled matrix. \\
-    For example, \verb|repmat(x, 2, 3)| returns a matrix obtained by tiling 6
-    copies of \verb|x| in two rows and three columns.
-\item
-    \verb|diag| takes a column vector of values, and returns a diagonal matrix
-    with the given values on the diagonal.
-\item
-    \verb|vstack| stacks scalars or matrices vertically. \\
-    For example, \verb|vstack(1, 2, 3)| returns the column vector {\tt [1; 2;
-    3]}.
-\item
-    \verb|hstack| stacks scalars or matrices horizontally. \\
-    For example, \verb|hstack(1, 2, 3)| returns the row vector {\tt [1, 2, 3]}.
-\item
-    \verb|eye| returns an identity matrix of the given size. \\
-    For example, \verb|eye(5)| returns a 5x5 identity matrix.
-\item
-    \verb|zeros| returns a matrix of the given size, filled with zeros. \\
-    For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
-\item
-    \verb|ones| returns a matrix of the given size, filled with ones. \\
-    For example, \verb|ones(3, 4)| returns a 3x4 matrix of ones.
-\item
-    \verb|exp| returns the element-wise exponential of a matrix. \\
-\end{itemize}
+\verb|inv: RealMatrix -> RealMatrix| Matrix inverse.
+
+\verb|transpose: RealMatrix -> RealMatrix| Matrix transpose.
+
+\verb|det: RealMatrix -> Real| Matrix determinant.
+
+\verb|diag: RealMatrix -> RealMatrix| Takes a column vector of values, and
+returns a diagonal matrix with the given values on the diagonal.
+
+\verb|repmat: RealMatrix x Integer x Integer -> RealMatrix| Return a tiled
+matrix. For example, \verb|repmat(x, 2, 3)| returns a matrix obtained by tiling
+6 copies of \verb|x| in two rows and three columns.
+
+\verb|sum: RealMatrix -> RealMatrix| Column-wise sum of a matrix. For example,
+\verb|sum([1, 2; 3, 4])| returns \verb|[4, 6]|.
+
+\verb|hstack: RealMatrix... -> RealMatrix| \\
+\verb|hstack: Real... -> RealMatrix| Stacks scalars or matrices horizontally.
+For example, \verb|hstack(1, 2, 3)| returns the row vector {\tt [1, 2, 3]}.
+
+\verb|vstack: RealMatrix... -> RealMatrix| \\
+\verb|vstack: Real... -> RealMatrix| Stacks scalars or matrices vertically. For
+example, \verb|vstack(1, 2, 3)| returns the column vector {\tt [1; 2; 3]}.
+
+\verb|eye: Integer -> RealMatrix| Returns an identity matrix of the given size.
+For example, \verb|eye(5)| returns a 5x5 identity matrix.
+
+\verb|zeros: Integer x Integer -> RealMatrix| Returns a matrix of the given size, filled with zeros.  For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
+
+\verb|ones: Integer x Integer -> RealMatrix| Returns a matrix of the given
+size, filled with ones.  For example, \verb|ones(3, 4)| returns a 3x4 matrix of
+ones.
+
+\verb|abs: RealMatrix -> RealMatrix| Element-wise absolute value.
+
+\verb|exp: RealMatrix -> RealMatrix| Element-wise exponential of a matrix.
+
+\verb|[]: RealMatrix x Integer -> RealMatrix| Index a matrix. For example,
+\verb|m[i]| returns the \verb|i|-th row of \verb|m|. \\
+\verb|[]: Real[] x Integer -> Real| Index an array.
 
 It is a runtime error to perform matrix operations with dimensions that do not
 match.
 
 
-\subsection{Conversions between types}
-\label{sec:builtin-conversions}
+\subsection{Set operations}
+\label{sec:builtin-set-ops}
 
-The following functions allow converting between types:
+\verb|min: Set -> Integer| Minimum of a set.
 
-\begin{itemize}
-\item
-    \verb|toReal| takes a 1x1 RealMatrix, an Integer, or a Boolean, and
-    converts it to a Real. \\
-    For example, if \verb|x| is a matrix, then \verb|x[0][0]| is a 1x1
-    RealMatrix. To extract its Real value, use \verb|toReal(x[0][0])|.
-    For Booleans, \verb|toReal(true)| evaluates to \verb|1| and
-    \verb|toReal(false)| evaluates to \verb|0|.
-\item
-    \verb|toInt| takes a 1x1 RealMatrix, a Real, or a Boolean, and converts it
-    to an Integer. \\
-    For example, \verb|toInt(2.9)| evaluates to \verb|2|. (The decimal part is
-    dropped.)
-\end{itemize}
+\verb|max: Set -> Integer| Maximum of a set.
+
+\verb|sum: Set -> Real| Sum of elements in a set of Real values.
+
+\verb|size: Set -> Integer| Number of elements in a set.
+
+\verb|iota: Set -> Any| Extract element from a singleton set. For example,
+\verb|iota({6})| evaluates to \verb|6|.
 
 
-\reminder{stuff below is still to do}
+\verb|round: Real -> Integer| Round a Real to the nearest Integer.  For
+example, \verb|round(1.6)| evaluates to \verb|2|.
 
-\begin{table}[H]
-\centering
-\caption{Logical operators on Boolean}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-\verb|&| & and & \verb|x & y| , \verb|(x > 3) & (x < 5)| \\ 
-{\tt |} & or & \verb#x | y# , \verb#(x > 5) | (x < 3)# \\ 
-{\tt !} & not & \verb|! x| , \verb|! (x > 3)| \\
-{\tt =>} & imply & \verb|x => y| , \verb|(x > 5) => (x > 3)| \\
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|toInt: Real -> Integer| Convert to Integer, rounding towards zero. \\
+\verb|toInt: Boolean -> Integer| Convert false to 0, true to 1. \\
+\verb|toInt: Integer -> Integer| Identity. \\
+\verb|toInt: RealMatrix -> Integer| Extract the element from a 1x1 RealMatrix,
+and convert it to an Integer by rounding towards zero.
 
-\begin{table}[H]
-\centering
-\caption{Quantified formula}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-{\tt forall} & $\forall$ & \verb|forall Person x height(x) > 1.0| \\ 
-{\tt exists} & $\exists$ & \verb|exists Person x height(x) > 1.0|  \\ 
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|toReal: Real -> Real| Identity. \\
+\verb|toReal: Boolean -> Real| Convert false to 0.0, true to 1.0. \\
+\verb|toReal: Integer -> Real| Convert Integer to Real. \\
+\verb|toReal: RealMatrix -> Real| Extract the element from a 1x1 RealMatrix,
+and convert it to a Real.
 
-\begin{table}[H]
-\centering
-\caption{Relational operators on Integer, Real and other comparable types}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-{\tt >} & greater than & \verb|a > b| ,  \verb|2 > 1.0|\\ 
-{\tt >=} & greater than or equal to & \verb|a >= b| ,  \verb|2 >= 1.0| \\ 
-{\tt <} & less than & \verb|a < b| ,  \verb|1.0 < 2.0| \\
-{\tt <=} & less than or equal to & \verb|a <= b| ,  \verb|1.0 <= 2.0|  \\
-\bottomrule
-\end{tabular}
-\end{table}
 
-\begin{table}[H]
-\centering
-\caption{Equality operator on all types}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-{\tt ==} & equal to & \verb|a == b|   \\ 
-{\tt !=} & unequal to & \verb|a != b|  \\ 
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Trigonometric functions}
+\label{sec:builtin-trig}
 
-\begin{table}[H]
-\centering
-\caption{Operators on String}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-{\tt +} & concatenate & \verb|"hello " + "world"|  \\ 
-{\tt ==} & equal to & \verb|"abc" == "def"|  \\
-{\tt !=} & unequal to & \verb|"abc" != "def"|\\ 
-\verb|IsEmptyString()| & returns True if the string is empty & \verb|IsEmptyString(a)| \\
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|sin: Real -> Real| Sine of the given value in radians.
 
-\begin{table}[H]
-\centering
-\caption{Operators on Timestep}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-\verb|prev()| & previous Timestep & \verb|prev(@1)|  \\
-\verb|-| & Timestep minus an integer & \verb|@10 - 1 == @9|  \\
-\verb|+| & Timestep plus an integer & \verb|@10 + 1 == @11|  \\
-\verb|%| &  Timestep mod & \verb|x % 10 == @0|  \\
-\verb|*| & Timestep multiply an integer & \verb|@10 * 2 == @20|  \\
-\verb|/| & Timestep divide an integer & \verb|@10 / 2 == @5|  \\
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|cos: Real -> Real| Cosine of the given value in radians.
 
-\begin{table}[H]
-\centering
-\caption{Arithmetic operators on Set}
-\begin{tabular}{ c c c }
-\toprule 
-operator & interpretation & example \\
-\midrule
-\verb|min| & minimum of elements a set & \verb|min()|\\ 
-\verb|max| & maximum of elements in a set & \verb|max()|\\
-\verb|sum| & summation of elements in a set & \verb|sum()|\\ 
-\bottomrule
-\end{tabular}
-\end{table}
+\verb|tan: Real -> Real| Tangent of the given value in radians.
+
+\verb|atan2: Real x Real -> Real| Arctangent. Analogous to the \verb|atan2|
+function in Java.
+
+
+\subsection{Miscellaneous functions}
+\label{sec:builtin-misc}
+
+\verb|succ: Integer -> Integer| Return the next integer.
+
+\verb|pred: Integer -> Integer| Return the previous integer.
+
+\verb|next: Timestep -> Timestep| Return the next timestep.
+
+\verb|prev: Timestep -> Timestep| Return the next timestep.
+
+\verb|+: String x String -> String| Concatenate strings.
+
+\verb|isEmptyString: String -> Boolean| Return true iff string is empty.
+
+\verb|loadRealMatrix: String -> RealMatrix| Load a \verb|RealMatrix| from a
+text file. The space-separated formats produced by numpy and Matlab are
+supported.
+
 
