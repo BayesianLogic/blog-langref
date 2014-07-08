@@ -10,11 +10,9 @@ Real x RealMatrix -> RealMatrix} means that the operator \verb|*| takes a
 \subsection{Constants}
 \label{sec:builtin-constants}
 
-\verb|null: Null| \reminder{?}
+\verb|e: Real|,  the base of the natural logarithm (approximately equal to $2.71828$).
 
-\verb|e: Real| The $e$ constant.
-
-\verb|pi: Real| The $\pi$ constant.
+\verb|pi: Real| The $\pi$ constant (approximately equal to $3.14159$).
 
 
 \subsection{Comparison operators}
@@ -75,7 +73,13 @@ Real x RealMatrix -> RealMatrix} means that the operator \verb|*| takes a
 \verb|*: RealMatrix x Real -> RealMatrix| \\
 \verb|*: Real x RealMatrix -> RealMatrix|
 
-\verb|inv: RealMatrix -> RealMatrix| Matrix inverse.
+\verb|inv(x)|
+\parahead{Argument:} \verb|x|, \verb|RealMatrix| 
+\parahead{Result:} \verb|RealMatrix|, inverse of the matrix \verb|x|.
+
+\verb|transpose(x)|
+\parahead{Argument:} \verb|x|, \verb|RealMatrix| 
+\parahead{Result:} \verb|RealMatrix|, transpose of the matrix \verb|x|.
 
 \verb|transpose: RealMatrix -> RealMatrix| Matrix transpose.
 

@@ -276,7 +276,7 @@ Keywords in \bl have preserved semantics. Currently there are the following keyw
 \begin{blogcode}
   type    distinct    fixed    random    origin
   if      then        else     case      in
-  obs     query       true     false
+  obs     query       true     false     null
 \end{blogcode}
 
 \subsection{Operators and Punctuation}
@@ -331,6 +331,9 @@ String literals are delimited by double quotes: \verb|"hello\n\nworld"|.
 \verb|Timestep|'s correspond to nonnegative integers, but are a distinguished type
 to allow for inference algorithms that are specialized for temporal models. 
 \verb|Timestep| literals are distinguished by an \verb|@| prefix. They are defined for all non-negative timesteps: \verb|@0|, \verb|@1|, \verb|@654|, etc.
+
+\paragraph{Null}
+\verb|null| is a special literal that can be assigned to any \hyperref[type-declaration-section]{user declared type}. 
 
 \subsection{Whitespace and Comments}
 Tokens may be separated by whitespace characters: \textvisiblespace, tab-character, and new-line. 
