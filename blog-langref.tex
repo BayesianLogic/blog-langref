@@ -165,7 +165,7 @@ typewriter font for symbols in the BLOG language.)
 A particular world is fixed by setting the values of every function symbol
 for every possible tuple of objects of the appropriate types. We call
 the value of a function symbol applied to a particular tuple of objects
-a {\em basic random variables} or BRV. For this domain, the BRVs are:
+a {\em basic random variable} or BRV. For this domain, the BRVs are:
 \begin{itemize}
 \item $isBlue_{Ball_i}$, either $true$ or $false$, for $i\eq1,\ldots,k$;
 \item $ballDrawn_{Draw_j}$, one of $Ball_1,\ldots,Ball_k$,  for $j\eq1,\ldots,8$;
@@ -237,7 +237,7 @@ In describing the syntax of \bl, we use the following conventions:
 \begin{itemize}
 \item Keywords of the language appear in bold green text: \blog|type Ball;|
 \item User-defined names (e.g., {\tt Ball}) and all literal values appear in plain black text.
-\item Built-in types appear in bold red text: \blog|fixed Real pi = 3.14159;|
+\item Built-in types appear in bold red text: \blog|fixed Real x = 4.567;|
 \item Built-in distributions appear in plain blue text: \blog|random Integer N ~ Poisson(12);|
 \item Function names appear in blue text: \blog|random Real height(Person p) ~ Gaussian(6, 1);|
 %\item Logical variables appear in bold blue italic text: \blog|random Real ReportedAge(Person x) ~ Gaussian(Age(x)-Offset,Var);|
@@ -308,6 +308,7 @@ The first two can be used as type names, distinct symbol names, or logical varia
 The last one, \verb|abs| refers to the library function \verb|abs()| which returns absolute value of the input argument.
 
 \subsection{Literals}
+\label{sec:literals}
 \paragraph{Boolean literal}
 
 There are two \verb|Boolean| literals: \verb|true| and \verb|false|. 
@@ -317,7 +318,10 @@ There are two \verb|Boolean| literals: \verb|true| and \verb|false|.
 \verb|7|, \verb|50000|.
 
 \paragraph{Real literals}
-\verb|Real| literals are defined for real numbers. Each real number is a double-precision 64-bit IEEE 754 floating point. The maximal positive \verb|Real| value is $1.7976931348623157 × 10^{308}$, while the minimal positive \verb|Real| value is $4.9406564584124654 × 10^{−324}$. 
+\verb|Real| literals are defined for real numbers. Each real number is a
+double-precision 64-bit IEEE 754 floating point. The maximal positive
+\verb|Real| value is $1.7976931348623157 \times 10^{308}$, while the minimal
+positive \verb|Real| value is $4.9406564584124654 \times 10^{-324}$. 
 In real literals, a zero on either side of the decimal point can be omitted: \verb|123.|, \verb|123.45|, \verb|0.123|,
 \verb|.123|, \verb|-45.6|. Scientific notation is also supported:
 \verb|123.45e-2|, \verb|123.45E-2|, \verb|123.45e1|, \verb|123.45e+1|.
@@ -338,7 +342,7 @@ to allow for inference algorithms that are specialized for temporal models.
 \subsection{Whitespace and Comments}
 Tokens may be separated by whitespace characters: \textvisiblespace, tab-character, and new-line. 
 
-Comments are in the following two form:
+Comments are in the following two forms:
 \begin{itemize}
 \item A single-line comment is a sequence of characters starts with \verb|//| and extends to the end of the line, or
 \item A multi-line comment is a sequence of characters between \verb|/*| and \verb|*/|. Note any character after the first \verb|/*| and before the first \verb|*/| is interpreted as comment. Therefore \verb|/* /* */| is a valid comment, while \verb|/* /* */ */| is not because it has extra \verb|*/|, which \bl does not know how to interpret.
@@ -352,17 +356,21 @@ The types can be \hyperref[builtin-type-section]{built-in-types} or \hyperref[us
 
 
 \subsection{Built-in types}\label{builtin-type-section}
-\bl has the following built-in types. 
-Every such literal names an object in the world; thus, for example, every world implicitly contains all the integers.
-Each of the following types has corresponding literals, except from \verb|RealMatrix|. 
+\bl has the following built-in types:
 \begin{itemize}
-\item \verb|Boolean|: Boolean literals \verb|true|, \verb|false|.
-\item \verb|Integer|: Integer literals \verb|17|, \verb|-53|.
-\item \verb|Real|: Real literals \verb|0.2643|, \verb|27.2e+12|.
-\item \verb|String|: String literals \verb|"abc"|, \verb|"123*456"|.
-\item \verb|Timestep|: \verb|@0|, \verb|@100|. 
-\item \verb|RealMatrix|: denoting matrix type. Please see \secref{matrix-section} for detailed description of constructing a \verb|RealMatrix|.
+\item \verb|Boolean|
+\item \verb|Integer|
+\item \verb|Real|
+\item \verb|Character|
+\item \verb|String|
+\item \verb|Timestep|
+\item \verb|RealMatrix|
 \end{itemize}
+
+\secref{sec:literals} describes the literals defined for each type.
+
+\secref{matrix-section} describes how to construct a \verb|RealMatrix|.
+
 
 \subsection{User-defined types}\label{user-type-section}
 
@@ -427,7 +435,7 @@ supported. Arrays of user declared type are only supported in distinct symbols a
 Arrays can be used as return type of functions, but not as arguments of functions. However, some distributions take arrays as arguments.
 
 \subsubsection{Constructing List}\label{list-literal-section}
-As we already seen, we can use square brackets, \texttt{[]} to construct a List. Elements in a List are separated by commas (,). Lists can also be nested within other Lists. A shorthand notation is to use semicolons (;) to separated multiple Lists.
+As we have already seen, we can use square brackets, \texttt{[]} to construct a List. Elements in a List are separated by commas (,). Lists can also be nested within other Lists. A shorthand notation is to use semicolons (;) to separated multiple Lists.
 Thus, the following two Lists are equivalent:
 \begin{blogcode}
 [1, 2, 3; 4, 5, 6];
@@ -437,28 +445,15 @@ Thus, the following two Lists are equivalent:
 Lists are used to assign values to matrix, or to pass parameters to functions.
 
 \subsubsection{Matrices}\label{matrix-section}
-To define a Matrix
-\begin{blogcode}
-fixed RealMatrix table = [...];
-\end{blogcode}
-
-For example, a two dimensional array of int will be
+To define a RealMatrix:
 \begin{blogcode}
 fixed RealMatrix table = [[1, 2, 3], [4, 5, 6]];
 \end{blogcode}
-The following syntax in short hand is also correct:
+The following shorthand syntax is also allowed:
 \begin{blogcode}
 fixed RealMatrix table = [1, 2, 3; 4, 5, 6];
 \end{blogcode}
-
-
-For example, a transition matrix in Kalman filters with Newton dynamics can be declared as:
-\begin{blogcode}
-fixed RealMatrix A = [1, 1, .5; 0, 1, 1; 0, 0, 1];
-\end{blogcode}
-An element in such a dimensional array can be referred as \texttt{A[0][0]}.
-
-
+An element in such a matrix can be referred to as \texttt{table[0][0]}.
 
 Linear algebra operations on vectors and matrices are listed in
 in \appref{builtin-operator-appendix}, \ref{sec:builtin-matrix-ops}.
@@ -498,8 +493,8 @@ random Real sumsquare(Real x, Real y) = x^2 + y^2;
 
 When a function has zero arguments, the resulting empty parentheses may be dropped
 in both the declaration statement and in occurrences within expressions.
-A fixed function with no arguments is called a \emph{fixed constant}; for example,
-For example, constants can 
+A fixed function with no arguments is called a \emph{fixed constant}; for
+example:
 \begin{blogcode}
 fixed Real pi = 3.14159;
 fixed Real CircleArea(Real r) = pi * r^2;
@@ -524,7 +519,8 @@ described by the corresponding instantiation of the {\tt distribution\_expressio
 For example, the following statement says the height of a tree has a Gaussian distribution
 whose mean depends linearly on the tree's age and the growth rate of its species:
 \begin{blogcode}
-random Real height(Tree x) ~ Gaussian(Growthrate(Species(x))*Age(x), 4.0);
+random Real height(Tree x) ~
+    Gaussian(Growthrate(Species(x))*Age(x), 4.0);
 \end{blogcode}
 The full syntax of distribution expressions is described in \secref{distribution-section}.
 
@@ -564,6 +560,9 @@ As with random function declarations, a number statement can use a deterministic
 \begin{blogcode}
 #type_name ~ count-expression;
 \end{blogcode}
+% Unfortunately, the current accepted syntax is indeed "#Thing ~ 5",
+% and not "#Thing = 5".
+
 The {\tt count-expression} should evaluate to a nonnegative integer.
 
 \subsection{Origin functions}\label{origin-section}
@@ -632,7 +631,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
   expressions of the appropriate types.
 \item A reference to an array element {\tt A[e1]} or matrix element
   {\tt A[e1][e2]} where {\tt e1} and {\tt e2} are arbitrary
-  expressions of type \blog|Integer|.%% [[vector or matrix element?
+  expressions of type \verb|Integer|.%% [[vector or matrix element?
   %% need to fix our terminology and ontology; also need vector and
   %% matrix expressions, types for vectors and matrices]]
   References outside the array size will cause a runtime error.
@@ -643,7 +642,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
   type \texttt{Integer} or \texttt{Real};
   with the exception of {\tt /}, the type of the expression will be
   {\tt Integer} if all arguments are of type {\tt Integer}, and will
-  be of type {|tt Real} otherwise. The full list of arithmetic
+  be of type {\tt Real} otherwise. The full list of arithmetic
   operators is given in \appref{builtin-operator-appendix}, \tabref{tab:arithmeticop}.
   %%[[check type coercion for arithmetic expressions]]
   %%[[are a + b + c and d * e * f and d + e - f -g allowed?]]
@@ -732,8 +731,8 @@ forall Boolean b (b => b)
 \end{blogcode}
 is true in all worlds, because the Boolean objects in all worlds are 
 just {\it true} and {\it false}, and the built-in function {\tt =>}
-has value {\it true} for both {\tt (}{\it true}{\tt => }{\it true}{\tt )}
-and {\tt (}{\it false}{\tt => }{\it false}{\tt )}.
+has value {\it true} for both {\tt (}{\it true} {\tt =>} {\it true}{\tt )}
+and {\tt (}{\it false} {\tt =>} {\it false}{\tt )}.
 
 An existentially quantified formula has the form
 \begin{blogcode}
@@ -780,7 +779,7 @@ The most general form is
 {expression for type_name var: condition}
 \end{blogcode}
 where {\tt expression} is any expression, possibly including {\tt
-  var}; \verb|type\_name| is any declared or built-in type; {\tt var} is
+  var}; \verb|type_name| is any declared or built-in type; {\tt var} is
 a logical variable; and {\tt condition} is any Boolean expression,
 possibly containing {\tt var}. The value of the set expression in any
 world is the set of objects that are possible values of {\tt
@@ -941,10 +940,8 @@ Categorical({true -> 0.3, false -> 0.7});
 defines a distribution with a 0.3 probability for {\tt true} and a 0.7
 probability for {\tt false}.
 
-The probability values in the map argument should sum to 1.0;
-otherwise, a default \texttt{null} key will be added with a
-probability value equal to the residual probability.  On the other hand, if the probabilities sum to more than 1.0, the BLOG
-compiler will automatically normalize the weights.
+BLOG will automatically normalize the probability values in the map, so that
+they sum to 1.0.
 
 
 \subsection{UniformChoice from Set} \label{uniformchoice-section}
@@ -977,17 +974,19 @@ Distribution<type>  name = Categorical(Array<Real>);
 
 
 \section{Observing evidence}\label{evidence-section}
-Evidence statements may be declared in two ways.  The first is form is known as value evidence, and is of form:
+Evidence statements may be declared in two ways.  The first way is known as
+value evidence, and is of the form:
 \begin{blogcode}
 obs expression1 = expression2;
 \end{blogcode}
-where \texttt{expression1} should be random function application expression without free variables.  For example:
+where \texttt{expression1} should be a random function application expression
+without free variables.  For example:
 \begin{blogcode}
 random Real x ~ Gaussian(1.0);
 obs x = 0.5;
 \end{blogcode}
 
-The second way is known as symbol evidence, and is of form:
+The second way is known as symbol evidence, and is of the form:
 \begin{blogcode}
 obs {x for type x : expression(x)} = { x1, x2, ...}
 \end{blogcode}
@@ -1005,7 +1004,7 @@ query expression;
 \end{blogcode}
 where \texttt{expression} is a function application expression without free variables or formulas. The result will be the posterior distribution given the observations. 
 
-[[fix to add multiple tosses, give answer]]
+\reminder{fix to add multiple tosses, give answer}
 \begin{blogcode}
 random Boolean even ~ BooleanDistrib(0.5);
 random Boolean head ~
