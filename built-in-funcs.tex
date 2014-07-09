@@ -1,124 +1,166 @@
-Operators such as \verb|+|, \verb|-|, etc. are used in infix form, e.g. 1 + 2 +
-3. Functions are used in the familiar way: \verb|func(arg1, arg2)|.
+\subsection{Unary operators}
+\label{sec:builtin-unary-ops}
 
-We show the type signature of each function and operator. For example, {\tt *:
-Real x RealMatrix -> RealMatrix} means that the operator \verb|*| takes a
-\verb|Real| argument and a \verb|RealMatrix| argument, and produces a
-\verb|RealMatrix| result.
+The operators are listed in order of precedence, with highest precedence at the
+top.
+
+% NOTE: Check BLOGParser.cup for precedence.
+\begin{table}[H]
+\centering
+\begin{tabular}{ c c c c }
+\toprule
+operator & argument type & result type & meaning \\
+\midrule
+\verb|-| & Integer & Integer & minus \\
+\verb|-| & Real & Real & minus \\
+\verb|-| & RealMatrix & RealMatrix & minus \\
+\verb|!| & Boolean & Boolean & negation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Binary operators}
+\label{sec:builtin-binary-ops}
+
+The operators are listed in order of precedence, with highest precedence at the
+top.
+
+% NOTE: Check BLOGParser.cup for precedence.
+\begin{table}[H]
+\centering
+\begin{tabular}{ c c c c c }
+\toprule
+left-hand type & operator & right-hand type & result type & meaning \\
+\midrule
+
+Integer & \verb|*| & Integer & Integer & multiply \\
+Real & \verb|*| & Real & Real & multiply \\
+Timestep & \verb|*| & Integer & Timestep & multiply \\
+
+Integer & \verb|/| & Integer & Integer & divide \\
+Real & \verb|/| & Real & Real & divide \\
+Timestep & \verb|/| & Integer & Timestep & divide \\
+
+Integer & \verb|%| & Integer & Integer & modulus \\
+
+Real & \verb|^| & Real & Real & power \\
+
+Integer & \verb|+| & Integer & Integer & plus \\
+Real & \verb|+| & Real & Real & plus \\
+Timestep & \verb|+| & Integer & Timestep & plus \\
+String & \verb|+| & String & String & concatenate \\
+
+Integer & \verb|-| & Integer & Integer & minus \\
+Real & \verb|-| & Real & Real & minus \\
+Timestep & \verb|-| & Integer & Timestep & minus \\
+
+Integer & \verb|<| & Integer & Boolean & less than \\
+Real & \verb|<| & Real & Boolean & less than \\
+Timestep & \verb|<| & Timestep & Boolean & less than \\
+
+Integer & \verb|>| & Integer & Boolean & greater than \\
+Real & \verb|>| & Real & Boolean & greater than \\
+Timestep & \verb|>| & Timestep & Boolean & greater than \\
+
+Integer & \verb|<=| & Integer & Boolean & less than or equal \\
+Real & \verb|<=| & Real & Boolean & less than or equal \\
+Timestep & \verb|<=| & Timestep & Boolean & less than or equal \\
+
+Integer & \verb|>=| & Integer & Boolean & greater than or equal \\
+Real & \verb|>=| & Real & Boolean & greater than or equal \\
+Timestep & \verb|>=| & Timestep & Boolean & greater than or equal \\
+
+Any & \verb|==| & Any & Boolean & equal to \\
+
+Any & \verb|!=| & Any & Boolean & not equal to \\
+
+Boolean & \verb|&| & Boolean & Boolean & and \\
+
+Boolean & \verb||| & Boolean & Boolean & or \\
+
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 \subsection{Constants}
 \label{sec:builtin-constants}
 
-\verb|e: Real|,  the base of the natural logarithm (approximately equal to $2.71828$).
+\blog|Real e|
+\myindent The base of the natural logarithm (approximately equal to $2.71828$).
 
-\verb|pi: Real| The $\pi$ constant (approximately equal to $3.14159$).
-
-
-\subsection{Comparison operators}
-\label{sec:builtin-comparison}
-
-\verb|<: Real x Real -> Boolean|
-
-\verb|<=: Real x Real -> Boolean|
-
-\verb|>: Real x Real -> Boolean|
-
-\verb|>=: Real x Real -> Boolean|
-
-\reminder{what about == and != ??? They're not in BuiltInFunctions.java}
-
-
-\subsection{Arithmetic operations}
-\label{sec:builtin-arithmetic}
-
-\verb|+: Integer x Integer -> Integer| \\
-\verb|+: Real x Real -> Real| \\
-\verb|+: Timestep x Integer -> Timestep|
-
-\verb|-: Integer x Integer -> Integer| \\
-\verb|-: Real x Real -> Real| \\
-\verb|-: Timestep x Integer -> Timestep|
-
-\verb|*: Integer x Integer -> Integer| \\
-\verb|*: Real x Real -> Real| \\
-\verb|*: Timestep x Integer -> Timestep|
-
-\verb|/: Integer x Integer -> Integer| \\
-\verb|/: Real x Real -> Real| \\
-\verb|/: Timestep x Integer -> Timestep|
-
-\verb|^: Real x Real -> Real|
-
-\verb|abs: Integer -> Integer| \\
-\verb|abs: Real -> Real| Absolute value.
-
-\verb|exp: Integer -> Real| \\
-\verb|exp: Real -> Real| Exponential.
-
-\reminder{no log??}
-
-\verb|%: Integer x Integer -> Integer| \\
-\verb|%: Timestep x Integer -> Timestep| Modulus.
+\blog|Real pi|
+\myindent The $\pi$ constant (approximately equal to $3.14159$).
 
 
 \subsection{Matrix operations}
 \label{sec:builtin-matrix-ops}
 
-\verb|+: RealMatrix x RealMatrix -> RealMatrix|
+For functions, a type signature like \verb|RealMatrix eye(Integer dim)| means
+that the function \verb|eye| takes a single \verb|Integer| and produces a
+\verb|RealMatrix|.
 
-\verb|-: RealMatrix x RealMatrix -> RealMatrix|
+\blog|RealMatrix inv(RealMatrix x)|
+\myindent Inverse of the matrix \verb|x|.
 
-\verb|*: RealMatrix x RealMatrix -> RealMatrix| \\
-\verb|*: RealMatrix x Real -> RealMatrix| \\
-\verb|*: Real x RealMatrix -> RealMatrix|
+\blog|RealMatrix transpose(RealMatrix x)|
+\myindent Transpose of the matrix \verb|x|.
 
-\verb|inv(x)|
-\parahead{Argument:} \verb|x|, \verb|RealMatrix| 
-\parahead{Result:} \verb|RealMatrix|, inverse of the matrix \verb|x|.
+\blog|RealMatrix det(RealMatrix x)|
+\myindent Determinant of the matrix \verb|x|.
 
-\verb|transpose(x)|
-\parahead{Argument:} \verb|x|, \verb|RealMatrix| 
-\parahead{Result:} \verb|RealMatrix|, transpose of the matrix \verb|x|.
+\blog|RealMatrix diag(RealMatrix vals)|
+\myindent Diagonal matrix with the given values on the diagonal. \verb|vals|
+must be a
+column vector.
 
-\verb|transpose: RealMatrix -> RealMatrix| Matrix transpose.
+\blog|RealMatrix repmat(RealMatrix m, Integer rows, Integer cols)|
+\myindent Return the matrix \verb|m| tiled \verb|rows| times vertically and
+\verb|cols|
+times horizontally.
 
-\verb|det: RealMatrix -> Real| Matrix determinant.
+\blog|RealMatrix sum(RealMatrix m)|
+\myindent Column-wise sum of a matrix.
+For example, \verb|sum([1, 2; 3, 4])| returns \verb|[4, 6]|.
 
-\verb|diag: RealMatrix -> RealMatrix| Takes a column vector of values, and
-returns a diagonal matrix with the given values on the diagonal.
-
-\verb|repmat: RealMatrix x Integer x Integer -> RealMatrix| Return a tiled
-matrix. For example, \verb|repmat(x, 2, 3)| returns a matrix obtained by tiling
-6 copies of \verb|x| in two rows and three columns.
-
-\verb|sum: RealMatrix -> RealMatrix| Column-wise sum of a matrix. For example,
-\verb|sum([1, 2; 3, 4])| returns \verb|[4, 6]|.
-
-\verb|hstack: RealMatrix... -> RealMatrix| \\
-\verb|hstack: Real... -> RealMatrix| Stacks scalars or matrices horizontally.
+\blog|RealMatrix hstack(RealMatrix arg1, ...)|
+\blog|RealMatrix hstack(Real arg1, ...)|
+\myindent Stack scalars or matrices horizontally. Accepts an arbitrary number
+of
+arguments.
 For example, \verb|hstack(1, 2, 3)| returns the row vector {\tt [1, 2, 3]}.
 
-\verb|vstack: RealMatrix... -> RealMatrix| \\
-\verb|vstack: Real... -> RealMatrix| Stacks scalars or matrices vertically. For
-example, \verb|vstack(1, 2, 3)| returns the column vector {\tt [1; 2; 3]}.
+\blog|RealMatrix vstack(RealMatrix arg1, ...)|
+\blog|RealMatrix vstack(Real arg1, ...)|
+\myindent Stack scalars or matrices vertically. Accepts an arbitrary number of
+arguments.
+For example, \verb|vstack(1, 2, 3)| returns the column vector {\tt [1; 2; 3]}.
 
-\verb|eye: Integer -> RealMatrix| Returns an identity matrix of the given size.
+\blog|RealMatrix eye(Integer dim)|
+\myindent Identity matrix of the given size.
 For example, \verb|eye(5)| returns a 5x5 identity matrix.
 
-\verb|zeros: Integer x Integer -> RealMatrix| Returns a matrix of the given size, filled with zeros.  For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
+\blog|RealMatrix zeros(Integer rows, Integer cols)|
+\myindent Matrix of the given size, filled with zeros.
+For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
 
-\verb|ones: Integer x Integer -> RealMatrix| Returns a matrix of the given
-size, filled with ones.  For example, \verb|ones(3, 4)| returns a 3x4 matrix of
-ones.
+\blog|RealMatrix ones(Integer rows, Integer cols)|
+\myindent Matrix of the given size, filled with ones.
+For example, \verb|ones(3, 4)| returns a 3x4 matrix of ones.
 
-\verb|abs: RealMatrix -> RealMatrix| Element-wise absolute value.
+\blog|RealMatrix abs(RealMatrix m)|
+\myindent Element-wise absolute value.
 
-\verb|exp: RealMatrix -> RealMatrix| Element-wise exponential of a matrix.
+\blog|RealMatrix exp(RealMatrix m)|
+\myindent Element-wise exponential of a matrix.
 
-\verb|[]: RealMatrix x Integer -> RealMatrix| Index a matrix. For example,
-\verb|m[i]| returns the \verb|i|-th row of \verb|m|. \\
-\verb|[]: Real[] x Integer -> Real| Index an array.
+Use square brackets to index into a matrix. If \verb|m| is a two-dimensional
+matrix, \verb|m[i]| returns the \verb|i|-th row of \verb|m|. If \verb|m| is a
+row or column vector, \verb|m[i]| returns the \verb|i|-th element of \verb|m|.
+Note that the resulting value is a \verb|RealMatrix|. To get the i,j-th
+element, use \verb|toInt(m[i][j])|.
 
 It is a runtime error to perform matrix operations with dimensions that do not
 match.
@@ -127,64 +169,102 @@ match.
 \subsection{Set operations}
 \label{sec:builtin-set-ops}
 
-\verb|min: Set -> Integer| Minimum of a set.
+\blog|Any min(Set s)|
+\myindent Minimum of a set.
 
-\verb|max: Set -> Integer| Maximum of a set.
+\blog|Any max(Set s)|
+\myindent Maximum of a set.
 
-\verb|sum: Set -> Real| Sum of elements in a set of Real values.
+\blog|Real sum(Set s)|
+\myindent Sum of elements in a set of Real values.
 
-\verb|size: Set -> Integer| Number of elements in a set.
+\blog|Integer size(Set s)|
+\myindent Number of elements in a set.
 
-\verb|iota: Set -> Any| Extract element from a singleton set. For example,
-\verb|iota({6})| evaluates to \verb|6|.
+\blog|Any iota(Set s)|
+\myindent Extract element from a singleton set.
+For example, \verb|iota({6})| evaluates to \verb|6|.
+
+Note: \verb|Any| is an internal BLOG type not meant to be used by the end user.
+It is necessary here because the BLOG type system does not distinguish between,
+for example, a \verb|Set| of \verb|Real|s and a \verb|Set| of \verb|Integer|s.
+Assigning an \verb|Any| value to a variable of the wrong type is a runtime
+error.
 
 
-\verb|round: Real -> Integer| Round a Real to the nearest Integer.  For
-example, \verb|round(1.6)| evaluates to \verb|2|.
+\subsection{Conversions between types}
+\label{sec:builtin-conversions}
 
-\verb|toInt: Real -> Integer| Convert to Integer, rounding towards zero. \\
-\verb|toInt: Boolean -> Integer| Convert false to 0, true to 1. \\
-\verb|toInt: Integer -> Integer| Identity. \\
-\verb|toInt: RealMatrix -> Integer| Extract the element from a 1x1 RealMatrix,
-and convert it to an Integer by rounding towards zero.
+\blog|Integer round(Real val)|
+\myindent Round a Real to the nearest Integer.
+For example, \verb|round(1.6)| evaluates to \verb|2|.
 
-\verb|toReal: Real -> Real| Identity. \\
-\verb|toReal: Boolean -> Real| Convert false to 0.0, true to 1.0. \\
-\verb|toReal: Integer -> Real| Convert Integer to Real. \\
-\verb|toReal: RealMatrix -> Real| Extract the element from a 1x1 RealMatrix,
-and convert it to a Real.
+\blog|Integer toInt(Real val)|
+\myindent Convert to Integer, rounding towards zero.
+
+\blog|Integer toInt(Boolean val)|
+\myindent Convert false to 0, true to 1.
+
+\blog|Integer toInt(RealMatrix val)|
+\myindent Extract the element from a 1x1 RealMatrix, and convert it to an
+Integer by rounding towards zero.
+
+\blog|Real toReal(Boolean val)|
+\myindent Convert false to 0.0, true to 1.0.
+
+\blog|Real toReal(Integer val)|
+\myindent Convert Integer to Real.
+
+\blog|Real toReal(RealMatrix val)|
+\myindent Extract the element from a 1x1 RealMatrix, and convert it to a Real.
 
 
 \subsection{Trigonometric functions}
 \label{sec:builtin-trig}
 
-\verb|sin: Real -> Real| Sine of the given value in radians.
+\blog|Real sin(Real radians)|
+\myindent Sine of the given value.
 
-\verb|cos: Real -> Real| Cosine of the given value in radians.
+\blog|Real cos(Real radians)|
+\myindent Cosine of the given value.
 
-\verb|tan: Real -> Real| Tangent of the given value in radians.
+\blog|Real tan(Real radians)|
+\myindent Tangent of the given value.
 
-\verb|atan2: Real x Real -> Real| Arctangent. Analogous to the \verb|atan2|
-function in Java.
+\blog|Real atan2(Real y, Real x)|
+\myindent Arctangent. Analogous to the \verb|atan2| function in Java.
 
 
 \subsection{Miscellaneous functions}
 \label{sec:builtin-misc}
 
-\verb|succ: Integer -> Integer| Return the next integer.
+\blog|Integer abs(Integer x)|
+\blog|Real abs(Real x)|
+\myindent Absolute value.
 
-\verb|pred: Integer -> Integer| Return the previous integer.
+\blog|Real exp(Integer x)|
+\blog|Real exp(Real x)|
+\myindent Exponential.
 
-\verb|next: Timestep -> Timestep| Return the next timestep.
+\blog|Real log(Integer x)|
+\blog|Real log(Real x)|
+\myindent Natural logarithm.
 
-\verb|prev: Timestep -> Timestep| Return the next timestep.
+\blog|Integer succ(Integer n)|
+\myindent The next integer.
 
-\verb|+: String x String -> String| Concatenate strings.
+\blog|Integer pred(Integer n)|
+\myindent The previous integer.
 
-\verb|isEmptyString: String -> Boolean| Return true iff string is empty.
+\blog|Timestep next(Timestep t)|
+\myindent The next timestep.
 
-\verb|loadRealMatrix: String -> RealMatrix| Load a \verb|RealMatrix| from a
-text file. The space-separated formats produced by numpy and Matlab are
-supported.
+\blog|Timestep prev(Timestep t)|
+\myindent The previous timestep.
 
+\blog|Boolean isEmptyString(String s)|
+\myindent True iff string is empty.
 
+\blog|RealMatrix loadRealMatrix(String s)|
+\myindent Load a \verb|RealMatrix| from a text file. The space-separated
+formats produced by numpy and Matlab are supported.
