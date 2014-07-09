@@ -1,16 +1,21 @@
 This section lists the distributions included in \bl standard library.
 
+
 \subsection{Bernoulli($p$)}
-\textbf{\texttt{Integer Bernoulli(Real p)}}
 Bernoulli distribution generates the value $1$ with probability $p$ and $0$ with probability $1-p$. 
+
 \parahead{Parameters:} 
 \begin{itemize*}
 \item[] \verb|Real|
  $p$, $0 \leq p \leq 1$ 
 \end{itemize*}
-\paragraph*{Support:} \verb|Integer|, $k \in \{0, 1\}$ 
 
-\paragraph*{Probability mass function:}
+\parahead{Support:}
+\begin{itemize*}
+\item[] \verb|Integer|, $k \in \{0, 1\}$ 
+\end{itemize*}
+
+\parahead{Probability mass function:}
 \[
 	P(X = k) = \left\{
 	  \begin{array}{lr}
