@@ -1,5 +1,45 @@
 \subsection{User-defined functions}\label{user-defined-function-section}
 
+A user-defined function must extend \verb|blog.model.AbstractFunctionInterp|
+and provide a constructor that takes a single \verb|List| argument.
+
+By default, the \bl engine will look for user-defined functions in the package
+\verb|blog.distrib|. In addition, it will look for user-defined functions under
+the default empty package.
+
+Here is an example user-defined function computing the logarithm in base 10 of
+a number:
+
+\begin{minted}{java}
+package blog.distrib;
+
+import java.util.List;
+
+import blog.model.AbstractFunctionInterp;
+
+public class Log10Interp extends AbstractFunctionInterp {
+  public Log10Interp(List args) {
+  }
+
+  public Object getValue(List args) {
+    final double value = ((Number) args.get(0)).doubleValue();
+    return Math.log10(value);
+  }
+}
+\end{minted}
+
+To use this function from a model, declare it like this:
+
+\begin{blogcode}
+fixed Real log10(Real val) = Log10Interp();
+\end{blogcode}
+
+Then \verb|log10| can be used just like any other built-in function, e.g.
+\verb|query log10(100.0)|.
+
+For more advanced examples of user-defined functions, see
+\verb|blog.distrib.ListInterp| and \verb|blog.distrib.TabularInterp|.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
