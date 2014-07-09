@@ -644,7 +644,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
   with the exception of {\tt /}, the type of the expression will be
   {\tt Integer} if all arguments are of type {\tt Integer}, and will
   be of type {\tt Real} otherwise. The full list of arithmetic
-  operators is given in \appref{builtin-operator-appendix}, \tabref{tab:arithmeticop}.
+  operators is given in \appref{builtin-operator-appendix}.
   %%[[check type coercion for arithmetic expressions]]
   %%[[are a + b + c and d * e * f and d + e - f -g allowed?]]
   Expressions of the form {\tt det(M)}, where {\tt M} is an expression
@@ -1020,12 +1020,34 @@ query even;
 \section{Extending \bl}\label{extending-section}
 \input{extending.tex}
 
+\appendix
+
+\phantomsection
+\addcontentsline{toc}{section}{\appendixtocname}
+
+\hide{
+\section{A Brief  History of BLOG}\label{history-appendix}
+Bayesian Logic (BLOG) was first developed by Brian Milch in 2005. Since then, major contribution is from various members of Professor Stuart Russell's research group at University of California Berkeley. 
+
+The initial syntax and semantics of \bl was described in 
+
+\begin{quote}
+Brian Milch, Bhaskara Marthi, Stuart Russell, David Sontag, Daniel L. Ong, and Andrey Kolobov (2005) "BLOG: Probabilistic Models with Unknown Objects". Proc. 19th International Joint Conference on Artificial Intelligence (IJCAI): 1352-1359.
+\end{quote}
+
+Dr. Rodrigo Braz introduced Timestep into BLOG. Milch and Braz released \bl 0.3 in 2008.
+
+Dr. Lei Li has been leading the development of the language and \bl inference system since 2011. Since then, the language sees major changes, as well as the inference engine. New algorithms are introduced. However, the semantics of \bl remain the same as the original. 
+}
+
+\section{\bl Grammar Definition}\label{bnf-appendix}
+\input{blog-bnf.tex}
+
 \section{Built-in operators and functions}\label{builtin-operator-appendix}
 \input{built-in-funcs.tex}
 
 \section{Built-in distributions}\label{builtin-distribution-appendix}
 \input{distribution-lib.tex}
-
 
 
 \end{document}
