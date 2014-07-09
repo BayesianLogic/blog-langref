@@ -1,17 +1,15 @@
 \subsection{User-defined functions}\label{user-defined-function-section}
 
 A user-defined function must extend \verb|blog.model.AbstractFunctionInterp|
-and provide a constructor that takes a single \verb|List| argument.
-
-By default, the \bl engine will look for user-defined functions in the package
-\verb|blog.distrib|. In addition, it will look for user-defined functions under
-the default empty package.
+and provide a constructor that takes a single \verb|List| argument. When
+compiling the class defining the user-defined function, you must add the \bl
+JAR file to the class path.
 
 Here is an example user-defined function computing the logarithm in base 10 of
 a number:
 
 \begin{minted}{java}
-package blog.distrib;
+package my_package;
 
 import java.util.List;
 
@@ -31,11 +29,18 @@ public class Log10Interp extends AbstractFunctionInterp {
 To use this function from a model, declare it like this:
 
 \begin{blogcode}
-fixed Real log10(Real val) = Log10Interp();
+fixed Real log10(Real val) = my_package.Log10Interp();
 \end{blogcode}
 
-Then \verb|log10| can be used just like any other built-in function, e.g.
+Then \verb|log10| can be used just like any other fixed function, e.g.
 \verb|query log10(100.0)|.
+
+Make sure \verb|my_package| is on the class path. If you get an error like "No
+definition found for non-random function log10", you most likely have a
+class-path problem. If \verb|my_package| is in the current working directory,
+you need not do anything. Otherwise, if \verb|my_package| lives at
+\verb|/some/absolute/path/my_package|, launch \bl with an environment variable:
+{\tt CLASSPATH=/some/absolute/path blog model.blog}.
 
 For more advanced examples of user-defined functions, see
 \verb|blog.distrib.ListInterp| and \verb|blog.distrib.TabularInterp|.
