@@ -41,6 +41,49 @@ fixed Real CircleArea(Real r) = pi * r^2;
 \end{blogcode}
 
 
+%%%%
+\subsubsection{List interpretations}\label{sec:list-interp}
+
+The \verb|ListInterp| construct allows defining a relation by exhaustively
+listing the tuples for which it holds. The first argument of \verb|ListInterp|
+is the number of arguments to the relation. The remaining arguments list the
+tuples for which the relation is true. The relation is implicitly false for any
+tuple not listed. For example:
+
+\begin{blogcode}
+fixed Boolean Teaches(Professor p, Course c)
+    = ListInterp(2, Smith, CS106,
+                    Jones, CS106,
+                    Moriarty, Phil80,
+                    Jones, Stat10);
+\end{blogcode}
+
+With this definition, {\tt Teaches(Jones, CS106)} evaluates to \verb|true|,
+while {\tt Teaches(Jones, Math101)} evaluates to \verb|false|.
+
+
+%%%%
+\subsubsection{Tabular interpretations}\label{sec:tabular-interp}
+
+The \verb|TabularInterp| construct allows defining a function by exhaustively
+listing the mapping it performs from arguments to return value. The first
+argument to \verb|TabularInterp| is the number of arguments to the function.
+The remaining arguments list the arguments and return value for which the
+function is defined. The function will return \verb|null| for any other tuple
+of arguments. For example:
+
+\begin{blogcode}
+fixed Integer Score(Student s, Course c)
+  = TabularInterp(2, Alice, CS106, 80,
+                     Alice, Phil80, 55,
+                     Bob, CS106, 65,
+                     Bob, Stat10, 35);
+\end{blogcode}
+
+With this definition, {\tt Score(Alice, Phil80)} evaluates to \verb|55|, while
+{\tt Score(Bob, Phil80)} evalutes to \verb|null|.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Random functions}\label{random-function-section}
