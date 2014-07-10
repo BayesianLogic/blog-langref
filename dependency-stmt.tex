@@ -1,0 +1,123 @@
+A {\em dependency statement} constrains the value of functions applied to objects. In the case of ordinary programming languages,
+as well as in the case of built-in functions in \bl, the value of a function applied to a given tuple of input objects is {\em fixed},
+i.e., it is the same in all worlds. Dependency statements for fixed functions are described in \secref{fixed-section}. On the other hand, a {\em random} function
+is one about whose values there is uncertainty, so that the values may vary across possible worlds. Dependency statements for random functions are described in \secref{random-function-section}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Fixed functions}\label{fixed-section}
+
+\bl allows the user to declare that there is {\em no} uncertainty concerning the value of a given function; that is, the
+value of the function applied to given arguments is the same in all worlds. Such a fixed function is declared as follows:
+\begin{blogcode}
+fixed type_name0 function_name(type_name1 var1, ...) = 
+  fixed_expression;
+\end{blogcode}
+This statement defines a fixed function with name \texttt{function\_name} whose arguments are {\tt var1} (of type \verb|type_name1|), etc.,
+and whose return type is \verb|type_name0|. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
+all elements of the corresponding types.
+
+The function body is a fixed expression, which may be
+\begin{itemize*}
+\item a literal from one of the built-in types or a declared distinct symbol;
+\item a logical variable from the argument list;
+\item a \hyperref[builtin-operator-appendix]{built-in operator}, fixed function, or \hyperref[external-function-appendix]{externally defined function} applied to fixed expressions.
+\end{itemize*}
+Put another way, a fixed expression is one containing no random function applications.
+
+The following example defines a function to calculate the sum of squares:
+\begin{blogcode}
+random Real sumsquare(Real x, Real y) = x^2 + y^2;
+\end{blogcode}
+
+When a function has zero arguments, the resulting empty parentheses may be dropped
+in both the declaration statement and in occurrences within expressions.
+A fixed function with no arguments is called a \emph{fixed constant}; for
+example:
+\begin{blogcode}
+fixed Real pi = 3.14159;
+fixed Real CircleArea(Real r) = pi * r^2;
+\end{blogcode}
+
+
+%%%%
+\subsubsection{List interpretations}\label{sec:list-interp}
+
+The \verb|ListInterp| construct allows defining a relation by exhaustively
+listing the tuples for which it holds. The first argument of \verb|ListInterp|
+is the number of arguments to the relation. The remaining arguments list the
+tuples for which the relation is true. The relation is implicitly false for any
+tuple not listed. For example:
+
+\begin{blogcode}
+fixed Boolean Teaches(Professor p, Course c)
+    = ListInterp(2, Smith, CS106,
+                    Jones, CS106,
+                    Moriarty, Phil80,
+                    Jones, Stat10);
+\end{blogcode}
+
+With this definition, {\tt Teaches(Jones, CS106)} evaluates to \verb|true|,
+while {\tt Teaches(Jones, Math101)} evaluates to \verb|false|.
+
+
+%%%%
+\subsubsection{Tabular interpretations}\label{sec:tabular-interp}
+
+The \verb|TabularInterp| construct allows defining a function by exhaustively
+listing the mapping it performs from arguments to return value. The first
+argument to \verb|TabularInterp| is the number of arguments to the function.
+The remaining arguments list the arguments and return value for which the
+function is defined. The function will return \verb|null| for any other tuple
+of arguments. For example:
+
+\begin{blogcode}
+fixed Integer Score(Student s, Course c)
+  = TabularInterp(2, Alice, CS106, 80,
+                     Alice, Phil80, 55,
+                     Bob, CS106, 65,
+                     Bob, Stat10, 35);
+\end{blogcode}
+
+With this definition, {\tt Score(Alice, Phil80)} evaluates to \verb|55|, while
+{\tt Score(Bob, Phil80)} evalutes to \verb|null|.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Random functions}\label{random-function-section}
+
+To declare a random function, there are two possible forms. The first describes a probabilistic
+conditional dependency:
+\begin{blogcode}
+random type_name0 function_name(type_name1 var1, ...) ~ 
+  distribution_expression;
+\end{blogcode}
+This form defines a random function with name \texttt{function\_name} whose arguments are {\tt var1} (of type \verb|type_name1|), etc.,
+and whose return type is \verb|type_name0|. The logical variables {\tt var1}, {\tt var2}, etc., are implicitly universally quantified over
+all elements of the corresponding types and may appear in the distribution expression. The statement asserts that for any possible instantiation of the
+logical variables with objects, the resulting random variable has a conditional probability distribution
+described by the corresponding instantiation of the {\tt distribution\_expression}. The {\tt distribution\_expression} must return a concrete distribution. 
+
+For example, the following statement says the height of a tree has a Gaussian distribution
+whose mean depends linearly on the tree's age and the growth rate of its species:
+\begin{blogcode}
+random Real height(Tree x) ~
+    Gaussian(Growthrate(Species(x))*Age(x), 4.0);
+\end{blogcode}
+The full syntax of distribution expressions is described in \secref{distribution-section}.
+
+The second form describes a deterministic dependency:
+\begin{blogcode}
+random type_name0 function-name(type_name1 var1, ...) = expression;
+\end{blogcode}
+As before, the logical variables may appear in the expression.
+Such a declaration is distinct from a fixed function declaration because, although the dependency is deterministic,
+the expression may contain other random function symbols. For example, 
+to express the fact that the observed value {\tt Y(t)} of some temporal process 
+is the underlying state {\tt X(t)} plus an additive Gaussian noise term, one may write
+\begin{blogcode}
+random Real Epsilon(Timestep t) ~ Gaussian(0.0,1.0);
+random Real Y(Timestep t) = X(t) + Epsilon(t);
+\end{blogcode}
