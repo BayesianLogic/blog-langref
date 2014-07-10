@@ -22,9 +22,9 @@ The function body is a fixed expression, which may be
 \begin{itemize*}
 \item a literal from one of the built-in types or a declared distinct symbol;
 \item a logical variable from the argument list;
-\item a \hyperref[builtin-operator-appendix]{built-in operator}, fixed function, or \hyperref[external-function-appendix]{externally defined function} applied to fixed expressions.
+\item a \hyperref[builtin-operator-appendix]{built-in operator}, fixed function, or \hyperref[user-defined-function-section]{externally defined function} applied to fixed expressions.
+\item other \hyperref[expression-section]{expressions} containing no random function applications nor Distributions.
 \end{itemize*}
-Put another way, a fixed expression is one containing no random function applications.
 
 The following example defines a function to calculate the sum of squares:
 \begin{blogcode}
@@ -40,6 +40,7 @@ fixed Real pi = 3.14159;
 fixed Real CircleArea(Real r) = pi * r^2;
 \end{blogcode}
 
+More types of expressions are in \secref{expression-section}.
 
 %%%%
 \subsubsection{List interpretations}\label{sec:list-interp}

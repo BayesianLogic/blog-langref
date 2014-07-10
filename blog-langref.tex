@@ -11,8 +11,8 @@
 \usepackage{color} % add more color
 \usepackage{longtable}
 \usepackage{url}
-\usepackage[square,comma]{natbib}
-\renewcommand{\cite}{\citep} % use the natbib style of citation
+%\usepackage[square,comma]{natbib}
+%\renewcommand{\cite}{\citep} % use the natbib style of citation
 \usepackage[tight]{subfigure}
 \usepackage{mdwlist}
 %\usepackage[letterpaper,twoside,vscale=.8,hscale=.75,nomarginpar,hmarginratio=1:1]{geometry}
@@ -37,6 +37,7 @@
 %\usepackage{titletoc}
 \usepackage{float}
 \usepackage{minted}
+
 %\usemintedstyle{colorful}
 
 
@@ -89,15 +90,10 @@ improvements in syntax, usability, and efficiency.
 
 \section{Introduction: Open-universe probability models and \bl}\label{intro-section}
 
-The initial syntax and semantics of \bl was described in 
-\href{http://www.cs.berkeley.edu/~russell/papers/srl04-blog.pdf}{{\it BLOG: Relational Modeling with Unknown Objects}}
-by Brian Milch, Bhaskara Marthi, and Stuart Russell (Proc. ICML-04 Workshop on Statistical Relational Learning, Banff, Canada, 2004),
-and in 
-\href{http://www.cs.berkeley.edu/~russell/papers/ijcai05-blog.pdf}{{\it BLOG: Probabilistic Models with Unknown Objects}}
-by Brian Milch, Bhaskara Marthi, Stuart Russell, David Sontag, Daniel L. Ong, and Andrey Kolobov (Proc. IJCAI-05, Edinburgh, 2005).
+The initial syntax and semantics of \bl was described in \cite{milch2004blog},
+and in \cite{milch2005blog}.
 The authors of these two papers contributed to the first implementation of the \bl language and inference algorithms.
-Full details of the formal semantics are given in the Brian Milch's PhD thesis,
-\href{https://sites.google.com/site/bmilch/papers/milch_thesis.pdf}{{\it Probabilistic Models with Unknown Objects}} (Computer Science Division, University of California, Berkeley, 2006).
+Full details of the formal semantics are given in the Brian Milch's PhD thesis \cite{milch2006probabilistic}.
 
 This document is primarily concerned with the detailed syntax of \bl, which has changed considerably from the initial version;
 it is helpful, nonetheless, to understand the key semantic ideas, which are based on first-order logic and have remained unchanged.
@@ -693,7 +689,7 @@ using predicate expressions, but sets are useful in two contexts:
   set of candidate values, e.g., as an argument to a distribution.
 \item When observing that certain distinct objects exist
 and constitute all objects satisfying a certain condition,
-a set expression can be used as the observation (see \secref{set-evidence-section}).
+a set expression can be used as the observation (see \secref{evidence-section}).
 \end{itemize}
 As with \hyperref[quantifier-section]{quantified formulas}, set
 expressions have a logical variable that ranges over a given type.
@@ -947,10 +943,12 @@ query even;
 
 
 
+\clearpage
 \appendix
 
 \phantomsection
 \addcontentsline{toc}{section}{\appendixtocname}
+
 
 \hide{
 \section{A Brief  History of BLOG}\label{history-appendix}
@@ -975,6 +973,13 @@ Dr. Lei Li has been leading the development of the language and \bl inference sy
 
 \section{Built-in distributions}\label{builtin-distribution-appendix}
 \input{distribution-lib.tex}
+
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{Bibliography}
+\bibliography{blog}
+\bibliographystyle{alpha}
 
 
 \end{document}
