@@ -549,7 +549,7 @@ An expression can include both fixed and random terms.  Expressions are of the f
 \end{itemize}
 \item A function application expression {\tt function-name(e1, e2,
   ...)}, where {\tt function-name} is a fixed, random, origin, or
-  \hyperref[external-function-section]{externally defined} function
+  \hyperref[user-defined-function-section]{user defined} function
   symbol and the arguments {\tt e1}, {\tt e2,}, etc., are
   expressions of the appropriate types.
 \item A reference to an array element {\tt A[e1]} or matrix element
@@ -612,7 +612,7 @@ The general form is
 \begin{blogcode}
 if condition then expression1 else expression2
 \end{blogcode}
-where \texttt{condition} is a \hyperref[Boolean-expression-section]{Boolean expression} and \texttt{expression1} and \texttt{expression2}
+where \texttt{condition} is a \hyperref[builtin-operator-appendix]{Boolean expression} and \texttt{expression1} and \texttt{expression2}
 are expressions. For example, suppose that a {\tt Coin} is exactly {\tt Fair} with probability 0.99, and that
 a fair coin comes up heads half the time and a biased coin comes up heads roughly 80\% of the time:
 \begin{blogcode}
@@ -636,7 +636,7 @@ Note that if-then-else can be nested.
 
 \subsection{Quantified formula}\label{quantifier-section}
 \bl allows quantified formulas, as in typed first-order logic. 
-Each such formula constitutes a Boolean expression.
+Each such formula constitutes a Boolean expression, i.e. its result type is \verb|Boolean|.
 
 A universally quantified formula has the form
 \begin{blogcode}
@@ -941,6 +941,11 @@ query even;
 
 \section{Extending \bl}\label{extending-section}
 \input{extending.tex}
+
+\section{Comprehensive examples}\label{example-section}
+\input{example.tex}
+
+
 
 \appendix
 

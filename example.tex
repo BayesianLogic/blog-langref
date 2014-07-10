@@ -1,0 +1,130 @@
+\subsection{Burglary}
+The following example was due initially to Judea Pearl:
+the alarm in a house goes off in response to a burglary or an earthquake,
+but is somewhat unreliable. We might write the following model:
+\begin{blogcode}
+type House;
+
+distinct House Maryhouse, Johnhouse, Cathyhouse, Rogerhouse;
+
+random Boolean Burglary(House h) ~ BooleanDistrib(0.003);
+random Boolean Earthquake ~ BooleanDistrib(0.002);
+random Boolean Alarm(House h) ~ 
+  case [Burglary(h), Earthquake] in {
+    [false, false] -> BooleanDistrib(0.01),
+    [false, true]  -> BooleanDistrib(0.40),
+    [true, false]  -> BooleanDistrib(0.80),
+    [true, true ]  -> BooleanDistrib(0.90)
+  };
+
+obs Alarm(Maryhouse) = true;
+obs Alarm(Johnhouse) = true;
+obs Alarm(Cathyhouse) = true;
+obs Alarm(Rogerhouse) = false;
+
+query Earthquake;
+\end{blogcode}
+
+\bl inference engine will produce the following likelihood of earthquake.
+\begin{verbatim}
+Number of samples: 10000
+Distribution of values for Earthquake
+	true	0.967140181036552
+	false	0.03285981896344725
+\end{verbatim}
+
+
+\subsection{A hidden Markov model for genetic sequences}
+\begin{example}[Hidden Markov models]
+The following represents a hidden Markov model for genetic sequences with four states and four output symbols. The state at each time step transitions to another with respect to a conditional distribution specified by a TabularCPD. 
+Each state at each time step emits an observation with respect to another CPD. After making a few observations, we can query the states for each time step.
+\end{example}
+
+\begin{blogcode}
+type State;
+distinct State A, C, G, T;
+
+type Output;
+distinct Output ResultA, ResultC, ResultG, ResultT;
+
+random State S(Timestep t) ~
+  if t == @0 then 
+    Categorical({A -> 0.3, C -> 0.2, G -> 0.1, T -> 0.4})
+  else case S(prev(t)) in {
+    A -> Categorical({A -> 0.1, C -> 0.3, G -> 0.3, T -> 0.3}),
+    C -> Categorical({A -> 0.3, C -> 0.1, G -> 0.3, T -> 0.3}),
+    G -> Categorical({A -> 0.3, C -> 0.3, G -> 0.1, T -> 0.3}),
+    T -> Categorical({A -> 0.3, C -> 0.3, G -> 0.3, T -> 0.1})
+  };
+
+random Output O(Timestep t) ~ 
+  case S(t) in {
+    A -> Categorical({
+      ResultA -> 0.85, ResultC -> 0.05, 
+      ResultG -> 0.05, ResultT -> 0.05}),
+    C -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.85, 
+      ResultG -> 0.05, ResultT -> 0.05}),
+    G -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.05, 
+      ResultG -> 0.85, ResultT -> 0.05}),
+    T -> Categorical({
+      ResultA -> 0.05, ResultC -> 0.05, 
+      ResultG -> 0.05, ResultT -> 0.85})
+  };
+
+/* Evidence for the Hidden Markov Model.
+ */
+
+obs O(@0) = ResultC;
+obs O(@1) = ResultA;
+obs O(@2) = ResultA;
+obs O(@3) = ResultA;
+obs O(@4) = ResultG;
+
+/* Queries for the Hiddem Markov Model, given the evidence.  
+ * Note that we can query S(5) even though our observations only 
+ * went up to time 4.
+ */
+
+query S(@0);
+query S(@1);
+query S(@2);
+query S(@3);
+query S(@4);
+query S(@5);
+\end{blogcode}
+
+\bl will generate the following results using the particle filtering algorithm. 
+\begin{verbatim}
+Distribution of values for S(@0)
+	C	0.8128524436090175
+	T	0.09473684210526356
+	A	0.06905545112781902
+	G	0.023355263157894345
+Distribution of values for S(@1)
+	A	0.8700181159420364
+	G	0.05365942028985556
+	T	0.05143115942029019
+	C	0.024891304347826236
+Distribution of values for S(@2)
+	A	0.7075761624799592
+	C	0.09974612506680965
+	G	0.0965058792089793
+	T	0.0961718332442546
+Distribution of values for S(@3)
+	A	0.7633727477477481
+	C	0.08085585585585582
+	G	0.07908220720720713
+	T	0.07668918918918921
+Distribution of values for S(@4)
+	G	0.8739530096536214
+	C	0.050912123793299964
+	T	0.05014906303236865
+	A	0.02498580352072714
+Distribution of values for S(@5)
+	A	0.2989778534923363
+	C	0.2949673480976736
+	T	0.2767248722316938
+	G	0.12932992617830938
+\end{verbatim}
