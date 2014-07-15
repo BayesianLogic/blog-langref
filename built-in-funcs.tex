@@ -112,13 +112,15 @@ that the function \verb|eye| takes a single \verb|Integer| and produces a
 \blog|RealMatrix transpose(RealMatrix x)|
 \myindent Transpose of the matrix \verb|x|.
 
-\blog|RealMatrix det(RealMatrix x)|
+\blog|Real det(RealMatrix x)|
 \myindent Determinant of the matrix \verb|x|.
+
+\blog|Real trace(RealMatrix x)|
+\myindent Trace of the matrix \verb|x|, i.e. the sum of the elements on the diagonal.
 
 \blog|RealMatrix diag(RealMatrix vals)|
 \myindent Diagonal matrix with the given values on the diagonal. \verb|vals|
-must be a
-column vector.
+must be a column vector.
 
 \blog|RealMatrix repmat(RealMatrix m, Integer rows, Integer cols)|
 \myindent Return the matrix \verb|m| tiled \verb|rows| times vertically and
