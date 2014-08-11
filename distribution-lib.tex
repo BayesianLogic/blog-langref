@@ -2,17 +2,17 @@ This section lists the distributions included in \bl standard library.
 
 
 \subsection{Bernoulli}
-Bernoulli distribution generates the value $1$ with probability $p$ and $0$ with probability $1-p$. 
+Bernoulli distribution generates the value $1$ with probability $p$ and $0$ with probability $1-p$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real|
- $p$, $0 \leq p \leq 1$ 
+ $p$, $0 \leq p \leq 1$
 \end{itemize*}
 
 \parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer|, $k \in \{0, 1\}$ 
+\item[] \verb|Integer|, $k \in \{0, 1\}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -33,16 +33,16 @@ random Integer x ~ Bernoulli(0.5);
 
 \subsection{Beta}
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
-\item[] \verb|Real| $\alpha$, $\alpha > 0$ 
-\item[] \verb|Real| $\beta$, $\beta > 0$ 
+\item[] \verb|Real| $\alpha$, $\alpha > 0$
+\item[] \verb|Real| $\beta$, $\beta > 0$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
 \item[]
-\verb|Real|, $0 \leq x \leq 1$ 
+\verb|Real|, $0 \leq x \leq 1$
 \end{itemize*}
 
 \parahead{Probability density function:}
@@ -60,13 +60,13 @@ random Real x ~ Beta(2, 3);
 \subsection{Binomial}
 Binomial distribution generates the number of successes in a sequence of $n$ independent Bernoulli trials where each trial yields success with probability $p$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Integer| $n$, $n \geq 0$
 \item[] \verb|Real| $p$, $0 \leq p \leq 1$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
 \item[] \verb|Integer|, $k \in \{0, 1, \ldots, n\} $
 \end{itemize*}
@@ -83,17 +83,17 @@ random Integer x ~ Binomial(10, 0.5);
 \end{blogcode}
 
 \subsection{BooleanDistrib} \label{boolean-distribution-section}
-BooleanDistrib distribution generates \verb|true| with probability $p$ and \verb|false| with probability $1-p$. 
+BooleanDistrib distribution generates \verb|true| with probability $p$ and \verb|false| with probability $1-p$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real|
- $p$, $0 \leq p \leq 1$ 
+ $p$, $0 \leq p \leq 1$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Boolean|, $k \in \{\verb|True|, \verb|False|\}$ 
+\item[] \verb|Boolean|, $k \in \{\verb|True|, \verb|False|\}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -117,12 +117,12 @@ Refer to \secref{categorical-section}.
 
 \subsection{Dirichlet}
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
-\item[] \verb|RealMatrix| (Column Vector) $\bar{\alpha}$, s.t. $\alpha_{i} > 0, \forall i \in \{1, \ldots, K\}$ 
+\item[] \verb|RealMatrix| (Column Vector) $\bar{\alpha}$, s.t. $\alpha_{i} > 0, \forall i \in \{1, \ldots, K\}$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
 \item[] \verb|RealMatrix|, $\bar{x} \in \mathbb{R}^{K}, s.t. \forall i \in \{1, \ldots, K\} x_{i} \geq 0, \sum_{1}^{K} x_{i} = 1 $
 \end{itemize*}
@@ -131,7 +131,7 @@ Refer to \secref{categorical-section}.
 \[
 	f(\bar{x}) = \frac{1}{Z(\bar{\alpha})} * \prod_{i=1}^{K} x_{i}^{\alpha_{i} - 1}
 \]
-\[ Z(\bar{\alpha}) = \frac{ \prod_{i=1}^{K} \Gamma(\alpha_{i})   }{ \Gamma(\sum_{i=1}^{K} \alpha_{i} )  } 
+\[ Z(\bar{\alpha}) = \frac{ \prod_{i=1}^{K} \Gamma(\alpha_{i})   }{ \Gamma(\sum_{i=1}^{K} \alpha_{i} )  }
 \]
 
 \parahead{Example:}
@@ -149,9 +149,9 @@ The Discrete distribution generates an integer from $0$ to $K-1$, where the like
 \item[] \verb|RealMatrix| (ColumnVector) $\bar{p}$, $\bar{p} \in \mathbb{R}$, $p_{0} \geq 0, \ldots, p_{K-1} \geq 0, s.t. \sum_{0}^{K-1} p_{i} > 0$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer| $k \in \{0, 1, \ldots, K-1 \}$ 
+\item[] \verb|Integer| $k \in \{0, 1, \ldots, K-1 \}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -169,14 +169,14 @@ random Integer x ~ Discrete(vec);
 \subsection{Exponential}
 The exponential distribution generates the interarrival time between two events in a Poisson process.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real|
- $\lambda$, $\lambda > 0$ 
+ $\lambda$, $\lambda > 0$
 \end{itemize*}
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Real|, $x \geq 0$ 
+\item[] \verb|Real|, $x \geq 0$
 \end{itemize*}
 
 \parahead{Probability density function:}
@@ -195,7 +195,7 @@ random Real x ~ Exponential(0.2);
 \parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real| $k$, $k > 0$
-\item[] \verb|Real| $\lambda$, $\lambda > 0$ 
+\item[] \verb|Real| $\lambda$, $\lambda > 0$
 \end{itemize*}
 
 \parahead{Support:}
@@ -219,17 +219,17 @@ random Real x ~ Gamma(2.0, 4.0);
 
 \subsection{Gaussian}
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] mean, \verb|Real|
  $\mu$, $\mu \in \mathbb{R}$
 \item[] variance \verb|Real|
- $\sigma^2$, $\sigma^2 > 0$ 
+ $\sigma^2$, $\sigma^2 > 0$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Real|, $x \in \mathbb{R}$ 
+\item[] \verb|Real|, $x \in \mathbb{R}$
 \end{itemize*}
 
 \parahead{Probability density function:}
@@ -246,15 +246,15 @@ random Real x ~ Gaussian(-1, 2);
 \subsection{Geometric}
 Geometric distribution generates the number of failures before the first success in a sequence of independent Bernoulli trials with probability of success $p$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real|
- $p$, $0 \leq p \leq 1$ 
+ $p$, $0 \leq p \leq 1$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -268,18 +268,47 @@ The following code defines a random function symbol \verb|x| distributed accordi
 random Integer x ~ Geometric(0.2);
 \end{blogcode}
 
+\subsection{Inverse Wishart}
+Inverse Wishart distribution is a conjugate prior distribution to Multivariate Gaussian distribution when the mean parameter is fixed but the covariance matrix is unknown.
+
+\parahead{Parameters:}
+\begin{itemize*}
+\item[] \verb|RealMatrix| $\Psi$, $\Psi\in\mathbb R^{d\times d}$ is positive definite, represents the scale of the distribution.
+\item[] \verb|Real| $\nu$, $\nu > d - 1$, represents the degrees of freedom of this distribution.
+\end{itemize*}
+
+\parahead{Support:}
+\begin{itemize*}
+\item[] \verb|RealMatrix|, $X$, $X\in\mathbb R^{d\times d}$ is positive definite
+\end{itemize*}
+
+\parahead{Probability density function:}
+\[
+	\frac{|\Psi|^{\frac\nu2}}{2^{\frac\nu p}{2}\Gamma_p(\frac\nu2)}|X|^{-\frac{\nu+d+1}{2}}e^{-\frac12\text{trace}(\Psi X^{-1})}
+\]
+
+where $\Gamma_p$ is the multivariate gamma function.
+
+\parahead{Example:}
+The following code defines a $2\times2$ random function symbol \verb|x| distributed according to a Inverse Wishart distribution with Identity matrix as the scale parameter and the degrees of freedom to be 10.
+\begin{blogcode}
+fixed RealMatrix psi = [1, 0; 0, 1];
+fixed Integer nu = 10;
+random RealMatrix x ~ InverseWishart(psi, nu);
+\end{blogcode}
+
 \subsection{Laplace}
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real| $\mu$, $\mu \in \mathbb{R}$
 \item[] \verb|Real| $b$, $b > 0$
- 
+
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Real|, $x \in \mathbb{R}$ 
+\item[] \verb|Real|, $x \in \mathbb{R}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -296,16 +325,16 @@ random Real x ~ Laplace(1.0, 2.0);
 
 \subsection{Multinomial}
  The multinomial distribution contains $k$ categories. During a single trial, exactly one of the $k$ categories is selected. The probability of selecting a particular category $i$ is $\frac{p_{i}}{\sum_{i=1}^{k} p_{i}}$. The process is repeated independently $n$ times, and the resultant counts of each category are returned.
- 
-\parahead{Parameters:} 
+
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Integer| $n$, $n \in \{0, 1, 2, \ldots \}$
 \item[] \verb|RealMatrix| (Column Vector) $\bar{p}$, $p \in \mathbb{R}^{k}$ $p_{1} \geq 0, p_{2} \geq 0, \ldots, .. p_{k} \geq 0, s.t. \sum_{i=1}^{k} p_{i} > 0$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|RealMatrix| (Column Vector), $\bar{x} \in \mathbb{Z}^{k}, s.t. x_{i} \in \{0, 1, 2, \ldots, n \} \forall i \in \{0, 1, 2, \ldots, k \}  $ 
+\item[] \verb|RealMatrix| (Column Vector), $\bar{x} \in \mathbb{Z}^{k}, s.t. x_{i} \in \{0, 1, 2, \ldots, n \} \forall i \in \{0, 1, 2, \ldots, k \}  $
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -322,7 +351,7 @@ random RealMatrix x ~ Multinomial(4, m);
 
 \subsection{MultivarGaussian}
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|RealMatrix| (Column Vector )$\bar{\mu}$, $\bar{\mu} \in \mathbb{R}^{K}$
 
@@ -330,9 +359,9 @@ random RealMatrix x ~ Multinomial(4, m);
 
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|RealMatrix|, $\bar{x} \in \mathbb{Z}^{K} $ 
+\item[] \verb|RealMatrix|, $\bar{x} \in \mathbb{Z}^{K} $
 \end{itemize*}
 
 \parahead{Probability density function:}
@@ -341,11 +370,11 @@ f(\bar{x}) = \frac{1}{\sqrt{(2\pi)^{K}|\Sigma|}}exp(-\frac{1}{2} (\bar{x} - \mu)
 \]
 
 \parahead{Example:}
-The following code defines a random function symbol \verb|x| distributed according to a Multivariate Gaussian with mean $\bar{\mu} = 
+The following code defines a random function symbol \verb|x| distributed according to a Multivariate Gaussian with mean $\bar{\mu} =
 \begin{pmatrix}
   1  \\
-  1  \\ 
- \end{pmatrix}$ and covariance $\Sigma = 
+  1  \\
+ \end{pmatrix}$ and covariance $\Sigma =
  \begin{pmatrix}
    1 & 0 \\
    0 & 3 \\
@@ -360,20 +389,20 @@ random RealMatrix x ~ MultivarGaussian(mu, covariance);
 \subsection{NegativeBinomial}
 NegativeBinomial distribution generates the number of failures until the $r^{\text{th}}$ success in a sequence of independent Bernoulli trials each with probability of success $p$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Integer| $r$, $r \in \{1, 2, \ldots \}$
-\item[] \verb|Real| $p$, $0 \leq p \leq 1$ 
+\item[] \verb|Real| $p$, $0 \leq p \leq 1$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
 \[
-	P(X = k) = \binom{k + r - 1}{k} p^{r} (1-p)^{k} 
+	P(X = k) = \binom{k + r - 1}{k} p^{r} (1-p)^{k}
 \]
 
 \parahead{Example:}
@@ -386,14 +415,14 @@ random Integer x ~ NegativeBinomial(2, 0.8);
 \subsection{Poisson}
 Given a success probability $p$ very close to $0$, and $n$ independent Bernoulli trials such that $\lambda = np$, the Poisson distribution generates a good approximation to the number of successful trials.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
-\item[] \verb|Real| $\lambda$, $\lambda > 0$ 
+\item[] \verb|Real| $\lambda$, $\lambda > 0$
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$ 
+\item[] \verb|Integer|, $k \in \{0, 1, 2, \ldots \}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -413,14 +442,14 @@ random Integer x ~ Poisson(3.0);
 
 UniformChoice distribution chooses an element uniformly from the set $S$, whose objects are all of type $T$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
-\item[] \verb|Real| $S$, a set of objects 
+\item[] \verb|Real| $S$, a set of objects
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|T|, $k \in S$ 
+\item[] \verb|T|, $k \in S$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -441,17 +470,17 @@ query x;
 \subsection{UniformInt} \label{uniformint-section}
 UniformInt distribution generates an \verb|Integer| uniformly at random between the between a lower bound $a$ and an upper bound $b$. $a$ and $b$ are both included in the set of integers which are uniformly sampled from.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Integer| $a$, $a \in \mathbb{Z}$
 \item[] \verb|Integer| $a$, $b \in \mathbb{Z}$
 \item[] $a \leq b$
- 
+
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Integer|, $k \in \{a, a+1, \ldots, b-1, b \}$ 
+\item[] \verb|Integer|, $k \in \{a, a+1, \ldots, b-1, b \}$
 \end{itemize*}
 
 \parahead{Probability mass function:}
@@ -475,17 +504,17 @@ random Integer x ~ UniformInt(1, 3);
 
 UniformReal distribution generates a \verb|Real| uniformly at random between the between a lower bound $a$ and an upper bound $b$. The lower bound $a$ is inclusive but the upper bound is exclusive.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|Real| $a$, $a \in \mathbb{R}$
 \item[] \verb|Real| $b$, $b \in \mathbb{R}$
 \item[] $a < b$
- 
+
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] \verb|Real|, $x \in [a, b)$ 
+\item[] \verb|Real|, $x \in [a, b)$
 \end{itemize*}
 
 \parahead{Probability density function:}
@@ -509,18 +538,18 @@ random Real x ~ UniformReal(0, 1);
 
 $v$ is an argument list of $1 \times 2$ \verb|RealMatrix| row vectors with arbitrary length $k$. Denote $v_{i,L}$ as the first element in the $i^{\text{th}}$ row vector and $v_{i, U}$ as the second element in the $i^{\text{th}}$ row vector. UniformVector generates a \verb|RealMatrix| column vector of dimension $k$ where element $i$ is uniformly distributed between $v_{i,L}$ and $v_{i,U}$.
 
-\parahead{Parameters:} 
+\parahead{Parameters:}
 \begin{itemize*}
 \item[] \verb|RealMatrix| $v_{1}$, $v_{1} \in \mathbb{R}^{2}, v_{1,L} < v_{1,U}$
 \item[] $\ldots$
-\item[] \verb|RealMatrix| $v_{k}$, $v_{k} \in \mathbb{R}^{2}, 
+\item[] \verb|RealMatrix| $v_{k}$, $v_{k} \in \mathbb{R}^{2},
 v_{k,L} < v_{k,U}$
 
 \end{itemize*}
 
-\parahead{Support:} 
+\parahead{Support:}
 \begin{itemize*}
-\item[] $\verb|RealMatrix| \text{(Column Vector)}, 
+\item[] $\verb|RealMatrix| \text{(Column Vector)},
 \bar{x} \in \mathbb{R}^{k}, \bigcap_{i=1}^{k} v_{i,L} \leq \bar{x_{i}} \leq v_{i,U}  $
 \end{itemize*}
 
@@ -543,29 +572,29 @@ random RealMatrix x ~ UniformVector(a, b);
 \centering
 \caption{Distributions in \bl}
 \begin{tabular}{ c c c }
-\toprule 
-distribution & argument type & value \\ 
+\toprule
+distribution & argument type & value \\
  \midrule
-Bernoulli & Real in [0,1] & binary 0/1 \\ 
-Beta & Positive Real, Positive Real & Real in [0,1]  \\ 
-Binomial & Nonnegative Integer, Real & Nonnegative Integer \\ 
-BooleanDistrib & Real in [0,1] & Boolean \\ 
+Bernoulli & Real in [0,1] & binary 0/1 \\
+Beta & Positive Real, Positive Real & Real in [0,1]  \\
+Binomial & Nonnegative Integer, Real & Nonnegative Integer \\
+BooleanDistrib & Real in [0,1] & Boolean \\
 Categorical & Map &  \\
 Dirichlet & Column Vector & Column Vector \\
 Discrete & ColumnVector & Integer \\
-Exponential & Positive Real & Nonnegative Real \\ 
-Gamma & Positive Real, Positive Real & Positive Real \\ 
-Gaussian & Real, Real & Real  \\ 
-Geometric & Real in [0,1] & Nonnegative Integer \\ 
-Laplace & Real, Positive Real & Real  \\ 
+Exponential & Positive Real & Nonnegative Real \\
+Gamma & Positive Real, Positive Real & Positive Real \\
+Gaussian & Real, Real & Real  \\
+Geometric & Real in [0,1] & Nonnegative Integer \\
+Laplace & Real, Positive Real & Real  \\
 Multinomial & Nonnegative Integer, ColumnVector & ColumnVector \\
 MultivarGaussian & ColumnVector, MatrixReal & ColumnVector  \\
-NegativeBinomial & Positive Integer, Real in [0,1] & Integer  \\ 
-Poisson & Real & Nonnegative Integer  \\ 
+NegativeBinomial & Positive Integer, Real in [0,1] & Integer  \\
+Poisson & Real & Nonnegative Integer  \\
 UniformChoice & Set & Element in Set \\
 UniformInt & Integer, Integer & Integer  \\
 UniformReal & Real, Real & Real  \\
 UniformVector & MatrixReal's & RealMatrix \\
  \bottomrule
-\end{tabular} 
+\end{tabular}
 \end{table}
