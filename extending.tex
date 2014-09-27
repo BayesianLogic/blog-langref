@@ -15,8 +15,8 @@ import java.util.List;
 
 import blog.model.AbstractFunctionInterp;
 
-public class Log10Interp extends AbstractFunctionInterp {
-  public Log10Interp(List args) {
+public class Log10 extends AbstractFunctionInterp {
+  public Log10(List args) {
   }
 
   public Object getValue(List args) {
@@ -26,17 +26,18 @@ public class Log10Interp extends AbstractFunctionInterp {
 }
 \end{minted}
 
-To use this function from a model, declare it like this:
+To use an externally defined function, a proper declaration should be added in the blog file using \verb|extern| keyword. 
 
+For example, to declare an externally defined 10-based logarithm. 
 \begin{blogcode}
-fixed Real log10(Real val) = my_package.Log10Interp();
+extern Real Log10(Real x);
 \end{blogcode}
 
-Then \verb|log10| can be used just like any other fixed function, e.g.
-\verb|query log10(100.0)|.
+Then \verb|Log10| can be used just like any other fixed function, e.g.
+\verb|query Log10(100.0)|.
 
-Make sure \verb|my_package| is on the class path. If you get an error like "No
-definition found for non-random function log10", you most likely have a
+Make sure \verb|Log10|  the same as the defined Class name in Java.If you get an error like "No
+definition found for non-random function Log10", you most likely have a
 class-path problem. If \verb|my_package| is in the current working directory,
 you need not do anything. Otherwise, if \verb|my_package| lives at
 \verb|/some/absolute/path/my_package|, launch \bl with an environment variable:
@@ -49,6 +50,13 @@ For more advanced examples of user-defined functions, see
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{User-defined distributions}\label{user-defined-distribution-section}
+
+For externally defined distribution, we need to add declaration of its signature in blog using \verb|distribution|.
+
+For example, to declare a \verb|UniformReal| distribution. 
+\begin{blogcode}
+distribution Real UniformReal(Real a, Real b);
+\end{blogcode}
 
 Probability distributions are implemented in Java.  Distribution classes should implement the interface \verb|blog.distrib.CondProbDistrib|. 
 By default, the \bl engine will look up distribution classes in the package \verb|blog.distrib|. In addition, it will look up distribution classes under the default empty package. 
