@@ -14,7 +14,7 @@ operator & argument type & result type & meaning \\
 \midrule
 \verb|-| & Integer & Integer & minus \\
 \verb|-| & Real & Real & minus \\
-\verb|-| & RealMatrix & RealMatrix & minus \\
+%\verb|-| & RealMatrix & RealMatrix & minus \\ % not supported yet
 \verb|!| & Boolean & Boolean & negation \\
 \bottomrule
 \end{tabular}
@@ -106,37 +106,71 @@ For functions, a type signature like \verb|RealMatrix eye(Integer dim)| means
 that the function \verb|eye| takes a single \verb|Integer| and produces a
 \verb|RealMatrix|.
 
-\blog|RealMatrix inv(RealMatrix x)|
-\myindent Inverse of the matrix \verb|x|.
+\blog|RealMatrix abs(RealMatrix m)|
+\myindent Element-wise absolute value.
 
-\blog|RealMatrix transpose(RealMatrix x)|
-\myindent Transpose of the matrix \verb|x|.
+\blog|RealMatrix colsum(RealMatrix m)|
+\myindent Column-wise sum of a matrix.
+For example, \verb|colsum([1, 2; 3, 4])| returns \verb|[4, 6]|.
 
 \blog|Real det(RealMatrix x)|
 \myindent Determinant of the matrix \verb|x|.
-
-\blog|Real trace(RealMatrix x)|
-\myindent Trace of the matrix \verb|x|, i.e. the sum of the elements on the diagonal.
 
 \blog|RealMatrix diag(RealMatrix vals)|
 \myindent Diagonal matrix with the given values on the diagonal. \verb|vals|
 must be a column vector.
 
-\blog|RealMatrix repmat(RealMatrix m, Integer rows, Integer cols)|
-\myindent Return the matrix \verb|m| tiled \verb|rows| times vertically and
-\verb|cols|
-times horizontally.
+\blog|RealMatrix exp(RealMatrix m)|
+\myindent Element-wise exponential of a matrix.
 
-\blog|RealMatrix sum(RealMatrix m)|
-\myindent Column-wise sum of a matrix.
-For example, \verb|sum([1, 2; 3, 4])| returns \verb|[4, 6]|.
+\blog|RealMatrix getCol(RealMatrix m, Integer i)|
+\myindent get i-th column of a matrix.
+
+\blog|RealMatrix getCols(RealMatrix m, Integer i, Integer j)|
+\myindent return a sub-matrix from i-th (inclusive) to j-th (inclusive) column of a matrix.
+
+\blog|RealMatrix getRow(RealMatrix m, Integer i)|
+\myindent get i-th row of a matrix.
+
+\blog|RealMatrix getRows(RealMatrix m, Integer i, Integer j)|
+\myindent return a sub-matrix from i-th (inclusive) to j-th (inclusive) row of a matrix.
 
 \blog|RealMatrix hstack(RealMatrix arg1, ...)|
 \blog|RealMatrix hstack(Real arg1, ...)|
 \myindent Stack scalars or matrices horizontally. Accepts an arbitrary number
-of
-arguments.
+of arguments.
 For example, \verb|hstack(1, 2, 3)| returns the row vector {\tt [1, 2, 3]}.
+
+\blog|RealMatrix inv(RealMatrix x)|
+\myindent Inverse of the matrix \verb|x|.
+
+\blog|RealMatrix log(RealMatrix m)|
+\myindent Element-wise logarithm of a matrix.
+
+\blog|Real matsum(RealMatrix m)|
+\myindent Total sum of a matrix.
+For example, \verb|matsum([1, 2; 3, 4])| returns \verb|10|.
+
+\blog|Integer numRows(RealMatrix m)|
+\myindent Number of rows of a matrix.
+
+\blog|Integer numCols(RealMatrix m)|
+\myindent Number of columns of a matrix.
+
+\blog|RealMatrix rowsum(RealMatrix m)|
+\myindent Row-wise sum of a matrix.
+For example, \verb|rowsum([1, 2; 3, 4])| returns \verb|[[3, 7]]|.
+
+\blog|RealMatrix transpose(RealMatrix x)|
+\myindent Transpose of the matrix \verb|x|.
+
+\blog|Real trace(RealMatrix x)|
+\myindent Trace of the matrix \verb|x|, i.e. the sum of the elements on the diagonal.
+
+\blog|RealMatrix repmat(RealMatrix m, Integer rows, Integer cols)|
+\myindent Return the matrix \verb|m| tiled \verb|rows| times vertically and
+\verb|cols|
+times horizontally.
 
 \blog|RealMatrix vstack(RealMatrix arg1, ...)|
 \blog|RealMatrix vstack(Real arg1, ...)|
@@ -156,11 +190,7 @@ For example, \verb|zeros(3, 4)| returns a 3x4 matrix of zeros.
 \myindent Matrix of the given size, filled with ones.
 For example, \verb|ones(3, 4)| returns a 3x4 matrix of ones.
 
-\blog|RealMatrix abs(RealMatrix m)|
-\myindent Element-wise absolute value.
 
-\blog|RealMatrix exp(RealMatrix m)|
-\myindent Element-wise exponential of a matrix.
 
 Use square brackets to index into a matrix. If \verb|m| is a two-dimensional
 matrix, \verb|m[i]| returns the \verb|i|-th row of \verb|m|. If \verb|m| is a
@@ -268,3 +298,7 @@ Integer by rounding towards zero.
 \blog|RealMatrix loadRealMatrix(String s)|
 \myindent Load a \verb|RealMatrix| from a text file. The space-separated
 formats produced by numpy and Matlab are supported.
+
+\blog|RealMatrix loadRealMatrix(String s, Integer i)|
+\myindent Load i-th line as a \verb|RealMatrix| from a text file. 
+The space-separated formats produced by numpy and Matlab are supported.
