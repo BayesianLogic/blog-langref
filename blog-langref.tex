@@ -957,6 +957,20 @@ query even;
 \end{blogcode}
 
 
+\section{Input/Output}
+BLOG provides an utility function to load data from a file. 
+\blog|loadRealMatrix(filename)|
+\blog|loadRealMatrix(filename, row-num)|
+
+The data must contain same number of columns in each row, and separated by commas or spaces. 
+
+For example, to load feature matrix from the file "feature.txt".
+\begin{blogcode}
+fixed RealMatrix feature = loadRealMatrix("feature.txt");
+\end{blogcode}
+
+To output the results to a file, one can issue the command with the option \verb|-o [filename]| and \verb|--writer [writer-class-name]|. The latter is used to specify the output format. Valid options are \verb|blog.io.TableWriter| (default), \verb|blog.io.JsonWriter|, and \verb|blog.io.DummyWriter| (for omitting output).
+
 
 \section{Extending \bl}\label{extending-section}
 \input{extending.tex}
