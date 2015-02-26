@@ -7,7 +7,7 @@
 
 2. install Pygments 
   This package requires pygments package. You may install by 
-  easy_install Pygments
+  sudo easy_install Pygments
 
 3. install blog_py_lexer
   Latex highlighting needs the blog_py_lexer.
